@@ -21,17 +21,7 @@ func (s IntegrationTestSuite) TestParams() {
 		Value:  `"200"`,
 	}}
 
-	var request1 = []params.UpdateParamRequest{{
-		Module: "service",
-		Key:    "BaseDenom",
-		Value:  `"upoint"`,
-	}}
-
-	rs, err := s.Params.UpdateParams(request1, baseTx)
-	require.NoError(s.T(), err)
-	require.NotEmpty(s.T(), rs.Hash)
-
-	rs, err = s.Params.UpdateParams(request, baseTx)
+	rs, err := s.Params.UpdateParams(request, baseTx)
 	require.NoError(s.T(), err)
 	require.NotEmpty(s.T(), rs.Hash)
 

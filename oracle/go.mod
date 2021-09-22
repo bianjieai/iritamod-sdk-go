@@ -3,7 +3,7 @@ module github.com/bianjieai/iritamod-sdk-go/oracle
 go 1.16
 
 require (
-	github.com/bianjieai/iritamod-sdk-go/service v0.0.0-00010101000000-000000000000
+	github.com/bianjieai/iritamod-sdk-go/service v0.0.0-20210922060017-08a51dc9e679
 	github.com/gogo/protobuf v1.3.3
 	github.com/golang/protobuf v1.5.2
 	github.com/irisnet/core-sdk-go v0.0.0-20210922011537-f1a5093df21b
@@ -12,7 +12,6 @@ require (
 )
 
 replace (
-	github.com/bianjieai/iritamod-sdk-go/service => D:\desktop\tmp\iritamod-sdk-go\service
 	github.com/gogo/protobuf => github.com/regen-network/protobuf v1.3.3-alpha.regen.1
 	github.com/tendermint/tendermint => github.com/bianjieai/tendermint v0.34.1-irita-210113
 

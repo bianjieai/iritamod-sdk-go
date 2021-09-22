@@ -47,7 +47,7 @@ func TestSuite(t *testing.T) {
 }
 
 func (s *IntegrationTestSuite) SetupSuite() {
-	feeCoin, err := types.ParseDecCoins("10upoint")
+	feeCoin, err := types.ParseDecCoins("100upoint")
 
 	options := []types.Option{
 		types.FeeOption(feeCoin),

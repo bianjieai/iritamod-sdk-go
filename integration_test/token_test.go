@@ -3,6 +3,8 @@ package integration
 import (
 	"strings"
 
+	"github.com/bianjieai/iritamod-sdk-go/params"
+
 	"github.com/stretchr/testify/require"
 
 	"github.com/bianjieai/iritamod-sdk-go/token"
@@ -12,7 +14,7 @@ import (
 func (s IntegrationTestSuite) TestToken() {
 	baseTx := sdk.BaseTx{
 		From:     s.Account().Name,
-		Gas:      0,
+		Gas:      200000,
 		Memo:     "test",
 		Mode:     sdk.Commit,
 		Password: s.Account().Password,
@@ -27,6 +29,15 @@ func (s IntegrationTestSuite) TestToken() {
 		MaxSupply:     21000000,
 		Mintable:      true,
 	}
+	var request1 = []params.UpdateParamRequest{{
+		Module: "token",
+		Key:    "IssueTokenBaseFee",
+		Value:  `{"denom":"point","amount":"20"}`,
+	}}
+
+	rs1, err := s.Params.UpdateParams(request1, baseTx)
+	require.NoError(s.T(), err)
+	require.NotEmpty(s.T(), rs1.Hash)
 
 	//test issue token
 	rs, err := s.Token.IssueToken(issueTokenReq, baseTx)
@@ -76,12 +87,12 @@ func (s IntegrationTestSuite) TestToken() {
 	feeToken, er := s.Token.QueryFees(issueTokenReq.Symbol)
 	require.NoError(s.T(), er)
 	require.Equal(s.T(), true, feeToken.Exist)
-	require.Equal(s.T(), "60000000000uirita", feeToken.IssueFee.String())
-	require.Equal(s.T(), "6000000000uirita", feeToken.MintFee.String())
+	require.Equal(s.T(), "20000000upoint", feeToken.IssueFee.String())
+	require.Equal(s.T(), "2000000upoint", feeToken.MintFee.String())
 
 	res, er := s.Token.QueryParams()
 	require.NoError(s.T(), er)
 	require.Equal(s.T(), "0.100000000000000000", res.MintTokenFeeRatio)
 	require.Equal(s.T(), "0.400000000000000000", res.TokenTaxRate)
-	require.Equal(s.T(), "60000irita", res.IssueTokenBaseFee)
+	require.Equal(s.T(), "20point", res.IssueTokenBaseFee)
 }
