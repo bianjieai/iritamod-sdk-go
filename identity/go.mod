@@ -4,12 +4,11 @@ go 1.16
 
 require (
 	github.com/gogo/protobuf v1.3.3
-	github.com/irisnet/core-sdk-go v0.0.0-20210719031639-9c6ece68d908
+	github.com/irisnet/core-sdk-go v0.0.0-20210922011537-f1a5093df21b
 	google.golang.org/genproto v0.0.0-20201119123407-9b1e624d6bc4
 	google.golang.org/grpc v1.37.0
 )
 
 replace (
-	github.com/irisnet/core-sdk-go => D:\desktop\tibc\core-sdk-go
 	github.com/gogo/protobuf => github.com/regen-network/protobuf v1.3.3-alpha.regen.1
 )
