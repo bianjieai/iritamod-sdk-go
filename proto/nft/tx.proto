@@ -3,7 +3,7 @@ package irismod.nft;
 
 import "gogoproto/gogo.proto";
 
-option go_package = "github.com/bianjieai/irita-sdk-go/modules/nft";
+option go_package = "github.com/bianjieai/iritamod-sdk-go/nft";
 option(gogoproto.goproto_getters_all) = false;
 
 // Msg defines the htlc Msg service.

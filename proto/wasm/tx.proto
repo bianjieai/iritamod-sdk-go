@@ -6,7 +6,7 @@ import "cosmos/base/v1beta1/coin.proto";
 import "gogoproto/gogo.proto";
 import "wasm/types.proto";
 
-option go_package = "github.com/bianjieai/irita-sdk-go/modules/wasm";
+option go_package = "github.com/bianjieai/iritamod-sdk-go/wasm";
 option (gogoproto.goproto_getters_all) = false;
 
 // Msg defines the wasm Msg service.
@@ -57,7 +57,7 @@ message MsgInstantiateContract {
   // InitMsg json encoded message to be passed to the contract on instantiation
   bytes init_msg = 5 [(gogoproto.casttype) = "encoding/json.RawMessage"];
   // InitFunds coins that are transferred to the contract on instantiation
-  repeated cosmos.base.v1beta1.Coin init_funds = 6 [(gogoproto.nullable) = false, (gogoproto.castrepeated) = "github.com/bianjieai/irita-sdk-go/types.Coins"];
+  repeated cosmos.base.v1beta1.Coin init_funds = 6 [(gogoproto.nullable) = false, (gogoproto.castrepeated) = "github.com/irisnet/core-sdk-go/types.Coins"];
 }
 // MsgInstantiateContractResponse return instantiation result data
 message MsgInstantiateContractResponse {
@@ -74,7 +74,7 @@ message MsgExecuteContract {
   // Msg json encoded message to be passed to the contract
   bytes msg = 3 [(gogoproto.casttype) = "encoding/json.RawMessage"];
   // SentFunds coins that are transferred to the contract on execution
-  repeated cosmos.base.v1beta1.Coin sent_funds = 5 [(gogoproto.nullable) = false, (gogoproto.castrepeated) = "github.com/bianjieai/irita-sdk-go/types.Coins"];
+  repeated cosmos.base.v1beta1.Coin sent_funds = 5 [(gogoproto.nullable) = false, (gogoproto.castrepeated) = "github.com/irisnet/core-sdk-go/types.Coins"];
 }
 
 // MsgExecuteContractResponse returns execution result data.

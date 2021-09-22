@@ -6,7 +6,7 @@ import "google/api/annotations.proto";
 import "nft/nft.proto";
 import "cosmos/base/query/v1beta1/pagination.proto";
 
-option go_package = "github.com/bianjieai/irita-sdk-go/modules/nft";
+option go_package = "github.com/bianjieai/iritamod-sdk-go/nft";
 
 // Query defines the gRPC querier service for nft module
 service Query {

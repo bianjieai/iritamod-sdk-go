@@ -4,7 +4,7 @@ package irismod.service;
 import "cosmos/base/v1beta1/coin.proto";
 import "gogoproto/gogo.proto";
 
-option go_package = "github.com/bianjieai/irita-sdk-go/service";
+option go_package = "github.com/bianjieai/iritamod-sdk-go/service";
 option (gogoproto.goproto_getters_all) = false;
 
 

@@ -3,7 +3,7 @@ package iritamod.perm;
 
 import "perm/perm.proto";
 
-option go_package = "github.com/bianjieai/irita-sdk-go/modules/perm";
+option go_package = "github.com/bianjieai/iritamod-sdk-go/perm";
 
 // Query defines the gRPC querier service for perm module
 service Query {

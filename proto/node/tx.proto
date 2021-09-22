@@ -3,7 +3,7 @@ package iritamod.node;
 
 import "gogoproto/gogo.proto";
 
-option go_package = "github.com/bianjieai/irita-sdk-go/modules/node";
+option go_package = "github.com/bianjieai/iritamod-sdk-go/node";
 option (gogoproto.goproto_getters_all) = false;
 
 // Msg defines the node Msg service.

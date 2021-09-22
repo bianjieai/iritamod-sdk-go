@@ -4,7 +4,7 @@ package irismod.random;
 import "gogoproto/gogo.proto";
 import "cosmos/base/v1beta1/coin.proto";
 
-option go_package = "github.com/bianjieai/irita-sdk-go/modules/random";
+option go_package = "github.com/bianjieai/iritamod-sdk-go/random";
 
 // Random defines the feed standard
 message Random {
@@ -19,6 +19,6 @@ message Request {
     string consumer = 2;
     string tx_hash = 3 [ (gogoproto.moretags) = "yaml:\"tx_hash\"" ];
     bool oracle = 4;
-    repeated cosmos.base.v1beta1.Coin service_fee_cap = 5 [ (gogoproto.nullable) = false, (gogoproto.castrepeated) = "github.com/bianjieai/irita-sdk-go/types.Coins", (gogoproto.moretags) = "yaml:\"service_fee_cap\"" ];
+    repeated cosmos.base.v1beta1.Coin service_fee_cap = 5 [ (gogoproto.nullable) = false, (gogoproto.castrepeated) = "github.com/irisnet/core-sdk-go/types.Coins", (gogoproto.moretags) = "yaml:\"service_fee_cap\"" ];
     string service_context_id = 6 [ (gogoproto.customname) = "ServiceContextID", (gogoproto.moretags) = "yaml:\"service_context_id\"" ];
 }

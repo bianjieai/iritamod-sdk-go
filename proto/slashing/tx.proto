@@ -3,7 +3,7 @@ package iritamod.slashing;
 
 import "gogoproto/gogo.proto";
 
-option go_package = "github.com/bianjieai/irita-sdk-go/modules/slashing";
+option go_package = "github.com/bianjieai/iritamod-sdk-go/slashing";
 option (gogoproto.goproto_getters_all) = false;
 
 

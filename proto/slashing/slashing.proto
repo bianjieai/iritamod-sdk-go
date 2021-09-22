@@ -5,7 +5,7 @@ import "gogoproto/gogo.proto";
 import "google/protobuf/duration.proto";
 import "google/protobuf/timestamp.proto";
 
-option go_package = "github.com/bianjieai/irita-sdk-go/modules/slashing";
+option go_package = "github.com/bianjieai/iritamod-sdk-go/slashing";
 option (gogoproto.goproto_getters_all) = false;
 
 // ValidatorSigningInfo defines a validator's signing info for monitoring their liveness activity.
@@ -31,7 +31,7 @@ message Params {
     int64 signed_blocks_window  = 1 [(gogoproto.moretags) = "yaml:\"signed_blocks_window\""];
     bytes min_signed_per_window = 2 [
         (gogoproto.moretags) = "yaml:\"min_signed_per_window\"",
-        (gogoproto.customtype) = "github.com/bianjieai/irita-sdk-go/types.Dec",
+        (gogoproto.customtype) = "github.com/irisnet/core-sdk-go/types.Dec",
         (gogoproto.nullable) = false
     ];
     google.protobuf.Duration downtime_jail_duration = 3 [
@@ -41,12 +41,12 @@ message Params {
     ];
     bytes slash_fraction_double_sign = 4 [
         (gogoproto.moretags) = "yaml:\"slash_fraction_double_sign\"",
-        (gogoproto.customtype) = "github.com/bianjieai/irita-sdk-go/types.Dec",
+        (gogoproto.customtype) = "github.com/irisnet/core-sdk-go/types.Dec",
         (gogoproto.nullable) = false
     ];
     bytes slash_fraction_downtime = 5 [
         (gogoproto.moretags) = "yaml:\"slash_fraction_downtime\"",
-        (gogoproto.customtype) = "github.com/bianjieai/irita-sdk-go/types.Dec",
+        (gogoproto.customtype) = "github.com/irisnet/core-sdk-go/types.Dec",
         (gogoproto.nullable) = false
     ];
 }

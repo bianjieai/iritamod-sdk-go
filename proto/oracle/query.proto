@@ -8,7 +8,7 @@ import "google/api/annotations.proto";
 import "cosmos/base/v1beta1/coin.proto";
 import "cosmos/base/query/v1beta1/pagination.proto";
 
-option go_package = "github.com/bianjieai/irita-sdk-go/modules/oracle";
+option go_package = "github.com/bianjieai/iritamod-sdk-go/oracle";
 
 // Query creates service with guardian as rpc
 service Query {
@@ -69,7 +69,7 @@ message FeedContext {
   repeated string providers = 3;
   string input = 4;
   int64 timeout = 5;
-  repeated cosmos.base.v1beta1.Coin service_fee_cap = 6 [ (gogoproto.nullable) = false, (gogoproto.castrepeated) = "github.com/bianjieai/irita-sdk-go/types.Coins", (gogoproto.moretags) = "yaml:\"service_fee_cap\"" ];
+  repeated cosmos.base.v1beta1.Coin service_fee_cap = 6 [ (gogoproto.nullable) = false, (gogoproto.castrepeated) = "github.com/irisnet/core-sdk-go/types.Coins", (gogoproto.moretags) = "yaml:\"service_fee_cap\"" ];
   uint64 repeated_frequency = 7 [ (gogoproto.moretags) = "yaml:\"repeated_frequency\"" ];
   uint32 response_threshold = 8 [ (gogoproto.moretags) = "yaml:\"response_threshold\"" ];
   irismod.service.RequestContextState state = 9;

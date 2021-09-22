@@ -3,7 +3,7 @@ package iritamod.perm;
 
 import "gogoproto/gogo.proto";
 
-option go_package = "github.com/bianjieai/irita-sdk-go/modules/perm";
+option go_package = "github.com/bianjieai/iritamod-sdk-go/perm";
 option (gogoproto.goproto_getters_all) = false;
 option (gogoproto.goproto_registration) = true;
 
