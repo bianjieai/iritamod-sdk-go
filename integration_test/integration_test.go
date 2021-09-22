@@ -17,9 +17,9 @@ import (
 const (
 	nodeURI  = "tcp://192.168.47.130:26657"
 	grpcAddr = "192.168.47.130:9090"
-	chainID  = "test"
+	chainID  = "iritatest"
 	charset  = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
-	addr     = "iaa13kgkgsdttwpp2emnr4ruk06lzulnhjdlmccfjc"
+	addr     = "iaa1wstxj7ahmxulqdwfmer9xhz6f30mau64qq7ux2"
 )
 
 type IntegrationTestSuite struct {

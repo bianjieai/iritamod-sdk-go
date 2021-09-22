@@ -3,7 +3,7 @@ package integration
 import (
 	"time"
 
-	"github.com/bianjieai/irita-sdk-go/service"
+	"github.com/bianjieai/iritamod-sdk-go/service"
 	sdk "github.com/irisnet/core-sdk-go/types"
 	"github.com/irisnet/core-sdk-go/types/query"
 	"github.com/stretchr/testify/require"
@@ -102,7 +102,7 @@ func (s IntegrationTestSuite) TestService() {
 
 	requestid, err := s.Service.QueryRequestsByReqCtx(requestContextID, 1, &query.PageRequest{})
 	require.NoError(s.T(), err)
-	s.Logger().Info("request_id: ", requestid)
+	s.Logger().Info("request_id: ", requestid[0].RequestContextID)
 
 	sub2, err = s.Service.SubscribeServiceResponse(requestContextID, func(reqCtxID, reqID, responses string) {
 		require.Equal(s.T(), reqCtxID, requestContextID)

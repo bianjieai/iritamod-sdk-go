@@ -6,8 +6,8 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"github.com/bianjieai/irita-sdk-go/oracle"
-	"github.com/bianjieai/irita-sdk-go/service"
+	"github.com/bianjieai/iritamod-sdk-go/oracle"
+	"github.com/bianjieai/iritamod-sdk-go/service"
 	sdk "github.com/irisnet/core-sdk-go/types"
 )
 

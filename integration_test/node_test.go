@@ -1,9 +1,13 @@
 package integration
 
 import (
+	"io/ioutil"
+	"os"
+	"path/filepath"
+
 	"github.com/stretchr/testify/require"
 
-	"github.com/bianjieai/irita-sdk-go/node"
+	"github.com/bianjieai/iritamod-sdk-go/node"
 	sdk "github.com/irisnet/core-sdk-go/types"
 )
 
@@ -16,19 +20,21 @@ func (s IntegrationTestSuite) TestValidator() {
 		Password: s.Account().Password,
 	}
 
-	cert := `-----BEGIN CERTIFICATE-----
-MIICBjCCAaugAwIBAgIUZFNJU4ANpSzL6ggat80j+h6gnDQwCgYIKoEcz1UBg3Uw
-WDELMAkGA1UEBhMCQ04xDTALBgNVBAgMBHJvb3QxDTALBgNVBAcMBHJvb3QxDTAL
-BgNVBAoMBHJvb3QxDTALBgNVBAsMBHJvb3QxDTALBgNVBAMMBHJvb3QwHhcNMjEw
-OTE3MDMzNzAwWhcNMjIwOTE3MDMzNzAwWjBYMQswCQYDVQQGEwJDTjENMAsGA1UE
-CAwEcm9vdDENMAsGA1UEBwwEcm9vdDENMAsGA1UECgwEcm9vdDENMAsGA1UECwwE
-cm9vdDENMAsGA1UEAwwEcm9vdDBZMBMGByqGSM49AgEGCCqBHM9VAYItA0IABA8G
-cAky8uGAgeDdJ7sbMj3VioSHXCklHu4Lck3hglspgVnI7kjJR+rExhnqhWO4u4a1
-qM6y18Z9SxvnLRNzAO6jUzBRMB0GA1UdDgQWBBROrZ7qRryLYFsRVe71xLw16tJY
-tzAfBgNVHSMEGDAWgBROrZ7qRryLYFsRVe71xLw16tJYtzAPBgNVHRMBAf8EBTAD
-AQH/MAoGCCqBHM9VAYN1A0kAMEYCIQDDGh24GkPzaA5jlq5g2TRENpXhenDDNIgi
-MY5maJdfuQIhAOUcqtg2W2+gONf7MCpFCcovPNNwXc+rI0WaGPrdJu8k
------END CERTIFICATE-----`
+	//	cert := `-----BEGIN CERTIFICATE-----
+	//MIICBjCCAaugAwIBAgIUGaV9lOO9McFCQ8rUnVr13G1LIM4wCgYIKoEcz1UBg3Uw
+	//WDELMAkGA1UEBhMCQ04xDTALBgNVBAgMBHJvb3QxDTALBgNVBAcMBHJvb3QxDTAL
+	//BgNVBAoMBHJvb3QxDTALBgNVBAsMBHJvb3QxDTALBgNVBAMMBHJvb3QwHhcNMjEw
+	//OTIyMDM1NzA3WhcNMjIwOTIyMDM1NzA3WjBYMQswCQYDVQQGEwJDTjENMAsGA1UE
+	//CAwEcm9vdDENMAsGA1UEBwwEcm9vdDENMAsGA1UECgwEcm9vdDENMAsGA1UECwwE
+	//cm9vdDENMAsGA1UEAwwEcm9vdDBZMBMGByqGSM49AgEGCCqBHM9VAYItA0IABDpd
+	//c1KOPowpvC9YCDDTYp/MYcoDSawUHoQO8Dl+yQzyqeWA3Gko3dosF9l2rM5gUHp6
+	//YS/hMhtAhjFnPLm0GfijUzBRMB0GA1UdDgQWBBSW7EMp99BmeVIUiGZ2yrI1AW8B
+	//rTAfBgNVHSMEGDAWgBSW7EMp99BmeVIUiGZ2yrI1AW8BrTAPBgNVHRMBAf8EBTAD
+	//AQH/MAoGCCqBHM9VAYN1A0kAMEYCIQD8cqMmzHaK1+idd8dN+MUQpU3+N6gcfscS
+	//9HbFEl+IQAIhAJCZ2rQVhfit8Hif02Dic9jky8BWvA7UxyK109mVKH86
+	//-----END CERTIFICATE-----`
+
+	cert := string(getRootPem())
 
 	createReq := node.CreateValidatorRequest{
 		Name:        "test1",
@@ -92,10 +98,24 @@ MY5maJdfuQIhAOUcqtg2W2+gONf7MCpFCcovPNNwXc+rI0WaGPrdJu8k
 
 	ns, err := s.Node.QueryNodes(nil)
 	require.NoError(s.T(), err)
-	require.Equal(s.T(), 2, len(ns))
+	require.NotEmpty(s.T(), ns)
 
 	rs, err = s.Node.RevokeNode(noid, baseTx)
 	require.NoError(s.T(), err)
 	require.NotEmpty(s.T(), rs.Hash)
 
+}
+
+func getRootPem() []byte {
+	path, err := os.Getwd()
+	if err != nil {
+		panic(err)
+	}
+	path = filepath.Dir(path)
+	path = filepath.Join(path, "integration_test/scripts/testnet/root_cert.pem")
+	bz, err := ioutil.ReadFile(path)
+	if err != nil {
+		panic(err)
+	}
+	return bz
 }

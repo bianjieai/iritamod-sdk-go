@@ -3,7 +3,7 @@ package integration
 import (
 	"fmt"
 
-	"github.com/bianjieai/irita-sdk-go/wasm"
+	"github.com/bianjieai/iritamod-sdk-go/wasm"
 	"github.com/irisnet/core-sdk-go/types"
 	"github.com/stretchr/testify/require"
 )

@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/bianjieai/irita-sdk-go/nft"
+	"github.com/bianjieai/iritamod-sdk-go/nft"
 	sdk "github.com/irisnet/core-sdk-go/types"
 	"github.com/stretchr/testify/require"
 )
@@ -114,7 +114,7 @@ func (s IntegrationTestSuite) Test_nft() {
 		ID:    mintReq.ID,
 	}
 
-	amount, e := sdk.ParseDecCoins("1000uirita")
+	amount, e := sdk.ParseDecCoins("1000upoint")
 	require.NoError(s.T(), e)
 	_, err = s.Bank.Send(recipient, amount, baseTx)
 	require.NoError(s.T(), err)

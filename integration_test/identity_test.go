@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"strings"
 
-	iritaidentity "github.com/bianjieai/irita-sdk-go/identity"
+	iritaidentity "github.com/bianjieai/iritamod-sdk-go/identity"
 
 	"github.com/irisnet/core-sdk-go/common/uuid"
 	sdk "github.com/irisnet/core-sdk-go/types"

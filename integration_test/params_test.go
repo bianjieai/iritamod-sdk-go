@@ -1,7 +1,7 @@
 package integration
 
 import (
-	"github.com/bianjieai/irita-sdk-go/params"
+	"github.com/bianjieai/iritamod-sdk-go/params"
 	"github.com/irisnet/core-sdk-go/types"
 	"github.com/stretchr/testify/require"
 )
@@ -21,7 +21,17 @@ func (s IntegrationTestSuite) TestParams() {
 		Value:  `"200"`,
 	}}
 
-	rs, err := s.Params.UpdateParams(request, baseTx)
+	var request1 = []params.UpdateParamRequest{{
+		Module: "service",
+		Key:    "BaseDenom",
+		Value:  `"upoint"`,
+	}}
+
+	rs, err := s.Params.UpdateParams(request1, baseTx)
+	require.NoError(s.T(), err)
+	require.NotEmpty(s.T(), rs.Hash)
+
+	rs, err = s.Params.UpdateParams(request, baseTx)
 	require.NoError(s.T(), err)
 	require.NotEmpty(s.T(), rs.Hash)
 
