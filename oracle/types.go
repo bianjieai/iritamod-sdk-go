@@ -57,7 +57,7 @@ func (m MsgCreateFeed) GetSignBytes() []byte {
 		m.ServiceFeeCap = nil
 	}
 
-	bz := ModuleCdc.MustMarshalJSON(&m)
+	bz := amino.MustMarshalJSON(&m)
 	return sdk.MustSortJSON(bz)
 }
 
@@ -81,7 +81,7 @@ func (m MsgStartFeed) ValidateBasic() error {
 }
 
 func (m MsgStartFeed) GetSignBytes() []byte {
-	bz := ModuleCdc.MustMarshalJSON(&m)
+	bz := amino.MustMarshalJSON(&m)
 	return sdk.MustSortJSON(bz)
 }
 
@@ -105,7 +105,7 @@ func (m MsgPauseFeed) ValidateBasic() error {
 }
 
 func (m MsgPauseFeed) GetSignBytes() []byte {
-	bz := ModuleCdc.MustMarshalJSON(&m)
+	bz := amino.MustMarshalJSON(&m)
 	return sdk.MustSortJSON(bz)
 }
 
@@ -129,7 +129,7 @@ func (m MsgEditFeed) ValidateBasic() error {
 }
 
 func (m MsgEditFeed) GetSignBytes() []byte {
-	bz := ModuleCdc.MustMarshalJSON(&m)
+	bz := amino.MustMarshalJSON(&m)
 	return sdk.MustSortJSON(bz)
 }
 

@@ -45,7 +45,7 @@ func (s IntegrationTestSuite) TestValidator() {
 	require.NoError(s.T(), err)
 	require.NotEmpty(s.T(), rs.Hash)
 
-	validatorID, er := rs.Events.GetValue("create_validator", "validator")
+	validatorID, er := sdk.StringifyEvents(rs.TxResult.Events).GetValue("create_validator", "validator")
 	require.NoError(s.T(), er)
 
 	v, err := s.Node.QueryValidator(validatorID)
@@ -87,7 +87,7 @@ func (s IntegrationTestSuite) TestValidator() {
 	require.NoError(s.T(), err)
 	require.NotEmpty(s.T(), rs.Hash)
 
-	noid, e := rs.Events.GetValue("grant_node", "id")
+	noid, e := sdk.StringifyEvents(rs.TxResult.Events).GetValue("grant_node", "id")
 	require.NoError(s.T(), e)
 
 	n, err := s.Node.QueryNode(noid)
@@ -110,7 +110,7 @@ func getRootPem() []byte {
 		panic(err)
 	}
 	path = filepath.Dir(path)
-	path = filepath.Join(path, "integration_test/scripts/testnet/root_cert.pem")
+	path = filepath.Join(path, "integration_test/scripts/root_cert.pem")
 	bz, err := ioutil.ReadFile(path)
 	if err != nil {
 		panic(err)

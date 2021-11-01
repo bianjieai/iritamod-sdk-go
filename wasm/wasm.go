@@ -4,10 +4,12 @@ import (
 	context "context"
 	"io/ioutil"
 
+	ctypes "github.com/tendermint/tendermint/rpc/core/types"
+
 	"github.com/spf13/cast"
 
-	"github.com/irisnet/core-sdk-go/common/codec"
-	codectypes "github.com/irisnet/core-sdk-go/common/codec/types"
+	"github.com/irisnet/core-sdk-go/codec"
+	codectypes "github.com/irisnet/core-sdk-go/codec/types"
 	sdk "github.com/irisnet/core-sdk-go/types"
 )
 
@@ -67,7 +69,7 @@ func (wasm wasmClient) Store(request StoreRequest, config sdk.BaseTx) (string, e
 	if err != nil {
 		return "", err
 	}
-	return result.Events.GetValue(sdk.EventTypeMessage, "code_id")
+	return sdk.StringifyEvents(result.TxResult.Events).GetValue(sdk.EventTypeMessage, "code_id")
 }
 
 //Instantiate instantiate the contract state
@@ -89,22 +91,22 @@ func (wasm wasmClient) Instantiate(request InstantiateRequest, config sdk.BaseTx
 	if err != nil {
 		return "", err
 	}
-	return result.Events.GetValue(sdk.EventTypeMessage, "contract_address")
+	return sdk.StringifyEvents(result.TxResult.Events).GetValue(sdk.EventTypeMessage, "contract_address")
 }
 
 //Execute execute the contract method
 func (wasm wasmClient) Execute(contractAddress string,
 	abi *ContractABI,
 	sentFunds sdk.Coins,
-	config sdk.BaseTx) (sdk.ResultTx, error) {
+	config sdk.BaseTx) (ctypes.ResultTx, error) {
 	sender, err := wasm.QueryAddress(config.From, config.Password)
 	if err != nil {
-		return sdk.ResultTx{}, err
+		return ctypes.ResultTx{}, err
 	}
 
 	msgBytes, er := abi.Build()
 	if er != nil {
-		return sdk.ResultTx{}, er
+		return ctypes.ResultTx{}, er
 	}
 
 	msg := &MsgExecuteContract{
@@ -120,10 +122,10 @@ func (wasm wasmClient) Execute(contractAddress string,
 func (wasm wasmClient) Migrate(contractAddress string,
 	newCodeID string,
 	msgByte []byte,
-	config sdk.BaseTx) (sdk.ResultTx, error) {
+	config sdk.BaseTx) (ctypes.ResultTx, error) {
 	sender, err := wasm.QueryAddress(config.From, config.Password)
 	if err != nil {
-		return sdk.ResultTx{}, err
+		return ctypes.ResultTx{}, err
 	}
 
 	msg := &MsgMigrateContract{
@@ -139,14 +141,14 @@ func (wasm wasmClient) Migrate(contractAddress string,
 func (wasm wasmClient) QueryContractInfo(address string) (*ContractInfo, error) {
 	conn, err := wasm.GenConn()
 	if err != nil {
-		return nil, sdk.Wrap(err)
+		return nil, err
 	}
 
 	req := &QueryContractInfoRequest{
 		Address: address,
 	}
 
-	res, err := NewQueryClient(*conn).ContractInfo(context.Background(), req)
+	res, err := NewQueryClient(conn).ContractInfo(context.Background(), req)
 	if err != nil {
 		return nil, err
 	}
@@ -157,14 +159,14 @@ func (wasm wasmClient) QueryContractInfo(address string) (*ContractInfo, error) 
 func (wasm wasmClient) ExportContractState(address string) (map[string][]byte, error) {
 	conn, err := wasm.GenConn()
 	if err != nil {
-		return nil, sdk.Wrap(err)
+		return nil, err
 	}
 
 	req := &QueryAllContractStateRequest{
 		Address: address,
 	}
 
-	res, err := NewQueryClient(*conn).AllContractState(context.Background(), req)
+	res, err := NewQueryClient(conn).AllContractState(context.Background(), req)
 	if err != nil {
 		return nil, err
 	}
@@ -181,7 +183,7 @@ func (wasm wasmClient) ExportContractState(address string) (map[string][]byte, e
 func (wasm wasmClient) QueryContract(address string, abi *ContractABI) ([]byte, error) {
 	conn, err := wasm.GenConn()
 	if err != nil {
-		return nil, sdk.Wrap(err)
+		return nil, err
 	}
 
 	msgBytes, err := abi.Build()
@@ -194,7 +196,7 @@ func (wasm wasmClient) QueryContract(address string, abi *ContractABI) ([]byte, 
 		QueryData: msgBytes,
 	}
 
-	res, err := NewQueryClient(*conn).SmartContractState(context.Background(), req)
+	res, err := NewQueryClient(conn).SmartContractState(context.Background(), req)
 	if err != nil {
 		return nil, err
 	}

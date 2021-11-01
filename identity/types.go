@@ -47,7 +47,7 @@ func (m MsgCreateIdentity) ValidateBasic() error {
 
 // GetSignBytes implements Msg
 func (m MsgCreateIdentity) GetSignBytes() []byte {
-	bz := ModuleCdc.MustMarshalJSON(&m)
+	bz := amino.MustMarshalJSON(&m)
 	return sdk.MustSortJSON(bz)
 }
 
@@ -64,7 +64,7 @@ func (m MsgUpdateIdentity) Type() string { return TypeMsgUpdateIdentity }
 
 // GetSignBytes implements m.
 func (m MsgUpdateIdentity) GetSignBytes() []byte {
-	b := ModuleCdc.MustMarshalJSON(&m)
+	b := amino.MustMarshalJSON(&m)
 	return sdk.MustSortJSON(b)
 }
 

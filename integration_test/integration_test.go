@@ -8,18 +8,20 @@ import (
 	"testing"
 	"time"
 
-	"github.com/irisnet/core-sdk-go/common/log"
+	"github.com/stretchr/testify/require"
+
+	"github.com/irisnet/core-sdk-go/log"
 	"github.com/irisnet/core-sdk-go/types"
 	"github.com/irisnet/core-sdk-go/types/store"
 	"github.com/stretchr/testify/suite"
 )
 
 const (
-	nodeURI  = "tcp://192.168.47.130:26657"
-	grpcAddr = "192.168.47.130:9090"
-	chainID  = "iritatest"
+	nodeURI  = "tcp://localhost:26657"
+	grpcAddr = "localhost:9090"
+	chainID  = "test"
 	charset  = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
-	addr     = "iaa1wstxj7ahmxulqdwfmer9xhz6f30mau64qq7ux2"
+	addr     = "iaa1scwlz30csd2hkfchw7djjpelrc9ltfkp5egxr0"
 )
 
 type IntegrationTestSuite struct {
@@ -65,7 +67,7 @@ func (s *IntegrationTestSuite) SetupSuite() {
 	s.r = rand.New(rand.NewSource(time.Now().UnixNano()))
 	s.rootAccount = MockAccount{
 		Name:     "v1",
-		Password: "123456789",
+		Password: "12345678",
 		Address:  types.MustAccAddressFromBech32(addr),
 	}
 	s.SetLogger(log.NewLogger(log.Config{
@@ -76,13 +78,13 @@ func (s *IntegrationTestSuite) SetupSuite() {
 }
 
 func (s *IntegrationTestSuite) initAccount() {
-	_, err := s.Import(s.Account().Name,
+	address, err := s.Import(s.Account().Name,
 		s.Account().Password,
 		string(getPrivKeyArmor()))
 	if err != nil {
 		panic(err)
 	}
-
+	require.Equal(s.T(), address, addr)
 	//var receipts bank.Receipts
 	for i := 0; i < 5; i++ {
 		name := s.RandStringOfLength(10)

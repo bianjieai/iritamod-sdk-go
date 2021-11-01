@@ -27,7 +27,7 @@ func (msg MsgCreateRecord) Type() string { return "create_record" }
 
 // GetSignBytes implements Msg.
 func (msg MsgCreateRecord) GetSignBytes() []byte {
-	b, err := ModuleCdc.MarshalJSON(&msg)
+	b, err := amino.MarshalJSON(&msg)
 	if err != nil {
 		panic(err)
 	}
@@ -44,7 +44,7 @@ func (msg MsgCreateRecord) ValidateBasic() error {
 	}
 
 	if err := sdk.ValidateAccAddress(msg.Creator); err != nil {
-		return sdk.Wrap(err)
+		return err
 	}
 
 	for i, content := range msg.Contents {

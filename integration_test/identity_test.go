@@ -8,8 +8,8 @@ import (
 
 	iritaidentity "github.com/bianjieai/iritamod-sdk-go/identity"
 
-	"github.com/irisnet/core-sdk-go/common/uuid"
 	sdk "github.com/irisnet/core-sdk-go/types"
+	"github.com/irisnet/core-sdk-go/uuid"
 	"github.com/stretchr/testify/require"
 	"github.com/tendermint/tendermint/crypto/sm2"
 )

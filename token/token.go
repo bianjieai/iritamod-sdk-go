@@ -7,21 +7,23 @@ import (
 	"context"
 	"strconv"
 
-	"github.com/irisnet/core-sdk-go/common/codec"
-	"github.com/irisnet/core-sdk-go/common/codec/types"
+	ctypes "github.com/tendermint/tendermint/rpc/core/types"
+
+	"github.com/irisnet/core-sdk-go/codec"
+	"github.com/irisnet/core-sdk-go/codec/types"
 	sdk "github.com/irisnet/core-sdk-go/types"
 	"github.com/irisnet/core-sdk-go/types/query"
 )
 
 type tokenClient struct {
 	sdk.BaseClient
-	codec.Marshaler
+	codec.Codec
 }
 
-func NewClient(bc sdk.BaseClient, cdc codec.Marshaler) Client {
+func NewClient(bc sdk.BaseClient, cdc codec.Codec) Client {
 	return tokenClient{
 		BaseClient: bc,
-		Marshaler:  cdc,
+		Codec:      cdc,
 	}
 }
 
@@ -33,10 +35,10 @@ func (t tokenClient) RegisterInterfaceTypes(registry types.InterfaceRegistry) {
 	RegisterInterfaces(registry)
 }
 
-func (t tokenClient) IssueToken(req IssueTokenRequest, baseTx sdk.BaseTx) (sdk.ResultTx, sdk.Error) {
+func (t tokenClient) IssueToken(req IssueTokenRequest, baseTx sdk.BaseTx) (ctypes.ResultTx, error) {
 	owner, err := t.QueryAddress(baseTx.From, baseTx.Password)
 	if err != nil {
-		return sdk.ResultTx{}, sdk.Wrap(err)
+		return ctypes.ResultTx{}, err
 	}
 
 	msg := &MsgIssueToken{
@@ -53,10 +55,10 @@ func (t tokenClient) IssueToken(req IssueTokenRequest, baseTx sdk.BaseTx) (sdk.R
 	return t.BuildAndSend([]sdk.Msg{msg}, baseTx)
 }
 
-func (t tokenClient) EditToken(req EditTokenRequest, baseTx sdk.BaseTx) (sdk.ResultTx, sdk.Error) {
+func (t tokenClient) EditToken(req EditTokenRequest, baseTx sdk.BaseTx) (ctypes.ResultTx, error) {
 	owner, err := t.QueryAddress(baseTx.From, baseTx.Password)
 	if err != nil {
-		return sdk.ResultTx{}, sdk.Wrap(err)
+		return ctypes.ResultTx{}, err
 	}
 
 	msg := &MsgEditToken{
@@ -70,14 +72,14 @@ func (t tokenClient) EditToken(req EditTokenRequest, baseTx sdk.BaseTx) (sdk.Res
 	return t.BuildAndSend([]sdk.Msg{msg}, baseTx)
 }
 
-func (t tokenClient) TransferToken(to string, symbol string, baseTx sdk.BaseTx) (sdk.ResultTx, sdk.Error) {
+func (t tokenClient) TransferToken(to string, symbol string, baseTx sdk.BaseTx) (ctypes.ResultTx, error) {
 	owner, err := t.QueryAddress(baseTx.From, baseTx.Password)
 	if err != nil {
-		return sdk.ResultTx{}, sdk.Wrap(err)
+		return ctypes.ResultTx{}, err
 	}
 
 	if err := sdk.ValidateAccAddress(to); err != nil {
-		return sdk.ResultTx{}, sdk.Wrap(err)
+		return ctypes.ResultTx{}, err
 	}
 
 	msg := &MsgTransferTokenOwner{
@@ -88,16 +90,16 @@ func (t tokenClient) TransferToken(to string, symbol string, baseTx sdk.BaseTx) 
 	return t.BuildAndSend([]sdk.Msg{msg}, baseTx)
 }
 
-func (t tokenClient) MintToken(symbol string, amount uint64, to string, baseTx sdk.BaseTx) (sdk.ResultTx, sdk.Error) {
+func (t tokenClient) MintToken(symbol string, amount uint64, to string, baseTx sdk.BaseTx) (ctypes.ResultTx, error) {
 	owner, err := t.QueryAddress(baseTx.From, baseTx.Password)
 	if err != nil {
-		return sdk.ResultTx{}, sdk.Wrap(err)
+		return ctypes.ResultTx{}, err
 	}
 
 	receipt := owner.String()
 	if len(to) != 0 {
 		if err := sdk.ValidateAccAddress(to); err != nil {
-			return sdk.ResultTx{}, sdk.Wrap(err)
+			return ctypes.ResultTx{}, err
 		} else {
 			receipt = to
 		}
@@ -115,13 +117,13 @@ func (t tokenClient) MintToken(symbol string, amount uint64, to string, baseTx s
 func (t tokenClient) QueryToken(denom string) (sdk.Token, error) {
 	conn, err := t.GenConn()
 	if err != nil {
-		return sdk.Token{}, sdk.Wrap(err)
+		return sdk.Token{}, err
 	}
 
 	request := &QueryTokenRequest{
 		Denom: denom,
 	}
-	res, err := NewQueryClient(*conn).Token(context.Background(), request)
+	res, err := NewQueryClient(conn).Token(context.Background(), request)
 	if err != nil {
 		return sdk.Token{}, err
 	}
@@ -140,7 +142,7 @@ func (t tokenClient) QueryTokens(owner string, pageReq *query.PageRequest) (sdk.
 	var ownerAddr string
 	if len(owner) > 0 {
 		if err := sdk.ValidateAccAddress(owner); err != nil {
-			return nil, sdk.Wrap(err)
+			return nil, err
 		}
 		ownerAddr = owner
 	}
@@ -148,7 +150,7 @@ func (t tokenClient) QueryTokens(owner string, pageReq *query.PageRequest) (sdk.
 	conn, err := t.GenConn()
 
 	if err != nil {
-		return sdk.Tokens{}, sdk.Wrap(err)
+		return sdk.Tokens{}, err
 	}
 
 	request := &QueryTokensRequest{
@@ -156,7 +158,7 @@ func (t tokenClient) QueryTokens(owner string, pageReq *query.PageRequest) (sdk.
 		Pagination: pageReq,
 	}
 
-	res, err := NewQueryClient(*conn).Tokens(context.Background(), request)
+	res, err := NewQueryClient(conn).Tokens(context.Background(), request)
 	if err != nil {
 		return sdk.Tokens{}, err
 	}
@@ -179,14 +181,14 @@ func (t tokenClient) QueryFees(symbol string) (QueryFeesResp, error) {
 	conn, err := t.GenConn()
 
 	if err != nil {
-		return QueryFeesResp{}, sdk.Wrap(err)
+		return QueryFeesResp{}, err
 	}
 
 	request := &QueryFeesRequest{
 		Symbol: symbol,
 	}
 
-	res, err := NewQueryClient(*conn).Fees(context.Background(), request)
+	res, err := NewQueryClient(conn).Fees(context.Background(), request)
 	if err != nil {
 		return QueryFeesResp{}, err
 	}
@@ -198,15 +200,15 @@ func (t tokenClient) QueryParams() (QueryParamsResp, error) {
 	conn, err := t.GenConn()
 
 	if err != nil {
-		return QueryParamsResp{}, sdk.Wrap(err)
+		return QueryParamsResp{}, err
 	}
 
-	res, err := NewQueryClient(*conn).Params(
+	res, err := NewQueryClient(conn).Params(
 		context.Background(),
 		&QueryParamsRequest{},
 	)
 	if err != nil {
-		return QueryParamsResp{}, sdk.Wrap(err)
+		return QueryParamsResp{}, err
 	}
 
 	return res.Params.Convert().(QueryParamsResp), nil

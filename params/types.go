@@ -30,7 +30,7 @@ func (m MsgUpdateParams) ValidateBasic() error {
 }
 
 func (m MsgUpdateParams) GetSignBytes() []byte {
-	bz := ModuleCdc.MustMarshalJSON(&m)
+	bz := amino.MustMarshalJSON(&m)
 	return sdk.MustSortJSON(bz)
 }
 

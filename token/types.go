@@ -31,7 +31,7 @@ func (msg MsgIssueToken) ValidateBasic() error {
 	}
 
 	if err := sdk.ValidateAccAddress(msg.Owner); err != nil {
-		return sdk.Wrap(err)
+		return err
 	}
 
 	if len(msg.Symbol) == 0 {
@@ -51,7 +51,7 @@ func (msg MsgIssueToken) ValidateBasic() error {
 
 // Implements Msg.
 func (msg MsgIssueToken) GetSignBytes() []byte {
-	b, err := ModuleCdc.MarshalJSON(&msg)
+	b, err := amino.MarshalJSON(&msg)
 	if err != nil {
 		panic(err)
 	}
@@ -66,7 +66,7 @@ func (msg MsgIssueToken) GetSigners() []sdk.AccAddress {
 
 // GetSignBytes implements Msg
 func (msg MsgTransferTokenOwner) GetSignBytes() []byte {
-	b, err := ModuleCdc.MarshalJSON(&msg)
+	b, err := amino.MarshalJSON(&msg)
 	if err != nil {
 		panic(err)
 	}
@@ -85,7 +85,7 @@ func (msg MsgTransferTokenOwner) ValidateBasic() error {
 	}
 
 	if err := sdk.ValidateAccAddress(msg.SrcOwner); err != nil {
-		return sdk.Wrap(err)
+		return err
 	}
 
 	if len(msg.DstOwner) == 0 {
@@ -93,7 +93,7 @@ func (msg MsgTransferTokenOwner) ValidateBasic() error {
 	}
 
 	if err := sdk.ValidateAccAddress(msg.DstOwner); err != nil {
-		return sdk.Wrap(err)
+		return err
 	}
 
 	if len(msg.Symbol) == 0 {
@@ -120,7 +120,7 @@ func (msg MsgEditToken) ValidateBasic() error {
 	}
 
 	if err := sdk.ValidateAccAddress(msg.Owner); err != nil {
-		return sdk.Wrap(err)
+		return err
 	}
 
 	if len(msg.Symbol) == 0 {
@@ -131,7 +131,7 @@ func (msg MsgEditToken) ValidateBasic() error {
 
 // GetSignBytes implements Msg
 func (msg MsgEditToken) GetSignBytes() []byte {
-	b, err := ModuleCdc.MarshalJSON(&msg)
+	b, err := amino.MarshalJSON(&msg)
 	if err != nil {
 		panic(err)
 	}
@@ -151,7 +151,7 @@ func (msg MsgMintToken) Type() string { return "mint_token" }
 
 // GetSignBytes implements Msg
 func (msg MsgMintToken) GetSignBytes() []byte {
-	b, err := ModuleCdc.MarshalJSON(&msg)
+	b, err := amino.MarshalJSON(&msg)
 	if err != nil {
 		panic(err)
 	}
@@ -170,7 +170,7 @@ func (msg MsgMintToken) ValidateBasic() error {
 	}
 
 	if err := sdk.ValidateAccAddress(msg.Owner); err != nil {
-		return sdk.Wrap(err)
+		return err
 	}
 
 	if len(msg.Symbol) == 0 {

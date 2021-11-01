@@ -45,7 +45,7 @@ func (m MsgCreateValidator) ValidateBasic() error {
 }
 
 func (m MsgCreateValidator) GetSignBytes() []byte {
-	bz := ModuleCdc.MustMarshalJSON(&m)
+	bz := amino.MustMarshalJSON(&m)
 	return sdk.MustSortJSON(bz)
 }
 
@@ -76,7 +76,7 @@ func (m MsgUpdateValidator) ValidateBasic() error {
 }
 
 func (m MsgUpdateValidator) GetSignBytes() []byte {
-	bz := ModuleCdc.MustMarshalJSON(&m)
+	bz := amino.MustMarshalJSON(&m)
 	return sdk.MustSortJSON(bz)
 }
 
@@ -103,7 +103,7 @@ func (m MsgRemoveValidator) ValidateBasic() error {
 }
 
 func (m MsgRemoveValidator) GetSignBytes() []byte {
-	bz := ModuleCdc.MustMarshalJSON(&m)
+	bz := amino.MustMarshalJSON(&m)
 	return sdk.MustSortJSON(bz)
 }
 
@@ -127,7 +127,7 @@ func (m MsgGrantNode) ValidateBasic() error {
 }
 
 func (m MsgGrantNode) GetSignBytes() []byte {
-	bz := ModuleCdc.MustMarshalJSON(&m)
+	bz := amino.MustMarshalJSON(&m)
 	return sdk.MustSortJSON(bz)
 }
 
@@ -154,7 +154,7 @@ func (m MsgRevokeNode) ValidateBasic() error {
 }
 
 func (m MsgRevokeNode) GetSignBytes() []byte {
-	bz := ModuleCdc.MustMarshalJSON(&m)
+	bz := amino.MustMarshalJSON(&m)
 	return sdk.MustSortJSON(bz)
 }
 

@@ -52,7 +52,7 @@ func (msg MsgStoreCode) ValidateBasic() error {
 
 // GetSignBytes implement sdk.Msg
 func (msg MsgStoreCode) GetSignBytes() []byte {
-	return sdk.MustSortJSON(ModuleCdc.MustMarshalJSON(&msg))
+	return sdk.MustSortJSON(amino.MustMarshalJSON(&msg))
 
 }
 
@@ -92,7 +92,7 @@ func (msg MsgInstantiateContract) ValidateBasic() error {
 
 // GetSignBytes implement sdk.Msg
 func (msg MsgInstantiateContract) GetSignBytes() []byte {
-	return sdk.MustSortJSON(ModuleCdc.MustMarshalJSON(&msg))
+	return sdk.MustSortJSON(amino.MustMarshalJSON(&msg))
 
 }
 
@@ -124,7 +124,7 @@ func (msg MsgExecuteContract) ValidateBasic() error {
 
 // GetSignBytes implement sdk.Msg
 func (msg MsgExecuteContract) GetSignBytes() []byte {
-	return sdk.MustSortJSON(ModuleCdc.MustMarshalJSON(&msg))
+	return sdk.MustSortJSON(amino.MustMarshalJSON(&msg))
 
 }
 
@@ -161,7 +161,7 @@ func (msg MsgMigrateContract) ValidateBasic() error {
 
 // GetSignBytes implement sdk.Msg
 func (msg MsgMigrateContract) GetSignBytes() []byte {
-	return sdk.MustSortJSON(ModuleCdc.MustMarshalJSON(&msg))
+	return sdk.MustSortJSON(amino.MustMarshalJSON(&msg))
 
 }
 
@@ -187,7 +187,7 @@ func (msg MsgUpdateAdmin) ValidateBasic() error {
 
 // GetSignBytes implement sdk.Msg
 func (msg MsgUpdateAdmin) GetSignBytes() []byte {
-	return sdk.MustSortJSON(ModuleCdc.MustMarshalJSON(&msg))
+	return sdk.MustSortJSON(amino.MustMarshalJSON(&msg))
 
 }
 
@@ -213,7 +213,7 @@ func (msg MsgClearAdmin) ValidateBasic() error {
 
 // GetSignBytes implement sdk.Msg
 func (msg MsgClearAdmin) GetSignBytes() []byte {
-	return sdk.MustSortJSON(ModuleCdc.MustMarshalJSON(&msg))
+	return sdk.MustSortJSON(amino.MustMarshalJSON(&msg))
 
 }
 

@@ -3,43 +3,45 @@ package service
 import (
 	"time"
 
+	ctypes "github.com/tendermint/tendermint/rpc/core/types"
+
 	sdk "github.com/irisnet/core-sdk-go/types"
 	"github.com/irisnet/core-sdk-go/types/query"
 )
 
 // Tx defines a set of transaction interfaces in the service module
 type Tx interface {
-	DefineService(request DefineServiceRequest, baseTx sdk.BaseTx) (sdk.ResultTx, sdk.Error)
-	BindService(request BindServiceRequest, baseTx sdk.BaseTx) (sdk.ResultTx, sdk.Error)
-	InvokeService(request InvokeServiceRequest, baseTx sdk.BaseTx) (string, sdk.ResultTx, sdk.Error)
-	InvokeServiceResponse(request InvokeServiceResponseRequest, baseTx sdk.BaseTx) (sdk.ResultTx, sdk.Error)
-	SetWithdrawAddress(withdrawAddress string, baseTx sdk.BaseTx) (sdk.ResultTx, sdk.Error)
-	UpdateServiceBinding(request UpdateServiceBindingRequest, baseTx sdk.BaseTx) (sdk.ResultTx, sdk.Error)
-	DisableServiceBinding(serviceName, provider string, baseTx sdk.BaseTx) (sdk.ResultTx, sdk.Error)
-	EnableServiceBinding(serviceName, provider string, deposit sdk.DecCoins, baseTx sdk.BaseTx) (sdk.ResultTx, sdk.Error)
-	RefundServiceDeposit(serviceName, provider string, baseTx sdk.BaseTx) (sdk.ResultTx, sdk.Error)
-	PauseRequestContext(requestContextID string, baseTx sdk.BaseTx) (sdk.ResultTx, sdk.Error)
-	StartRequestContext(requestContextID string, baseTx sdk.BaseTx) (sdk.ResultTx, sdk.Error)
-	KillRequestContext(requestContextID string, baseTx sdk.BaseTx) (sdk.ResultTx, sdk.Error)
-	UpdateRequestContext(request UpdateRequestContextRequest, baseTx sdk.BaseTx) (sdk.ResultTx, sdk.Error)
-	WithdrawEarnedFees(provider string, baseTx sdk.BaseTx) (sdk.ResultTx, sdk.Error)
-	SubscribeServiceRequest(serviceName string, callback RespondCallback, baseTx sdk.BaseTx) (sdk.Subscription, sdk.Error)
-	SubscribeServiceResponse(reqCtxID string, callback InvokeCallback) (sdk.Subscription, sdk.Error)
+	DefineService(request DefineServiceRequest, baseTx sdk.BaseTx) (ctypes.ResultTx, error)
+	BindService(request BindServiceRequest, baseTx sdk.BaseTx) (ctypes.ResultTx, error)
+	InvokeService(request InvokeServiceRequest, baseTx sdk.BaseTx) (string, ctypes.ResultTx, error)
+	InvokeServiceResponse(request InvokeServiceResponseRequest, baseTx sdk.BaseTx) (ctypes.ResultTx, error)
+	SetWithdrawAddress(withdrawAddress string, baseTx sdk.BaseTx) (ctypes.ResultTx, error)
+	UpdateServiceBinding(request UpdateServiceBindingRequest, baseTx sdk.BaseTx) (ctypes.ResultTx, error)
+	DisableServiceBinding(serviceName, provider string, baseTx sdk.BaseTx) (ctypes.ResultTx, error)
+	EnableServiceBinding(serviceName, provider string, deposit sdk.DecCoins, baseTx sdk.BaseTx) (ctypes.ResultTx, error)
+	RefundServiceDeposit(serviceName, provider string, baseTx sdk.BaseTx) (ctypes.ResultTx, error)
+	PauseRequestContext(requestContextID string, baseTx sdk.BaseTx) (ctypes.ResultTx, error)
+	StartRequestContext(requestContextID string, baseTx sdk.BaseTx) (ctypes.ResultTx, error)
+	KillRequestContext(requestContextID string, baseTx sdk.BaseTx) (ctypes.ResultTx, error)
+	UpdateRequestContext(request UpdateRequestContextRequest, baseTx sdk.BaseTx) (ctypes.ResultTx, error)
+	WithdrawEarnedFees(provider string, baseTx sdk.BaseTx) (ctypes.ResultTx, error)
+	SubscribeServiceRequest(serviceName string, callback RespondCallback, baseTx sdk.BaseTx) (sdk.Subscription, error)
+	SubscribeServiceResponse(reqCtxID string, callback InvokeCallback) (sdk.Subscription, error)
 }
 
 // Query defines a set of query interfaces in the service module
 type Query interface {
-	QueryServiceDefinition(serviceName string) (QueryServiceDefinitionResponse, sdk.Error)
-	QueryServiceBinding(serviceName string, provider string) (QueryServiceBindingResponse, sdk.Error)
-	QueryServiceBindings(serviceName string, pageReq *query.PageRequest) ([]QueryServiceBindingResponse, sdk.Error)
-	QueryServiceRequest(requestID string) (QueryServiceRequestResponse, sdk.Error)
-	QueryServiceRequests(serviceName string, provider string, pageReq *query.PageRequest) ([]QueryServiceRequestResponse, sdk.Error)
-	QueryRequestsByReqCtx(requestContextID string, batchCounter uint64, pageReq *query.PageRequest) ([]QueryServiceRequestResponse, sdk.Error)
-	QueryServiceResponse(requestID string) (QueryServiceResponseResponse, sdk.Error)
-	QueryServiceResponses(requestContextID string, batchCounter uint64, pageReq *query.PageRequest) ([]QueryServiceResponseResponse, sdk.Error)
-	QueryRequestContext(requestContextID string) (QueryRequestContextResp, sdk.Error)
-	QueryFees(provider string) (sdk.Coins, sdk.Error)
-	QueryParams() (QueryParamsResp, sdk.Error)
+	QueryServiceDefinition(serviceName string) (QueryServiceDefinitionResponse, error)
+	QueryServiceBinding(serviceName string, provider string) (QueryServiceBindingResponse, error)
+	QueryServiceBindings(serviceName string, pageReq *query.PageRequest) ([]QueryServiceBindingResponse, error)
+	QueryServiceRequest(requestID string) (QueryServiceRequestResponse, error)
+	QueryServiceRequests(serviceName string, provider string, pageReq *query.PageRequest) ([]QueryServiceRequestResponse, error)
+	QueryRequestsByReqCtx(requestContextID string, batchCounter uint64, pageReq *query.PageRequest) ([]QueryServiceRequestResponse, error)
+	QueryServiceResponse(requestID string) (QueryServiceResponseResponse, error)
+	QueryServiceResponses(requestContextID string, batchCounter uint64, pageReq *query.PageRequest) ([]QueryServiceResponseResponse, error)
+	QueryRequestContext(requestContextID string) (QueryRequestContextResp, error)
+	QueryFees(provider string) (sdk.Coins, error)
+	QueryParams() (QueryParamsResp, error)
 }
 
 // Client defines a set of interfaces in the service module

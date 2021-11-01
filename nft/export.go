@@ -3,24 +3,25 @@ package nft
 import (
 	sdk "github.com/irisnet/core-sdk-go/types"
 	"github.com/irisnet/core-sdk-go/types/query"
+	ctypes "github.com/tendermint/tendermint/rpc/core/types"
 )
 
 // expose NFT module api for user
 type Client interface {
 	sdk.Module
 
-	IssueDenom(request IssueDenomRequest, baseTx sdk.BaseTx) (sdk.ResultTx, sdk.Error)
-	MintNFT(request MintNFTRequest, baseTx sdk.BaseTx) (sdk.ResultTx, sdk.Error)
-	EditNFT(request EditNFTRequest, baseTx sdk.BaseTx) (sdk.ResultTx, sdk.Error)
-	TransferNFT(request TransferNFTRequest, baseTx sdk.BaseTx) (sdk.ResultTx, sdk.Error)
-	BurnNFT(request BurnNFTRequest, baseTx sdk.BaseTx) (sdk.ResultTx, sdk.Error)
+	IssueDenom(request IssueDenomRequest, baseTx sdk.BaseTx) (ctypes.ResultTx, error)
+	MintNFT(request MintNFTRequest, baseTx sdk.BaseTx) (ctypes.ResultTx, error)
+	EditNFT(request EditNFTRequest, baseTx sdk.BaseTx) (ctypes.ResultTx, error)
+	TransferNFT(request TransferNFTRequest, baseTx sdk.BaseTx) (ctypes.ResultTx, error)
+	BurnNFT(request BurnNFTRequest, baseTx sdk.BaseTx) (ctypes.ResultTx, error)
 
-	QuerySupply(denomID, creator string) (uint64, sdk.Error)
-	QueryOwner(creator, denomID string, pageReq *query.PageRequest) (QueryOwnerResp, sdk.Error)
-	QueryCollection(denomID string, pageReq *query.PageRequest) (QueryCollectionResp, sdk.Error)
-	QueryDenom(denomID string) (QueryDenomResp, sdk.Error)
-	QueryDenoms(pageReq *query.PageRequest) ([]QueryDenomResp, sdk.Error)
-	QueryNFT(denomID, tokenID string) (QueryNFTResp, sdk.Error)
+	QuerySupply(denomID, creator string) (uint64, error)
+	QueryOwner(creator, denomID string, pageReq *query.PageRequest) (QueryOwnerResp, error)
+	QueryCollection(denomID string, pageReq *query.PageRequest) (QueryCollectionResp, error)
+	QueryDenom(denomID string) (QueryDenomResp, error)
+	QueryDenoms(pageReq *query.PageRequest) ([]QueryDenomResp, error)
+	QueryNFT(denomID, tokenID string) (QueryNFTResp, error)
 }
 
 type IssueDenomRequest struct {

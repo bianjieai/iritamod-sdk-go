@@ -91,7 +91,7 @@ func (msg MsgDefineService) GetSignBytes() []byte {
 		msg.Tags = nil
 	}
 
-	b, err := ModuleCdc.MarshalJSON(&msg)
+	b, err := amino.MarshalJSON(&msg)
 	if err != nil {
 		panic(err)
 	}
@@ -135,7 +135,7 @@ func (msg MsgBindService) ValidateBasic() error {
 }
 
 func (msg MsgBindService) GetSignBytes() []byte {
-	b, err := ModuleCdc.MarshalJSON(&msg)
+	b, err := amino.MarshalJSON(&msg)
 	if err != nil {
 		panic(err)
 	}
@@ -181,7 +181,7 @@ func (msg MsgCallService) ValidateBasic() error {
 }
 
 func (msg MsgCallService) GetSignBytes() []byte {
-	b, err := ModuleCdc.MarshalJSON(&msg)
+	b, err := amino.MarshalJSON(&msg)
 	if err != nil {
 		panic(err)
 	}
@@ -221,7 +221,7 @@ func (msg MsgRespondService) ValidateBasic() error {
 }
 
 func (msg MsgRespondService) GetSignBytes() []byte {
-	b, err := ModuleCdc.MarshalJSON(&msg)
+	b, err := amino.MarshalJSON(&msg)
 	if err != nil {
 		panic(err)
 	}
@@ -242,7 +242,7 @@ func (msg MsgUpdateServiceBinding) Type() string { return "update_service_bindin
 
 // GetSignBytes implements Msg.
 func (msg MsgUpdateServiceBinding) GetSignBytes() []byte {
-	b, err := ModuleCdc.MarshalJSON(&msg)
+	b, err := amino.MarshalJSON(&msg)
 	if err != nil {
 		panic(err)
 	}
@@ -291,7 +291,7 @@ func (msg MsgSetWithdrawAddress) Type() string { return "set_withdraw_address" }
 
 // GetSignBytes implements Msg.
 func (msg MsgSetWithdrawAddress) GetSignBytes() []byte {
-	b, err := ModuleCdc.MarshalJSON(&msg)
+	b, err := amino.MarshalJSON(&msg)
 	if err != nil {
 		panic(err)
 	}
@@ -329,7 +329,7 @@ func (msg MsgDisableServiceBinding) Type() string { return "disable_service_bind
 
 // GetSignBytes implements Msg.
 func (msg MsgDisableServiceBinding) GetSignBytes() []byte {
-	b, err := ModuleCdc.MarshalJSON(&msg)
+	b, err := amino.MarshalJSON(&msg)
 	if err != nil {
 		panic(err)
 	}
@@ -374,7 +374,7 @@ func (msg MsgEnableServiceBinding) Type() string { return "enable_service_bindin
 
 // GetSignBytes implements Msg.
 func (msg MsgEnableServiceBinding) GetSignBytes() []byte {
-	b, err := ModuleCdc.MarshalJSON(&msg)
+	b, err := amino.MarshalJSON(&msg)
 	if err != nil {
 		panic(err)
 	}
@@ -423,7 +423,7 @@ func (msg MsgRefundServiceDeposit) Type() string { return "refund_service_deposi
 
 // GetSignBytes implements Msg.
 func (msg MsgRefundServiceDeposit) GetSignBytes() []byte {
-	b, err := ModuleCdc.MarshalJSON(&msg)
+	b, err := amino.MarshalJSON(&msg)
 	if err != nil {
 		panic(err)
 	}
@@ -468,7 +468,7 @@ func (msg MsgPauseRequestContext) Type() string { return "pause_request_context"
 
 // GetSignBytes implements Msg.
 func (msg MsgPauseRequestContext) GetSignBytes() []byte {
-	b, err := ModuleCdc.MarshalJSON(&msg)
+	b, err := amino.MarshalJSON(&msg)
 	if err != nil {
 		panic(err)
 	}
@@ -501,7 +501,7 @@ func (msg MsgStartRequestContext) Type() string { return "start_request_context"
 
 // GetSignBytes implements Msg.
 func (msg MsgStartRequestContext) GetSignBytes() []byte {
-	b, err := ModuleCdc.MarshalJSON(&msg)
+	b, err := amino.MarshalJSON(&msg)
 	if err != nil {
 		panic(err)
 	}
@@ -534,7 +534,7 @@ func (msg MsgKillRequestContext) Type() string { return "kill_request_context" }
 
 // GetSignBytes implements Msg.
 func (msg MsgKillRequestContext) GetSignBytes() []byte {
-	b, err := ModuleCdc.MarshalJSON(&msg)
+	b, err := amino.MarshalJSON(&msg)
 	if err != nil {
 		panic(err)
 	}
@@ -568,7 +568,7 @@ func (msg MsgUpdateRequestContext) Type() string { return "update_request_contex
 
 // GetSignBytes implements Msg.
 func (msg MsgUpdateRequestContext) GetSignBytes() []byte {
-	b, err := ModuleCdc.MarshalJSON(&msg)
+	b, err := amino.MarshalJSON(&msg)
 	if err != nil {
 		panic(err)
 	}
@@ -602,7 +602,7 @@ func (msg MsgWithdrawEarnedFees) Type() string { return "withdraw_earned_fees" }
 
 // GetSignBytes implements Msg.
 func (msg MsgWithdrawEarnedFees) GetSignBytes() []byte {
-	b, err := ModuleCdc.MarshalJSON(&msg)
+	b, err := amino.MarshalJSON(&msg)
 	if err != nil {
 		panic(err)
 	}

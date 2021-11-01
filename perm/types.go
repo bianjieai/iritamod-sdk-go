@@ -46,7 +46,7 @@ func (m MsgAssignRoles) ValidateBasic() error {
 }
 
 func (m MsgAssignRoles) GetSignBytes() []byte {
-	bz := ModuleCdc.MustMarshalJSON(&m)
+	bz := amino.MustMarshalJSON(&m)
 	return sdk.MustSortJSON(bz)
 }
 
@@ -76,7 +76,7 @@ func (m MsgUnassignRoles) ValidateBasic() error {
 }
 
 func (m MsgUnassignRoles) GetSignBytes() []byte {
-	bz := ModuleCdc.MustMarshalJSON(&m)
+	bz := amino.MustMarshalJSON(&m)
 	return sdk.MustSortJSON(bz)
 }
 
@@ -103,7 +103,7 @@ func (m MsgBlockAccount) ValidateBasic() error {
 }
 
 func (m MsgBlockAccount) GetSignBytes() []byte {
-	bz := ModuleCdc.MustMarshalJSON(&m)
+	bz := amino.MustMarshalJSON(&m)
 	return sdk.MustSortJSON(bz)
 }
 
@@ -130,7 +130,7 @@ func (m MsgUnblockAccount) ValidateBasic() error {
 }
 
 func (m MsgUnblockAccount) GetSignBytes() []byte {
-	bz := ModuleCdc.MustMarshalJSON(&m)
+	bz := amino.MustMarshalJSON(&m)
 	return sdk.MustSortJSON(bz)
 }
 

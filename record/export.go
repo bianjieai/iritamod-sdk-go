@@ -1,6 +1,7 @@
 package record
 
 import (
+	"github.com/bianjieai/iritamod-sdk-go/types"
 	sdk "github.com/irisnet/core-sdk-go/types"
 )
 
@@ -8,8 +9,8 @@ import (
 type Client interface {
 	sdk.Module
 
-	CreateRecord(request CreateRecordRequest, baseTx sdk.BaseTx) (string, sdk.Error)
-	QueryRecord(request QueryRecordReq) (QueryRecordResp, sdk.Error)
+	CreateRecord(request CreateRecordRequest, baseTx sdk.BaseTx) (string, error)
+	QueryRecord(request QueryRecordReq) (QueryRecordResp, error)
 }
 
 type CreateRecordRequest struct {
@@ -23,9 +24,9 @@ type QueryRecordReq struct {
 }
 
 type QueryRecordResp struct {
-	Record Data           `json:"record"`
-	Proof  sdk.ProofValue `json:"proof"`
-	Height int64          `json:"height"`
+	Record Data             `json:"record"`
+	Proof  types.ProofValue `json:"proof"`
+	Height int64            `json:"height"`
 }
 
 type Data struct {

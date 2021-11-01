@@ -3,23 +3,27 @@ package service
 import (
 	"context"
 	"encoding/json"
+	"errors"
+	"fmt"
 	"strings"
 
-	"github.com/irisnet/core-sdk-go/common/codec"
-	"github.com/irisnet/core-sdk-go/common/codec/types"
+	ctypes "github.com/tendermint/tendermint/rpc/core/types"
+
+	"github.com/irisnet/core-sdk-go/codec"
+	"github.com/irisnet/core-sdk-go/codec/types"
 	sdk "github.com/irisnet/core-sdk-go/types"
 	"github.com/irisnet/core-sdk-go/types/query"
 )
 
 type serviceClient struct {
 	sdk.BaseClient
-	codec.Marshaler
+	codec.Codec
 }
 
-func NewClient(bc sdk.BaseClient, cdc codec.Marshaler) Client {
+func NewClient(bc sdk.BaseClient, cdc codec.Codec) Client {
 	return serviceClient{
 		BaseClient: bc,
-		Marshaler:  cdc,
+		Codec:      cdc,
 	}
 }
 
@@ -32,10 +36,10 @@ func (s serviceClient) RegisterInterfaceTypes(registry types.InterfaceRegistry) 
 }
 
 //DefineService is responsible for creating a new service definition
-func (s serviceClient) DefineService(request DefineServiceRequest, baseTx sdk.BaseTx) (sdk.ResultTx, sdk.Error) {
+func (s serviceClient) DefineService(request DefineServiceRequest, baseTx sdk.BaseTx) (ctypes.ResultTx, error) {
 	author, err := s.QueryAddress(baseTx.From, baseTx.Password)
 	if err != nil {
-		return sdk.ResultTx{}, sdk.Wrap(err)
+		return ctypes.ResultTx{}, err
 	}
 	msg := &MsgDefineService{
 		Name:              request.ServiceName,
@@ -49,23 +53,23 @@ func (s serviceClient) DefineService(request DefineServiceRequest, baseTx sdk.Ba
 }
 
 //BindService is responsible for binding a new service definition
-func (s serviceClient) BindService(request BindServiceRequest, baseTx sdk.BaseTx) (sdk.ResultTx, sdk.Error) {
+func (s serviceClient) BindService(request BindServiceRequest, baseTx sdk.BaseTx) (ctypes.ResultTx, error) {
 	owner, err := s.QueryAddress(baseTx.From, baseTx.Password)
 	if err != nil {
-		return sdk.ResultTx{}, sdk.Wrap(err)
+		return ctypes.ResultTx{}, err
 	}
 
 	var provider = owner.String()
 	if len(request.Provider) > 0 {
 		if err := sdk.ValidateAccAddress(request.Provider); err != nil {
-			return sdk.ResultTx{}, sdk.Wrap(err)
+			return ctypes.ResultTx{}, err
 		}
 		provider = request.Provider
 	}
 
 	amt, err := s.ToMinCoin(request.Deposit...)
 	if err != nil {
-		return sdk.ResultTx{}, sdk.Wrap(err)
+		return ctypes.ResultTx{}, err
 	}
 
 	msg := &MsgBindService{
@@ -81,23 +85,23 @@ func (s serviceClient) BindService(request BindServiceRequest, baseTx sdk.BaseTx
 }
 
 //UpdateServiceBinding updates the specified service binding
-func (s serviceClient) UpdateServiceBinding(request UpdateServiceBindingRequest, baseTx sdk.BaseTx) (sdk.ResultTx, sdk.Error) {
+func (s serviceClient) UpdateServiceBinding(request UpdateServiceBindingRequest, baseTx sdk.BaseTx) (ctypes.ResultTx, error) {
 	owner, err := s.QueryAddress(baseTx.From, baseTx.Password)
 	if err != nil {
-		return sdk.ResultTx{}, sdk.Wrap(err)
+		return ctypes.ResultTx{}, err
 	}
 
 	var provider = owner.String()
 	if len(request.Provider) > 0 {
 		if err := sdk.ValidateAccAddress(request.Provider); err != nil {
-			return sdk.ResultTx{}, sdk.Wrap(err)
+			return ctypes.ResultTx{}, err
 		}
 		provider = request.Provider
 	}
 
 	amt, err := s.ToMinCoin(request.Deposit...)
 	if err != nil {
-		return sdk.ResultTx{}, sdk.Wrap(err)
+		return ctypes.ResultTx{}, err
 	}
 
 	msg := &MsgUpdateServiceBinding{
@@ -112,16 +116,16 @@ func (s serviceClient) UpdateServiceBinding(request UpdateServiceBindingRequest,
 }
 
 // DisableServiceBinding disables the specified service binding
-func (s serviceClient) DisableServiceBinding(serviceName, provider string, baseTx sdk.BaseTx) (sdk.ResultTx, sdk.Error) {
+func (s serviceClient) DisableServiceBinding(serviceName, provider string, baseTx sdk.BaseTx) (ctypes.ResultTx, error) {
 	owner, err := s.QueryAddress(baseTx.From, baseTx.Password)
 	if err != nil {
-		return sdk.ResultTx{}, sdk.Wrap(err)
+		return ctypes.ResultTx{}, err
 	}
 
 	var providerAddr = owner.String()
 	if len(provider) > 0 {
 		if err := sdk.ValidateAccAddress(provider); err != nil {
-			return sdk.ResultTx{}, sdk.Wrap(err)
+			return ctypes.ResultTx{}, err
 		}
 		providerAddr = provider
 	}
@@ -135,23 +139,23 @@ func (s serviceClient) DisableServiceBinding(serviceName, provider string, baseT
 }
 
 // EnableServiceBinding enables the specified service binding
-func (s serviceClient) EnableServiceBinding(serviceName, provider string, deposit sdk.DecCoins, baseTx sdk.BaseTx) (sdk.ResultTx, sdk.Error) {
+func (s serviceClient) EnableServiceBinding(serviceName, provider string, deposit sdk.DecCoins, baseTx sdk.BaseTx) (ctypes.ResultTx, error) {
 	owner, err := s.QueryAddress(baseTx.From, baseTx.Password)
 	if err != nil {
-		return sdk.ResultTx{}, sdk.Wrap(err)
+		return ctypes.ResultTx{}, err
 	}
 
 	var providerAddr = owner.String()
 	if len(provider) > 0 {
 		if err := sdk.ValidateAccAddress(provider); err != nil {
-			return sdk.ResultTx{}, sdk.Wrap(err)
+			return ctypes.ResultTx{}, err
 		}
 		providerAddr = provider
 	}
 
 	amt, err := s.ToMinCoin(deposit...)
 	if err != nil {
-		return sdk.ResultTx{}, sdk.Wrap(err)
+		return ctypes.ResultTx{}, err
 	}
 
 	msg := &MsgEnableServiceBinding{
@@ -164,23 +168,23 @@ func (s serviceClient) EnableServiceBinding(serviceName, provider string, deposi
 }
 
 //InvokeService is responsible for invoke a new service and callback `handler`
-func (s serviceClient) InvokeService(request InvokeServiceRequest, baseTx sdk.BaseTx) (string, sdk.ResultTx, sdk.Error) {
+func (s serviceClient) InvokeService(request InvokeServiceRequest, baseTx sdk.BaseTx) (string, ctypes.ResultTx, error) {
 	consumer, err := s.QueryAddress(baseTx.From, baseTx.Password)
 	if err != nil {
-		return "", sdk.ResultTx{}, sdk.Wrap(err)
+		return "", ctypes.ResultTx{}, err
 	}
 
 	var providers []string
 	for _, provider := range request.Providers {
 		if err := sdk.ValidateAccAddress(provider); err != nil {
-			return "", sdk.ResultTx{}, sdk.Wrap(err)
+			return "", ctypes.ResultTx{}, err
 		}
 		providers = append(providers, provider)
 	}
 
 	amt, err := s.ToMinCoin(request.ServiceFeeCap...)
 	if err != nil {
-		return "", sdk.ResultTx{}, sdk.Wrap(err)
+		return "", ctypes.ResultTx{}, err
 	}
 
 	msg := &MsgCallService{
@@ -200,12 +204,12 @@ func (s serviceClient) InvokeService(request InvokeServiceRequest, baseTx sdk.Ba
 
 	result, err := s.BuildAndSend([]sdk.Msg{msg}, baseTx)
 	if err != nil {
-		return "", sdk.ResultTx{}, sdk.Wrap(err)
+		return "", ctypes.ResultTx{}, err
 	}
 
-	reqCtxID, e := result.Events.GetValue(sdk.EventTypeCreateContext, attributeKeyRequestContextID)
+	reqCtxID, e := sdk.StringifyEvents(result.TxResult.Events).GetValue(sdk.EventTypeCreateContext, attributeKeyRequestContextID)
 	if e != nil {
-		return reqCtxID, result, sdk.Wrap(e)
+		return reqCtxID, result, e
 	}
 
 	if request.Callback == nil {
@@ -213,19 +217,19 @@ func (s serviceClient) InvokeService(request InvokeServiceRequest, baseTx sdk.Ba
 	}
 
 	_, err = s.SubscribeServiceResponse(reqCtxID, request.Callback)
-	return reqCtxID, result, sdk.Wrap(err)
+	return reqCtxID, result, err
 }
 
-func (s serviceClient) InvokeServiceResponse(req InvokeServiceResponseRequest, baseTx sdk.BaseTx) (sdk.ResultTx, sdk.Error) {
+func (s serviceClient) InvokeServiceResponse(req InvokeServiceResponseRequest, baseTx sdk.BaseTx) (ctypes.ResultTx, error) {
 	provider, err := s.QueryAddress(baseTx.From, baseTx.Password)
 	if err != nil {
-		return sdk.ResultTx{}, err
+		return ctypes.ResultTx{}, err
 	}
 
 	reqId := req.RequestId
 	_, err = s.QueryServiceRequest(reqId)
 	if err != nil {
-		return sdk.ResultTx{}, err
+		return ctypes.ResultTx{}, err
 	}
 
 	msg := &MsgRespondService{
@@ -239,9 +243,9 @@ func (s serviceClient) InvokeServiceResponse(req InvokeServiceResponseRequest, b
 }
 
 func (s serviceClient) SubscribeServiceResponse(reqCtxID string,
-	callback InvokeCallback) (subscription sdk.Subscription, err sdk.Error) {
+	callback InvokeCallback) (subscription sdk.Subscription, err error) {
 	if len(reqCtxID) == 0 {
-		return subscription, sdk.Wrapf("reqCtxID %s should not be empty", reqCtxID)
+		return subscription, errors.New(fmt.Sprintf("reqCtxID %s should not be empty", reqCtxID))
 	}
 
 	builder := sdk.NewEventQueryBuilder().AddCondition(
@@ -280,14 +284,14 @@ func (s serviceClient) SubscribeServiceResponse(reqCtxID string,
 }
 
 // SetWithdrawAddress sets a new withdrawal address for the specified service binding
-func (s serviceClient) SetWithdrawAddress(withdrawAddress string, baseTx sdk.BaseTx) (sdk.ResultTx, sdk.Error) {
+func (s serviceClient) SetWithdrawAddress(withdrawAddress string, baseTx sdk.BaseTx) (ctypes.ResultTx, error) {
 	owner, err := s.QueryAddress(baseTx.From, baseTx.Password)
 	if err != nil {
-		return sdk.ResultTx{}, sdk.Wrap(err)
+		return ctypes.ResultTx{}, err
 	}
 
 	if err := sdk.ValidateAccAddress(withdrawAddress); err != nil {
-		return sdk.ResultTx{}, sdk.Wrapf("%s invalid address", withdrawAddress)
+		return ctypes.ResultTx{}, errors.New(fmt.Sprintf("%s invalid address", withdrawAddress))
 	}
 	msg := &MsgSetWithdrawAddress{
 		Owner:           owner.String(),
@@ -297,14 +301,14 @@ func (s serviceClient) SetWithdrawAddress(withdrawAddress string, baseTx sdk.Bas
 }
 
 // RefundServiceDeposit refunds the deposit from the specified service binding
-func (s serviceClient) RefundServiceDeposit(serviceName, provider string, baseTx sdk.BaseTx) (sdk.ResultTx, sdk.Error) {
+func (s serviceClient) RefundServiceDeposit(serviceName, provider string, baseTx sdk.BaseTx) (ctypes.ResultTx, error) {
 	owner, err := s.QueryAddress(baseTx.From, baseTx.Password)
 	if err != nil {
-		return sdk.ResultTx{}, sdk.Wrap(err)
+		return ctypes.ResultTx{}, err
 	}
 
 	if err := sdk.ValidateAccAddress(provider); err != nil {
-		return sdk.ResultTx{}, sdk.Wrap(err)
+		return ctypes.ResultTx{}, err
 	}
 
 	msg := &MsgRefundServiceDeposit{
@@ -316,10 +320,10 @@ func (s serviceClient) RefundServiceDeposit(serviceName, provider string, baseTx
 }
 
 // StartRequestContext starts the specified request context
-func (s serviceClient) StartRequestContext(requestContextID string, baseTx sdk.BaseTx) (sdk.ResultTx, sdk.Error) {
+func (s serviceClient) StartRequestContext(requestContextID string, baseTx sdk.BaseTx) (ctypes.ResultTx, error) {
 	consumer, err := s.QueryAddress(baseTx.From, baseTx.Password)
 	if err != nil {
-		return sdk.ResultTx{}, sdk.Wrap(err)
+		return ctypes.ResultTx{}, err
 	}
 	msg := &MsgStartRequestContext{
 		RequestContextId: requestContextID,
@@ -329,10 +333,10 @@ func (s serviceClient) StartRequestContext(requestContextID string, baseTx sdk.B
 }
 
 // PauseRequestContext suspends the specified request context
-func (s serviceClient) PauseRequestContext(requestContextID string, baseTx sdk.BaseTx) (sdk.ResultTx, sdk.Error) {
+func (s serviceClient) PauseRequestContext(requestContextID string, baseTx sdk.BaseTx) (ctypes.ResultTx, error) {
 	consumer, err := s.QueryAddress(baseTx.From, baseTx.Password)
 	if err != nil {
-		return sdk.ResultTx{}, sdk.Wrap(err)
+		return ctypes.ResultTx{}, err
 	}
 	msg := &MsgPauseRequestContext{
 		RequestContextId: requestContextID,
@@ -342,10 +346,10 @@ func (s serviceClient) PauseRequestContext(requestContextID string, baseTx sdk.B
 }
 
 // KillRequestContext terminates the specified request context
-func (s serviceClient) KillRequestContext(requestContextID string, baseTx sdk.BaseTx) (sdk.ResultTx, sdk.Error) {
+func (s serviceClient) KillRequestContext(requestContextID string, baseTx sdk.BaseTx) (ctypes.ResultTx, error) {
 	consumer, err := s.QueryAddress(baseTx.From, baseTx.Password)
 	if err != nil {
-		return sdk.ResultTx{}, sdk.Wrap(err)
+		return ctypes.ResultTx{}, err
 	}
 	msg := &MsgKillRequestContext{
 		RequestContextId: requestContextID,
@@ -355,21 +359,21 @@ func (s serviceClient) KillRequestContext(requestContextID string, baseTx sdk.Ba
 }
 
 // UpdateRequestContext updates the specified request context
-func (s serviceClient) UpdateRequestContext(request UpdateRequestContextRequest, baseTx sdk.BaseTx) (sdk.ResultTx, sdk.Error) {
+func (s serviceClient) UpdateRequestContext(request UpdateRequestContextRequest, baseTx sdk.BaseTx) (ctypes.ResultTx, error) {
 	consumer, err := s.QueryAddress(baseTx.From, baseTx.Password)
 	if err != nil {
-		return sdk.ResultTx{}, sdk.Wrap(err)
+		return ctypes.ResultTx{}, err
 	}
 
 	for _, provider := range request.Providers {
 		if err := sdk.ValidateAccAddress(provider); err != nil {
-			return sdk.ResultTx{}, sdk.Wrap(err)
+			return ctypes.ResultTx{}, err
 		}
 	}
 
 	amt, err := s.ToMinCoin(request.ServiceFeeCap...)
 	if err != nil {
-		return sdk.ResultTx{}, sdk.Wrap(err)
+		return ctypes.ResultTx{}, err
 	}
 
 	msg := &MsgUpdateRequestContext{
@@ -385,16 +389,16 @@ func (s serviceClient) UpdateRequestContext(request UpdateRequestContextRequest,
 }
 
 // WithdrawEarnedFees withdraws the earned fees to the specified provider
-func (s serviceClient) WithdrawEarnedFees(provider string, baseTx sdk.BaseTx) (sdk.ResultTx, sdk.Error) {
+func (s serviceClient) WithdrawEarnedFees(provider string, baseTx sdk.BaseTx) (ctypes.ResultTx, error) {
 	owner, err := s.QueryAddress(baseTx.From, baseTx.Password)
 	if err != nil {
-		return sdk.ResultTx{}, sdk.Wrap(err)
+		return ctypes.ResultTx{}, err
 	}
 
 	var providerAddr = owner.String()
 	if len(provider) > 0 {
 		if err := sdk.ValidateAccAddress(provider); err != nil {
-			return sdk.ResultTx{}, sdk.Wrap(err)
+			return ctypes.ResultTx{}, err
 		}
 		providerAddr = provider
 	}
@@ -409,10 +413,10 @@ func (s serviceClient) WithdrawEarnedFees(provider string, baseTx sdk.BaseTx) (s
 //SubscribeSingleServiceRequest is responsible for registering a single service handler
 func (s serviceClient) SubscribeServiceRequest(serviceName string,
 	callback RespondCallback,
-	baseTx sdk.BaseTx) (subscription sdk.Subscription, err sdk.Error) {
+	baseTx sdk.BaseTx) (subscription sdk.Subscription, err error) {
 	provider, e := s.QueryAddress(baseTx.From, baseTx.Password)
 	if e != nil {
-		return sdk.Subscription{}, sdk.Wrap(e)
+		return sdk.Subscription{}, e
 	}
 
 	builder := sdk.NewEventQueryBuilder().AddCondition(
@@ -436,37 +440,37 @@ func (s serviceClient) SubscribeServiceRequest(serviceName string,
 }
 
 // QueryDefinition return a service definition of the specified name
-func (s serviceClient) QueryServiceDefinition(serviceName string) (QueryServiceDefinitionResponse, sdk.Error) {
+func (s serviceClient) QueryServiceDefinition(serviceName string) (QueryServiceDefinitionResponse, error) {
 	conn, err := s.GenConn()
 
 	if err != nil {
-		return QueryServiceDefinitionResponse{}, sdk.Wrap(err)
+		return QueryServiceDefinitionResponse{}, err
 	}
 
-	resp, err := NewQueryClient(*conn).Definition(
+	resp, err := NewQueryClient(conn).Definition(
 		context.Background(),
 		&QueryDefinitionRequest{ServiceName: serviceName},
 	)
 	if err != nil {
-		return QueryServiceDefinitionResponse{}, sdk.Wrap(err)
+		return QueryServiceDefinitionResponse{}, err
 	}
 
 	return resp.ServiceDefinition.Convert().(QueryServiceDefinitionResponse), nil
 }
 
 // QueryBinding return the specified service binding
-func (s serviceClient) QueryServiceBinding(serviceName string, provider string) (QueryServiceBindingResponse, sdk.Error) {
+func (s serviceClient) QueryServiceBinding(serviceName string, provider string) (QueryServiceBindingResponse, error) {
 	conn, err := s.GenConn()
 
 	if err != nil {
-		return QueryServiceBindingResponse{}, sdk.Wrap(err)
+		return QueryServiceBindingResponse{}, err
 	}
 
 	if err := sdk.ValidateAccAddress(provider); err != nil {
-		return QueryServiceBindingResponse{}, sdk.Wrap(err)
+		return QueryServiceBindingResponse{}, err
 	}
 
-	resp, err := NewQueryClient(*conn).Binding(
+	resp, err := NewQueryClient(conn).Binding(
 		context.Background(),
 		&QueryBindingRequest{
 			ServiceName: serviceName,
@@ -474,21 +478,21 @@ func (s serviceClient) QueryServiceBinding(serviceName string, provider string) 
 		},
 	)
 	if err != nil {
-		return QueryServiceBindingResponse{}, sdk.Wrap(err)
+		return QueryServiceBindingResponse{}, err
 	}
 
 	return resp.ServiceBinding.Convert().(QueryServiceBindingResponse), nil
 }
 
 // QueryBindings returns all bindings of the specified service
-func (s serviceClient) QueryServiceBindings(serviceName string, pageReq *query.PageRequest) ([]QueryServiceBindingResponse, sdk.Error) {
+func (s serviceClient) QueryServiceBindings(serviceName string, pageReq *query.PageRequest) ([]QueryServiceBindingResponse, error) {
 	conn, err := s.GenConn()
 
 	if err != nil {
-		return nil, sdk.Wrap(err)
+		return nil, err
 	}
 
-	resp, err := NewQueryClient(*conn).Bindings(
+	resp, err := NewQueryClient(conn).Bindings(
 		context.Background(),
 		&QueryBindingsRequest{
 			ServiceName: serviceName,
@@ -496,21 +500,21 @@ func (s serviceClient) QueryServiceBindings(serviceName string, pageReq *query.P
 		},
 	)
 	if err != nil {
-		return nil, sdk.Wrap(err)
+		return nil, err
 	}
 
 	return serviceBindings(resp.ServiceBindings).Convert().([]QueryServiceBindingResponse), nil
 }
 
 // QueryRequest returns  the active request of the specified requestID
-func (s serviceClient) QueryServiceRequest(requestID string) (QueryServiceRequestResponse, sdk.Error) {
+func (s serviceClient) QueryServiceRequest(requestID string) (QueryServiceRequestResponse, error) {
 	conn, err := s.GenConn()
 
 	if err != nil {
-		return QueryServiceRequestResponse{}, sdk.Wrap(err)
+		return QueryServiceRequestResponse{}, err
 	}
 
-	resp, err := NewQueryClient(*conn).Request(
+	resp, err := NewQueryClient(conn).Request(
 		context.Background(),
 		&QueryRequestRequest{RequestId: requestID},
 	)
@@ -522,25 +526,25 @@ func (s serviceClient) QueryServiceRequest(requestID string) (QueryServiceReques
 	//query service Request by block
 	request, err := s.queryRequestByTxQuery(requestID)
 	if err != nil {
-		return QueryServiceRequestResponse{}, sdk.Wrap(err)
+		return QueryServiceRequestResponse{}, err
 	}
 
 	return request.Convert().(QueryServiceRequestResponse), nil
 }
 
 // QueryRequest returns all the active requests of the specified service binding
-func (s serviceClient) QueryServiceRequests(serviceName string, provider string, pageReq *query.PageRequest) ([]QueryServiceRequestResponse, sdk.Error) {
+func (s serviceClient) QueryServiceRequests(serviceName string, provider string, pageReq *query.PageRequest) ([]QueryServiceRequestResponse, error) {
 	conn, err := s.GenConn()
 
 	if err != nil {
-		return nil, sdk.Wrap(err)
+		return nil, err
 	}
 
 	if err := sdk.ValidateAccAddress(provider); err != nil {
-		return nil, sdk.Wrap(err)
+		return nil, err
 	}
 
-	resp, err := NewQueryClient(*conn).Requests(
+	resp, err := NewQueryClient(conn).Requests(
 		context.Background(),
 		&QueryRequestsRequest{
 			ServiceName: serviceName,
@@ -549,21 +553,21 @@ func (s serviceClient) QueryServiceRequests(serviceName string, provider string,
 		},
 	)
 	if err != nil {
-		return nil, sdk.Wrap(err)
+		return nil, err
 	}
 
 	return requests(resp.Requests).Convert().([]QueryServiceRequestResponse), nil
 }
 
 // QueryRequestsByReqCtx returns all requests of the specified request context ID and batch counter
-func (s serviceClient) QueryRequestsByReqCtx(reqCtxID string, batchCounter uint64, pageReq *query.PageRequest) ([]QueryServiceRequestResponse, sdk.Error) {
+func (s serviceClient) QueryRequestsByReqCtx(reqCtxID string, batchCounter uint64, pageReq *query.PageRequest) ([]QueryServiceRequestResponse, error) {
 	conn, err := s.GenConn()
 
 	if err != nil {
-		return nil, sdk.Wrap(err)
+		return nil, err
 	}
 
-	resp, err := NewQueryClient(*conn).RequestsByReqCtx(
+	resp, err := NewQueryClient(conn).RequestsByReqCtx(
 		context.Background(),
 		&QueryRequestsByReqCtxRequest{
 			RequestContextId: reqCtxID,
@@ -572,21 +576,21 @@ func (s serviceClient) QueryRequestsByReqCtx(reqCtxID string, batchCounter uint6
 		},
 	)
 	if err != nil {
-		return nil, sdk.Wrap(err)
+		return nil, err
 	}
 
 	return requests(resp.Requests).Convert().([]QueryServiceRequestResponse), nil
 }
 
 // QueryResponse returns a response with the speicified request ID
-func (s serviceClient) QueryServiceResponse(requestID string) (QueryServiceResponseResponse, sdk.Error) {
+func (s serviceClient) QueryServiceResponse(requestID string) (QueryServiceResponseResponse, error) {
 	conn, err := s.GenConn()
 
 	if err != nil {
-		return QueryServiceResponseResponse{}, sdk.Wrap(err)
+		return QueryServiceResponseResponse{}, err
 	}
 
-	resp, err := NewQueryClient(*conn).Response(
+	resp, err := NewQueryClient(conn).Response(
 		context.Background(),
 		&QueryResponseRequest{RequestId: requestID},
 	)
@@ -597,21 +601,21 @@ func (s serviceClient) QueryServiceResponse(requestID string) (QueryServiceRespo
 
 	response, err := s.queryResponseByTxQuery(requestID)
 	if err != nil {
-		return QueryServiceResponseResponse{}, sdk.Wrap(nil)
+		return QueryServiceResponseResponse{}, nil
 	}
 
 	return response.Convert().(QueryServiceResponseResponse), nil
 }
 
 // QueryResponses returns all responses of the specified request context and batch counter
-func (s serviceClient) QueryServiceResponses(reqCtxID string, batchCounter uint64, pageReq *query.PageRequest) ([]QueryServiceResponseResponse, sdk.Error) {
+func (s serviceClient) QueryServiceResponses(reqCtxID string, batchCounter uint64, pageReq *query.PageRequest) ([]QueryServiceResponseResponse, error) {
 	conn, err := s.GenConn()
 
 	if err != nil {
-		return nil, sdk.Wrap(err)
+		return nil, err
 	}
 
-	resp, err := NewQueryClient(*conn).Responses(
+	resp, err := NewQueryClient(conn).Responses(
 		context.Background(),
 		&QueryResponsesRequest{
 			RequestContextId: reqCtxID,
@@ -620,21 +624,21 @@ func (s serviceClient) QueryServiceResponses(reqCtxID string, batchCounter uint6
 		},
 	)
 	if err != nil {
-		return nil, sdk.Wrap(err)
+		return nil, err
 	}
 
 	return responses(resp.Responses).Convert().([]QueryServiceResponseResponse), nil
 }
 
 // QueryRequestContext return the specified request context
-func (s serviceClient) QueryRequestContext(reqCtxID string) (QueryRequestContextResp, sdk.Error) {
+func (s serviceClient) QueryRequestContext(reqCtxID string) (QueryRequestContextResp, error) {
 	conn, err := s.GenConn()
 
 	if err != nil {
-		return QueryRequestContextResp{}, sdk.Wrap(err)
+		return QueryRequestContextResp{}, err
 	}
 
-	resp, err := NewQueryClient(*conn).RequestContext(
+	resp, err := NewQueryClient(conn).RequestContext(
 		context.Background(),
 		&QueryRequestContextRequest{RequestContextId: reqCtxID},
 	)
@@ -644,47 +648,47 @@ func (s serviceClient) QueryRequestContext(reqCtxID string) (QueryRequestContext
 
 	reqCtx, err := s.queryRequestContextByTxQuery(reqCtxID)
 	if err != nil {
-		return QueryRequestContextResp{}, sdk.Wrap(err)
+		return QueryRequestContextResp{}, err
 	}
 
 	return reqCtx.Convert().(QueryRequestContextResp), nil
 }
 
 //QueryFees return the earned fees for a provider
-func (s serviceClient) QueryFees(provider string) (sdk.Coins, sdk.Error) {
+func (s serviceClient) QueryFees(provider string) (sdk.Coins, error) {
 	if err := sdk.ValidateAccAddress(provider); err != nil {
-		return nil, sdk.Wrap(err)
+		return nil, err
 	}
 
 	conn, err := s.GenConn()
 
 	if err != nil {
-		return nil, sdk.Wrap(err)
+		return nil, err
 	}
 
-	res, err := NewQueryClient(*conn).EarnedFees(
+	res, err := NewQueryClient(conn).EarnedFees(
 		context.Background(),
 		&QueryEarnedFeesRequest{Provider: provider},
 	)
 	if err != nil {
-		return nil, sdk.Wrap(err)
+		return nil, err
 	}
 	return res.Fees, nil
 }
 
-func (s serviceClient) QueryParams() (QueryParamsResp, sdk.Error) {
+func (s serviceClient) QueryParams() (QueryParamsResp, error) {
 	conn, err := s.GenConn()
 
 	if err != nil {
-		return QueryParamsResp{}, sdk.Wrap(err)
+		return QueryParamsResp{}, err
 	}
 
-	res, err := NewQueryClient(*conn).Params(
+	res, err := NewQueryClient(conn).Params(
 		context.Background(),
 		&QueryParamsRequest{},
 	)
 	if err != nil {
-		return QueryParamsResp{}, sdk.Wrap(err)
+		return QueryParamsResp{}, err
 	}
 
 	return res.Params.Convert().(QueryParamsResp), nil

@@ -3,6 +3,8 @@ package oracle
 import (
 	"time"
 
+	ctypes "github.com/tendermint/tendermint/rpc/core/types"
+
 	"github.com/bianjieai/iritamod-sdk-go/service"
 	sdk "github.com/irisnet/core-sdk-go/types"
 	types "github.com/irisnet/core-sdk-go/types"
@@ -16,14 +18,14 @@ var (
 type Client interface {
 	sdk.Module
 
-	CreateFeed(request CreateFeedRequest, baseTx sdk.BaseTx) (sdk.ResultTx, sdk.Error)
-	StartFeed(feedName string, baseTx sdk.BaseTx) (sdk.ResultTx, sdk.Error)
-	PauseFeed(feedName string, baseTx sdk.BaseTx) (sdk.ResultTx, sdk.Error)
-	EditFeedRequest(request EditFeedRequest, baseTx sdk.BaseTx) (sdk.ResultTx, sdk.Error)
+	CreateFeed(request CreateFeedRequest, baseTx sdk.BaseTx) (ctypes.ResultTx, error)
+	StartFeed(feedName string, baseTx sdk.BaseTx) (ctypes.ResultTx, error)
+	PauseFeed(feedName string, baseTx sdk.BaseTx) (ctypes.ResultTx, error)
+	EditFeedRequest(request EditFeedRequest, baseTx sdk.BaseTx) (ctypes.ResultTx, error)
 
-	QueryFeed(feedName string) (QueryFeedResp, sdk.Error)
-	QueryFeeds(state string) ([]QueryFeedResp, sdk.Error)
-	QueryFeedValue(feedName string) ([]QueryFeedValueResp, sdk.Error)
+	QueryFeed(feedName string) (QueryFeedResp, error)
+	QueryFeeds(state string) ([]QueryFeedResp, error)
+	QueryFeedValue(feedName string) ([]QueryFeedValueResp, error)
 }
 
 type CreateFeedRequest struct {

@@ -1,9 +1,9 @@
 package wasm
 
 import (
-	"github.com/irisnet/core-sdk-go/common/codec"
-	"github.com/irisnet/core-sdk-go/common/codec/types"
-	cryptocodec "github.com/irisnet/core-sdk-go/common/crypto/codec"
+	"github.com/irisnet/core-sdk-go/codec"
+	"github.com/irisnet/core-sdk-go/codec/types"
+	cryptocodec "github.com/irisnet/core-sdk-go/crypto/codec"
 	sdk "github.com/irisnet/core-sdk-go/types"
 )
 
@@ -15,7 +15,6 @@ const (
 var (
 	amino = codec.NewLegacyAmino()
 	// ModuleCdc define the codec for wasm module
-	ModuleCdc = codec.NewAminoCodec(amino)
 )
 
 func init() {

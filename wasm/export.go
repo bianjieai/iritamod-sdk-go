@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"errors"
 
+	ctypes "github.com/tendermint/tendermint/rpc/core/types"
+
 	sdk "github.com/irisnet/core-sdk-go/types"
 )
 
@@ -16,11 +18,11 @@ type Client interface {
 	Execute(contractAddress string,
 		abi *ContractABI,
 		SentFunds sdk.Coins,
-		config sdk.BaseTx) (sdk.ResultTx, error)
+		config sdk.BaseTx) (ctypes.ResultTx, error)
 	Migrate(contractAddress string,
 		newCodeID string,
 		msgByte []byte,
-		config sdk.BaseTx) (sdk.ResultTx, error)
+		config sdk.BaseTx) (ctypes.ResultTx, error)
 
 	QueryContractInfo(address string) (*ContractInfo, error)
 	QueryContract(address string, abi *ContractABI) ([]byte, error)

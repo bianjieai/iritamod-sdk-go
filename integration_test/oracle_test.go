@@ -73,8 +73,7 @@ func (s IntegrationTestSuite) TestOracle() {
 	}
 	input := `{"header":{},"body":{"pair":"iris-usdt"}}`
 	feedName := generateFeedName(serviceName)
-	serviceFeeCap, _ := sdk.ParseCoins("10000upoint")
-
+	serviceFeeCap, _ := sdk.ParseCoinsNormalized("10000upoint")
 	sender := s.rootAccount.Address
 	createReq := oracle.CreateFeedRequest{
 		FeedName:          feedName,

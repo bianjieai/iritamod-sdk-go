@@ -3,20 +3,22 @@ package perm
 import (
 	"context"
 
-	"github.com/irisnet/core-sdk-go/common/codec"
-	"github.com/irisnet/core-sdk-go/common/codec/types"
+	ctypes "github.com/tendermint/tendermint/rpc/core/types"
+
+	"github.com/irisnet/core-sdk-go/codec"
+	"github.com/irisnet/core-sdk-go/codec/types"
 	sdk "github.com/irisnet/core-sdk-go/types"
 )
 
 type permClient struct {
 	sdk.BaseClient
-	codec.Marshaler
+	codec.Codec
 }
 
-func NewClient(bc sdk.BaseClient, cdc codec.Marshaler) Client {
+func NewClient(bc sdk.BaseClient, cdc codec.Codec) Client {
 	return permClient{
 		BaseClient: bc,
-		Marshaler:  cdc,
+		Codec:      cdc,
 	}
 }
 
@@ -28,15 +30,15 @@ func (a permClient) RegisterInterfaceTypes(registry types.InterfaceRegistry) {
 	RegisterInterfaces(registry)
 }
 
-func (a permClient) AssignRoles(address string, roles []Role, baseTx sdk.BaseTx) (sdk.ResultTx, sdk.Error) {
+func (a permClient) AssignRoles(address string, roles []Role, baseTx sdk.BaseTx) (ctypes.ResultTx, error) {
 	sender, err := a.QueryAddress(baseTx.From, baseTx.Password)
 	if err != nil {
-		return sdk.ResultTx{}, sdk.Wrap(err)
+		return ctypes.ResultTx{}, err
 	}
 
 	acc, err := sdk.AccAddressFromBech32(address)
 	if err != nil {
-		return sdk.ResultTx{}, sdk.Wrap(err)
+		return ctypes.ResultTx{}, err
 	}
 
 	msg := &MsgAssignRoles{
@@ -47,15 +49,15 @@ func (a permClient) AssignRoles(address string, roles []Role, baseTx sdk.BaseTx)
 	return a.BuildAndSend([]sdk.Msg{msg}, baseTx)
 }
 
-func (a permClient) UnassignRoles(address string, roles []Role, baseTx sdk.BaseTx) (sdk.ResultTx, sdk.Error) {
+func (a permClient) UnassignRoles(address string, roles []Role, baseTx sdk.BaseTx) (ctypes.ResultTx, error) {
 	sender, err := a.QueryAddress(baseTx.From, baseTx.Password)
 	if err != nil {
-		return sdk.ResultTx{}, sdk.Wrap(err)
+		return ctypes.ResultTx{}, err
 	}
 
 	acc, err := sdk.AccAddressFromBech32(address)
 	if err != nil {
-		return sdk.ResultTx{}, sdk.Wrap(err)
+		return ctypes.ResultTx{}, err
 	}
 
 	msg := &MsgUnassignRoles{
@@ -66,15 +68,15 @@ func (a permClient) UnassignRoles(address string, roles []Role, baseTx sdk.BaseT
 	return a.BuildAndSend([]sdk.Msg{msg}, baseTx)
 }
 
-func (a permClient) BlockAccount(address string, baseTx sdk.BaseTx) (sdk.ResultTx, sdk.Error) {
+func (a permClient) BlockAccount(address string, baseTx sdk.BaseTx) (ctypes.ResultTx, error) {
 	sender, err := a.QueryAddress(baseTx.From, baseTx.Password)
 	if err != nil {
-		return sdk.ResultTx{}, sdk.Wrap(err)
+		return ctypes.ResultTx{}, err
 	}
 
 	acc, err := sdk.AccAddressFromBech32(address)
 	if err != nil {
-		return sdk.ResultTx{}, sdk.Wrap(err)
+		return ctypes.ResultTx{}, err
 	}
 
 	msg := &MsgBlockAccount{
@@ -84,15 +86,15 @@ func (a permClient) BlockAccount(address string, baseTx sdk.BaseTx) (sdk.ResultT
 	return a.BuildAndSend([]sdk.Msg{msg}, baseTx)
 }
 
-func (a permClient) UnblockAccount(address string, baseTx sdk.BaseTx) (sdk.ResultTx, sdk.Error) {
+func (a permClient) UnblockAccount(address string, baseTx sdk.BaseTx) (ctypes.ResultTx, error) {
 	sender, err := a.QueryAddress(baseTx.From, baseTx.Password)
 	if err != nil {
-		return sdk.ResultTx{}, sdk.Wrap(err)
+		return ctypes.ResultTx{}, err
 	}
 
 	acc, err := sdk.AccAddressFromBech32(address)
 	if err != nil {
-		return sdk.ResultTx{}, sdk.Wrap(err)
+		return ctypes.ResultTx{}, err
 	}
 
 	msg := &MsgUnblockAccount{
@@ -102,42 +104,42 @@ func (a permClient) UnblockAccount(address string, baseTx sdk.BaseTx) (sdk.Resul
 	return a.BuildAndSend([]sdk.Msg{msg}, baseTx)
 }
 
-func (a permClient) QueryRoles(address string) ([]Role, sdk.Error) {
+func (a permClient) QueryRoles(address string) ([]Role, error) {
 	conn, err := a.GenConn()
 
 	if err != nil {
-		return nil, sdk.Wrap(err)
+		return nil, err
 	}
 
 	acc, err := sdk.AccAddressFromBech32(address)
 	if err != nil {
-		return nil, sdk.Wrap(err)
+		return nil, err
 	}
 
-	resp, err := NewQueryClient(*conn).Roles(
+	resp, err := NewQueryClient(conn).Roles(
 		context.Background(),
 		&QueryRolesRequest{Address: acc.String()},
 	)
 	if err != nil {
-		return nil, sdk.Wrap(err)
+		return nil, err
 	}
 
 	return resp.Roles, nil
 }
 
-func (a permClient) QueryBlacklist(page, limit int) ([]string, sdk.Error) {
+func (a permClient) QueryBlacklist(page, limit int) ([]string, error) {
 	conn, err := a.GenConn()
 
 	if err != nil {
-		return nil, sdk.Wrap(err)
+		return nil, err
 	}
 
-	resp, err := NewQueryClient(*conn).Blacklist(
+	resp, err := NewQueryClient(conn).Blacklist(
 		context.Background(),
 		&QueryBlacklistRequest{},
 	)
 	if err != nil {
-		return nil, sdk.Wrap(err)
+		return nil, err
 	}
 
 	return resp.Addresses, nil

@@ -3,6 +3,7 @@ package node
 import (
 	sdk "github.com/irisnet/core-sdk-go/types"
 	"github.com/irisnet/core-sdk-go/types/query"
+	ctypes "github.com/tendermint/tendermint/rpc/core/types"
 )
 
 var (
@@ -13,18 +14,18 @@ var (
 type Client interface {
 	sdk.Module
 
-	CreateValidator(request CreateValidatorRequest, baseTx sdk.BaseTx) (sdk.ResultTx, sdk.Error)
-	UpdateValidator(request UpdateValidatorRequest, baseTx sdk.BaseTx) (sdk.ResultTx, sdk.Error)
-	RemoveValidator(id string, baseTx sdk.BaseTx) (sdk.ResultTx, sdk.Error)
+	CreateValidator(request CreateValidatorRequest, baseTx sdk.BaseTx) (ctypes.ResultTx, error)
+	UpdateValidator(request UpdateValidatorRequest, baseTx sdk.BaseTx) (ctypes.ResultTx, error)
+	RemoveValidator(id string, baseTx sdk.BaseTx) (ctypes.ResultTx, error)
 
-	GrantNode(request GrantNodeRequest, baseTx sdk.BaseTx) (sdk.ResultTx, sdk.Error)
-	RevokeNode(nodeId string, baseTx sdk.BaseTx) (sdk.ResultTx, sdk.Error)
+	GrantNode(request GrantNodeRequest, baseTx sdk.BaseTx) (ctypes.ResultTx, error)
+	RevokeNode(nodeId string, baseTx sdk.BaseTx) (ctypes.ResultTx, error)
 
-	QueryValidators(pageReq *query.PageRequest) ([]QueryValidatorResp, sdk.Error)
-	QueryValidator(id string) (QueryValidatorResp, sdk.Error)
-	QueryNodes(pageReq *query.PageRequest) ([]QueryNodeResp, sdk.Error)
-	QueryNode(id string) (QueryNodeResp, sdk.Error)
-	QueryParams() (QueryParamsResp, sdk.Error)
+	QueryValidators(pageReq *query.PageRequest) ([]QueryValidatorResp, error)
+	QueryValidator(id string) (QueryValidatorResp, error)
+	QueryNodes(pageReq *query.PageRequest) ([]QueryNodeResp, error)
+	QueryNode(id string) (QueryNodeResp, error)
+	QueryParams() (QueryParamsResp, error)
 }
 
 type CreateValidatorRequest struct {

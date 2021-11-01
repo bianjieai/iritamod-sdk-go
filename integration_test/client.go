@@ -11,16 +11,16 @@ import (
 	"github.com/bianjieai/iritamod-sdk-go/service"
 	"github.com/bianjieai/iritamod-sdk-go/token"
 	"github.com/bianjieai/iritamod-sdk-go/wasm"
-	"github.com/irisnet/core-sdk-go/bank"
 	"github.com/irisnet/core-sdk-go/client"
-	"github.com/irisnet/core-sdk-go/common/codec"
-	"github.com/irisnet/core-sdk-go/gov"
-	"github.com/irisnet/core-sdk-go/staking"
+	"github.com/irisnet/core-sdk-go/codec"
+	"github.com/irisnet/core-sdk-go/modules/bank"
+	"github.com/irisnet/core-sdk-go/modules/gov"
+	"github.com/irisnet/core-sdk-go/modules/staking"
 	"github.com/irisnet/core-sdk-go/types"
 	"github.com/tendermint/tendermint/libs/log"
 
-	cdctypes "github.com/irisnet/core-sdk-go/common/codec/types"
-	cryptocodec "github.com/irisnet/core-sdk-go/common/crypto/codec"
+	cdctypes "github.com/irisnet/core-sdk-go/codec/types"
+	cryptocodec "github.com/irisnet/core-sdk-go/crypto/codec"
 	txtypes "github.com/irisnet/core-sdk-go/types/tx"
 )
 
@@ -51,19 +51,19 @@ func NewClient(cfg types.ClientConfig) Client {
 	// create a instance of baseClient
 
 	baseClient := client.NewBaseClient(cfg, encodingConfig, nil)
-	bankClient := bank.NewClient(baseClient, encodingConfig.Marshaler)
+	bankClient := bank.NewClient(baseClient, encodingConfig.Codec)
 
-	stakingClient := staking.NewClient(baseClient, encodingConfig.Marshaler)
-	govClient := gov.NewClient(baseClient, encodingConfig.Marshaler)
-	identityClient := identity.NewClient(baseClient, encodingConfig.Marshaler)
-	nftClient := nft.NewClient(baseClient, encodingConfig.Marshaler)
-	nodeClient := node.NewClient(baseClient, encodingConfig.Marshaler)
-	serviceClient := service.NewClient(baseClient, encodingConfig.Marshaler)
-	oracleClient := oracle.NewClient(baseClient, encodingConfig.Marshaler)
-	paramsClient := params.NewClient(baseClient, encodingConfig.Marshaler)
-	permClient := perm.NewClient(baseClient, encodingConfig.Marshaler)
-	recordClient := record.NewClient(baseClient, encodingConfig.Marshaler)
-	tokenClient := token.NewClient(baseClient, encodingConfig.Marshaler)
+	stakingClient := staking.NewClient(baseClient, encodingConfig.Codec)
+	govClient := gov.NewClient(baseClient, encodingConfig.Codec)
+	identityClient := identity.NewClient(baseClient, encodingConfig.Codec)
+	nftClient := nft.NewClient(baseClient, encodingConfig.Codec)
+	nodeClient := node.NewClient(baseClient, encodingConfig.Codec)
+	serviceClient := service.NewClient(baseClient, encodingConfig.Codec)
+	oracleClient := oracle.NewClient(baseClient, encodingConfig.Codec)
+	paramsClient := params.NewClient(baseClient, encodingConfig.Codec)
+	permClient := perm.NewClient(baseClient, encodingConfig.Codec)
+	recordClient := record.NewClient(baseClient, encodingConfig.Codec)
+	tokenClient := token.NewClient(baseClient, encodingConfig.Codec)
 	wasmClient := wasm.NewClient(baseClient)
 
 	client := &Client{
@@ -112,8 +112,8 @@ func (client Client) Codec() *codec.LegacyAmino {
 	return client.encodingConfig.Amino
 }
 
-func (client Client) AppCodec() codec.Marshaler {
-	return client.encodingConfig.Marshaler
+func (client Client) AppCodec() codec.Codec {
+	return client.encodingConfig.Codec
 }
 
 func (client Client) EncodingConfig() types.EncodingConfig {
@@ -137,12 +137,12 @@ func (client Client) Module(name string) types.Module {
 func makeEncodingConfig() types.EncodingConfig {
 	amino := codec.NewLegacyAmino()
 	interfaceRegistry := cdctypes.NewInterfaceRegistry()
-	marshaler := codec.NewProtoCodec(interfaceRegistry)
-	txCfg := txtypes.NewTxConfig(marshaler, txtypes.DefaultSignModes)
+	protoCodec := codec.NewProtoCodec(interfaceRegistry)
+	txCfg := txtypes.NewTxConfig(protoCodec, txtypes.DefaultSignModes)
 
 	encodingConfig := types.EncodingConfig{
 		InterfaceRegistry: interfaceRegistry,
-		Marshaler:         marshaler,
+		Codec:             protoCodec,
 		TxConfig:          txCfg,
 		Amino:             amino,
 	}

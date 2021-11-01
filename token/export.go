@@ -2,17 +2,18 @@ package token
 
 import (
 	sdk "github.com/irisnet/core-sdk-go/types"
-
 	"github.com/irisnet/core-sdk-go/types/query"
+
+	ctypes "github.com/tendermint/tendermint/rpc/core/types"
 )
 
 type Client interface {
 	sdk.Module
 
-	IssueToken(req IssueTokenRequest, baseTx sdk.BaseTx) (sdk.ResultTx, sdk.Error)
-	EditToken(req EditTokenRequest, baseTx sdk.BaseTx) (sdk.ResultTx, sdk.Error)
-	TransferToken(to string, symbol string, baseTx sdk.BaseTx) (sdk.ResultTx, sdk.Error)
-	MintToken(symbol string, amount uint64, to string, baseTx sdk.BaseTx) (sdk.ResultTx, sdk.Error)
+	IssueToken(req IssueTokenRequest, baseTx sdk.BaseTx) (ctypes.ResultTx, error)
+	EditToken(req EditTokenRequest, baseTx sdk.BaseTx) (ctypes.ResultTx, error)
+	TransferToken(to string, symbol string, baseTx sdk.BaseTx) (ctypes.ResultTx, error)
+	MintToken(symbol string, amount uint64, to string, baseTx sdk.BaseTx) (ctypes.ResultTx, error)
 
 	QueryToken(symbol string) (sdk.Token, error)
 	QueryTokens(owner string, pageReq *query.PageRequest) (sdk.Tokens, error)
