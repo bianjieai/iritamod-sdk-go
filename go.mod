@@ -2,11 +2,6 @@ module github.com/bianjieai/iritamod-sdk-go
 
 go 1.16
 
-replace (
-	github.com/irisnet/core-sdk-go => /Users/bianjie/work/gowork/irisnet/core-sdk-go
-	github.com/gogo/protobuf => github.com/regen-network/protobuf v1.3.3-alpha.regen.1
-	github.com/tendermint/tendermint => github.com/bianjieai/tendermint v0.34.1-irita-210113
-)
 
 require (
 	github.com/cosmos/go-bip39 v1.0.0 // indirect
@@ -25,4 +20,10 @@ require (
 	google.golang.org/grpc v1.40.0
 	google.golang.org/protobuf v1.27.1
 	gopkg.in/yaml.v2 v2.3.0
+)
+
+replace (
+	github.com/irisnet/core-sdk-go => /Users/bianjie/work/gowork/irisnet/core-sdk-go
+	github.com/gogo/protobuf => github.com/regen-network/protobuf v1.3.3-alpha.regen.1
+	github.com/tendermint/tendermint => github.com/bianjieai/tendermint v0.34.1-irita-210113
 )
