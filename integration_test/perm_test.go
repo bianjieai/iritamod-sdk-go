@@ -1,9 +1,11 @@
 package integration
 
 import (
-	"github.com/bianjieai/iritamod-sdk-go/perm"
 	"github.com/irisnet/core-sdk-go/types"
+
 	"github.com/stretchr/testify/require"
+
+	"github.com/bianjieai/iritamod-sdk-go/perm"
 )
 
 func (s IntegrationTestSuite) TestPerm() {

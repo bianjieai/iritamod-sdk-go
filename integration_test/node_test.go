@@ -9,8 +9,9 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"github.com/bianjieai/iritamod-sdk-go/node"
 	sdk "github.com/irisnet/core-sdk-go/types"
+
+	"github.com/bianjieai/iritamod-sdk-go/node"
 )
 
 func (s IntegrationTestSuite) TestValidator() {

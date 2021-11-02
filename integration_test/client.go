@@ -1,6 +1,15 @@
 package integration
 
 import (
+	"github.com/irisnet/core-sdk-go/client"
+	"github.com/irisnet/core-sdk-go/codec"
+	"github.com/irisnet/core-sdk-go/modules/bank"
+	"github.com/irisnet/core-sdk-go/modules/gov"
+	"github.com/irisnet/core-sdk-go/modules/staking"
+	"github.com/irisnet/core-sdk-go/types"
+
+	"github.com/tendermint/tendermint/libs/log"
+
 	"github.com/bianjieai/iritamod-sdk-go/identity"
 	"github.com/bianjieai/iritamod-sdk-go/nft"
 	"github.com/bianjieai/iritamod-sdk-go/node"
@@ -11,13 +20,6 @@ import (
 	"github.com/bianjieai/iritamod-sdk-go/service"
 	"github.com/bianjieai/iritamod-sdk-go/token"
 	"github.com/bianjieai/iritamod-sdk-go/wasm"
-	"github.com/irisnet/core-sdk-go/client"
-	"github.com/irisnet/core-sdk-go/codec"
-	"github.com/irisnet/core-sdk-go/modules/bank"
-	"github.com/irisnet/core-sdk-go/modules/gov"
-	"github.com/irisnet/core-sdk-go/modules/staking"
-	"github.com/irisnet/core-sdk-go/types"
-	"github.com/tendermint/tendermint/libs/log"
 
 	cdctypes "github.com/irisnet/core-sdk-go/codec/types"
 	cryptocodec "github.com/irisnet/core-sdk-go/crypto/codec"

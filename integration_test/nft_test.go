@@ -4,9 +4,11 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/bianjieai/iritamod-sdk-go/nft"
 	sdk "github.com/irisnet/core-sdk-go/types"
+
 	"github.com/stretchr/testify/require"
+
+	"github.com/bianjieai/iritamod-sdk-go/nft"
 )
 
 func (s IntegrationTestSuite) Test_nft() {

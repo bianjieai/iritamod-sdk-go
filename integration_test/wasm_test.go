@@ -3,9 +3,11 @@ package integration
 import (
 	"fmt"
 
-	"github.com/bianjieai/iritamod-sdk-go/wasm"
 	"github.com/irisnet/core-sdk-go/types"
+
 	"github.com/stretchr/testify/require"
+
+	"github.com/bianjieai/iritamod-sdk-go/wasm"
 )
 
 func (s IntegrationTestSuite) TestWasm() {

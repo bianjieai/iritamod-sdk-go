@@ -5,8 +5,9 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"github.com/bianjieai/iritamod-sdk-go/record"
 	sdk "github.com/irisnet/core-sdk-go/types"
+
+	"github.com/bianjieai/iritamod-sdk-go/record"
 )
 
 func (s IntegrationTestSuite) TestRecord() {

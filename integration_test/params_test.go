@@ -1,9 +1,11 @@
 package integration
 
 import (
-	"github.com/bianjieai/iritamod-sdk-go/params"
 	"github.com/irisnet/core-sdk-go/types"
+
 	"github.com/stretchr/testify/require"
+
+	"github.com/bianjieai/iritamod-sdk-go/params"
 )
 
 func (s IntegrationTestSuite) TestParams() {

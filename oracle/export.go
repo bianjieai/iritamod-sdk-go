@@ -5,9 +5,10 @@ import (
 
 	ctypes "github.com/tendermint/tendermint/rpc/core/types"
 
-	"github.com/bianjieai/iritamod-sdk-go/service"
 	sdk "github.com/irisnet/core-sdk-go/types"
 	types "github.com/irisnet/core-sdk-go/types"
+
+	"github.com/bianjieai/iritamod-sdk-go/service"
 )
 
 var (

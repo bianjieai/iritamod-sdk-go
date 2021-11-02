@@ -3,10 +3,12 @@ package integration
 import (
 	"time"
 
-	"github.com/bianjieai/iritamod-sdk-go/service"
 	sdk "github.com/irisnet/core-sdk-go/types"
 	"github.com/irisnet/core-sdk-go/types/query"
+
 	"github.com/stretchr/testify/require"
+
+	"github.com/bianjieai/iritamod-sdk-go/service"
 )
 
 func (s IntegrationTestSuite) TestService() {

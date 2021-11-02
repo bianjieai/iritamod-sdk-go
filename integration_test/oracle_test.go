@@ -6,9 +6,10 @@ import (
 
 	"github.com/stretchr/testify/require"
 
+	sdk "github.com/irisnet/core-sdk-go/types"
+
 	"github.com/bianjieai/iritamod-sdk-go/oracle"
 	"github.com/bianjieai/iritamod-sdk-go/service"
-	sdk "github.com/irisnet/core-sdk-go/types"
 )
 
 var serviceName = generateServiceName()
