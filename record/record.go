@@ -68,9 +68,8 @@ func (r recordClient) QueryRecord(request QueryRecordReq) (QueryRecordResp, erro
 	if err != nil {
 		return QueryRecordResp{}, err
 	}
-
 	var record Record
-	if err := r.Codec.UnmarshalLengthPrefixed(res.Value, &record); err != nil {
+	if err := r.Codec.Unmarshal(res.Value, &record); err != nil {
 		return QueryRecordResp{}, err
 	}
 

@@ -8,6 +8,9 @@ import (
 	"errors"
 	"fmt"
 
+	"github.com/irisnet/core-sdk-go/codec"
+	"github.com/irisnet/core-sdk-go/types/tx"
+
 	sdk "github.com/irisnet/core-sdk-go/types"
 )
 
@@ -22,9 +25,12 @@ func (s serviceClient) queryRequestContextByTxQuery(reqCtxID string) (RequestCon
 	if err != nil {
 		return RequestContext{}, err
 	}
-
-	if int64(len(txInfo.Tx.Body.Msgs)) > msgIndex {
-		msg := txInfo.Tx.Body.Msgs[msgIndex]
+	txInterface, err := tx.DefaultTxDecoder(s.Codec.(*codec.ProtoCodec))(txInfo.Tx)
+	if err != nil {
+		return RequestContext{}, err
+	}
+	if int64(len(txInterface.GetMsgs())) > msgIndex {
+		msg := txInterface.GetMsgs()[msgIndex]
 		if msg, ok := msg.(*MsgCallService); ok {
 			return RequestContext{
 				ServiceName:        msg.ServiceName,
@@ -142,8 +148,11 @@ func (s serviceClient) queryResponseByTxQuery(requestID string) (Response, error
 	if err != nil {
 		return Response{}, err
 	}
-
-	for _, msg := range result.Txs[0].Tx.Body.Msgs {
+	txInterface, err := tx.DefaultTxDecoder(s.Codec.(*codec.ProtoCodec))(result.Txs[0].Tx)
+	if err != nil {
+		return Response{}, err
+	}
+	for _, msg := range txInterface.GetMsgs() {
 		if responseMsg, ok := msg.(*MsgRespondService); ok {
 			if responseMsg.RequestId != requestID {
 				continue

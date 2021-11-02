@@ -216,7 +216,7 @@
         "clients": [],
         "clients_consensus": [],
         "clients_metadata": [],
-        "native_chain_name": "tibc-test",
+        "native_chain_name": "iritamodtest",
         "relayers": []
       },
       "packet_genesis": {

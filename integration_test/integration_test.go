@@ -67,7 +67,7 @@ func (s *IntegrationTestSuite) SetupSuite() {
 	s.r = rand.New(rand.NewSource(time.Now().UnixNano()))
 	s.rootAccount = MockAccount{
 		Name:     "v1",
-		Password: "12345678",
+		Password: "1234567890",
 		Address:  types.MustAccAddressFromBech32(addr),
 	}
 	s.SetLogger(log.NewLogger(log.Config{
@@ -89,7 +89,7 @@ func (s *IntegrationTestSuite) initAccount() {
 	for i := 0; i < 5; i++ {
 		name := s.RandStringOfLength(10)
 		pwd := s.RandStringOfLength(16)
-		address, _, err := s.Add(name, "11111111")
+		address, _, err := s.Add(name, "1234567890")
 		if err != nil {
 			panic("generate test account failed")
 		}

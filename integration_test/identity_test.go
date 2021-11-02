@@ -54,6 +54,7 @@ func (s IntegrationTestSuite) Test_Identity() {
 	fmt.Println(rest)
 
 	rs, err := s.Identity.CreateIdentity(request, baseTx)
+	fmt.Println(rs.Hash)
 	require.NoError(s.T(), err)
 	require.NotEmpty(s.T(), rs.Hash)
 
