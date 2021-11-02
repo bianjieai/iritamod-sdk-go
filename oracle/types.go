@@ -17,14 +17,6 @@ var (
 	_ sdk.Msg = &MsgEditFeed{}
 )
 
-func (m MsgCreateFeed) Route() string {
-	return ModuleName
-}
-
-func (m MsgCreateFeed) Type() string {
-	return "create_feed"
-}
-
 func (m MsgCreateFeed) ValidateBasic() error {
 	if len(m.FeedName) == 0 {
 		return errors.New("feedName missing")
@@ -49,28 +41,8 @@ func (m MsgCreateFeed) ValidateBasic() error {
 	return nil
 }
 
-func (m MsgCreateFeed) GetSignBytes() []byte {
-	if len(m.Providers) == 0 {
-		m.Providers = nil
-	}
-	if len(m.ServiceFeeCap) == 0 {
-		m.ServiceFeeCap = nil
-	}
-
-	bz := amino.MustMarshalJSON(&m)
-	return sdk.MustSortJSON(bz)
-}
-
 func (m MsgCreateFeed) GetSigners() []sdk.AccAddress {
 	return []sdk.AccAddress{sdk.MustAccAddressFromBech32(m.Creator)}
-}
-
-func (m MsgStartFeed) Route() string {
-	return ModuleName
-}
-
-func (m MsgStartFeed) Type() string {
-	return "start_feed"
 }
 
 func (m MsgStartFeed) ValidateBasic() error {
@@ -80,21 +52,8 @@ func (m MsgStartFeed) ValidateBasic() error {
 	return nil
 }
 
-func (m MsgStartFeed) GetSignBytes() []byte {
-	bz := amino.MustMarshalJSON(&m)
-	return sdk.MustSortJSON(bz)
-}
-
 func (m MsgStartFeed) GetSigners() []sdk.AccAddress {
 	return []sdk.AccAddress{sdk.MustAccAddressFromBech32(m.Creator)}
-}
-
-func (m MsgPauseFeed) Route() string {
-	return ModuleName
-}
-
-func (m MsgPauseFeed) Type() string {
-	return "pause_feed"
 }
 
 func (m MsgPauseFeed) ValidateBasic() error {
@@ -104,21 +63,8 @@ func (m MsgPauseFeed) ValidateBasic() error {
 	return nil
 }
 
-func (m MsgPauseFeed) GetSignBytes() []byte {
-	bz := amino.MustMarshalJSON(&m)
-	return sdk.MustSortJSON(bz)
-}
-
 func (m MsgPauseFeed) GetSigners() []sdk.AccAddress {
 	return []sdk.AccAddress{sdk.MustAccAddressFromBech32(m.Creator)}
-}
-
-func (m MsgEditFeed) Route() string {
-	return ModuleName
-}
-
-func (m MsgEditFeed) Type() string {
-	return "edit_feed"
 }
 
 func (m MsgEditFeed) ValidateBasic() error {
@@ -126,11 +72,6 @@ func (m MsgEditFeed) ValidateBasic() error {
 		return errors.New("feedName missing")
 	}
 	return nil
-}
-
-func (m MsgEditFeed) GetSignBytes() []byte {
-	bz := amino.MustMarshalJSON(&m)
-	return sdk.MustSortJSON(bz)
 }
 
 func (m MsgEditFeed) GetSigners() []sdk.AccAddress {

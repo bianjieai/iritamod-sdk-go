@@ -19,12 +19,7 @@ var (
 	_ sdk.Msg = &MsgTransferTokenOwner{}
 )
 
-func (msg MsgIssueToken) Route() string { return ModuleName }
-
-// Implements Msg.
-func (msg MsgIssueToken) Type() string { return "issue_token" }
-
-// Implements Msg.
+// ValidateBasic Implements Msg.
 func (msg MsgIssueToken) ValidateBasic() error {
 	if len(msg.Owner) == 0 {
 		return errors.New("owner must be not empty")
@@ -49,29 +44,9 @@ func (msg MsgIssueToken) ValidateBasic() error {
 	return nil
 }
 
-// Implements Msg.
-func (msg MsgIssueToken) GetSignBytes() []byte {
-	b, err := amino.MarshalJSON(&msg)
-	if err != nil {
-		panic(err)
-	}
-
-	return sdk.MustSortJSON(b)
-}
-
-// Implements Msg.
+// GetSigners Implements Msg.
 func (msg MsgIssueToken) GetSigners() []sdk.AccAddress {
 	return []sdk.AccAddress{sdk.MustAccAddressFromBech32(msg.Owner)}
-}
-
-// GetSignBytes implements Msg
-func (msg MsgTransferTokenOwner) GetSignBytes() []byte {
-	b, err := amino.MarshalJSON(&msg)
-	if err != nil {
-		panic(err)
-	}
-
-	return sdk.MustSortJSON(b)
 }
 
 // GetSigners implements Msg
@@ -103,16 +78,6 @@ func (msg MsgTransferTokenOwner) ValidateBasic() error {
 	return nil
 }
 
-func (msg MsgTransferTokenOwner) Route() string { return ModuleName }
-
-// Type implements Msg
-func (msg MsgTransferTokenOwner) Type() string { return "transfer_token_owner" }
-
-func (msg MsgEditToken) Route() string { return ModuleName }
-
-// Type implements Msg
-func (msg MsgEditToken) Type() string { return "edit_token" }
-
 // ValidateBasic implements Msg
 func (msg MsgEditToken) ValidateBasic() error {
 	if len(msg.Owner) == 0 {
@@ -129,33 +94,9 @@ func (msg MsgEditToken) ValidateBasic() error {
 	return nil
 }
 
-// GetSignBytes implements Msg
-func (msg MsgEditToken) GetSignBytes() []byte {
-	b, err := amino.MarshalJSON(&msg)
-	if err != nil {
-		panic(err)
-	}
-
-	return sdk.MustSortJSON(b)
-}
-
 // GetSigners implements Msg
 func (msg MsgEditToken) GetSigners() []sdk.AccAddress {
 	return []sdk.AccAddress{sdk.MustAccAddressFromBech32(msg.Owner)}
-}
-
-func (msg MsgMintToken) Route() string { return ModuleName }
-
-// Type implements Msg
-func (msg MsgMintToken) Type() string { return "mint_token" }
-
-// GetSignBytes implements Msg
-func (msg MsgMintToken) GetSignBytes() []byte {
-	b, err := amino.MarshalJSON(&msg)
-	if err != nil {
-		panic(err)
-	}
-	return sdk.MustSortJSON(b)
 }
 
 // GetSigners implements Msg

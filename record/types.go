@@ -19,21 +19,6 @@ var (
 	recordKey = []byte{0x01} // record key
 )
 
-// Route implements Msg.
-func (msg MsgCreateRecord) Route() string { return ModuleName }
-
-// Type implements Msg.
-func (msg MsgCreateRecord) Type() string { return "create_record" }
-
-// GetSignBytes implements Msg.
-func (msg MsgCreateRecord) GetSignBytes() []byte {
-	b, err := amino.MarshalJSON(&msg)
-	if err != nil {
-		panic(err)
-	}
-	return sdk.MustSortJSON(b)
-}
-
 // ValidateBasic implements Msg.
 func (msg MsgCreateRecord) ValidateBasic() error {
 	if len(msg.Contents) == 0 {

@@ -24,14 +24,6 @@ var (
 	_ sdk.Msg = &MsgUnblockAccount{}
 )
 
-func (m MsgAssignRoles) Route() string {
-	return ModuleName
-}
-
-func (m MsgAssignRoles) Type() string {
-	return TypeMsgAssignRoles
-}
-
 func (m MsgAssignRoles) ValidateBasic() error {
 	if len(m.Address) == 0 {
 		return errors.New("address missing")
@@ -45,21 +37,8 @@ func (m MsgAssignRoles) ValidateBasic() error {
 	return nil
 }
 
-func (m MsgAssignRoles) GetSignBytes() []byte {
-	bz := amino.MustMarshalJSON(&m)
-	return sdk.MustSortJSON(bz)
-}
-
 func (m MsgAssignRoles) GetSigners() []sdk.AccAddress {
 	return []sdk.AccAddress{sdk.MustAccAddressFromBech32(m.Operator)}
-}
-
-func (m MsgUnassignRoles) Route() string {
-	return ModuleName
-}
-
-func (m MsgUnassignRoles) Type() string {
-	return TypeMsgUnassignRoles
 }
 
 func (m MsgUnassignRoles) ValidateBasic() error {
@@ -75,21 +54,8 @@ func (m MsgUnassignRoles) ValidateBasic() error {
 	return nil
 }
 
-func (m MsgUnassignRoles) GetSignBytes() []byte {
-	bz := amino.MustMarshalJSON(&m)
-	return sdk.MustSortJSON(bz)
-}
-
 func (m MsgUnassignRoles) GetSigners() []sdk.AccAddress {
 	return []sdk.AccAddress{sdk.MustAccAddressFromBech32(m.Operator)}
-}
-
-func (m MsgBlockAccount) Route() string {
-	return ModuleName
-}
-
-func (m MsgBlockAccount) Type() string {
-	return TypeMsgBlockAccount
 }
 
 func (m MsgBlockAccount) ValidateBasic() error {
@@ -102,21 +68,8 @@ func (m MsgBlockAccount) ValidateBasic() error {
 	return nil
 }
 
-func (m MsgBlockAccount) GetSignBytes() []byte {
-	bz := amino.MustMarshalJSON(&m)
-	return sdk.MustSortJSON(bz)
-}
-
 func (m MsgBlockAccount) GetSigners() []sdk.AccAddress {
 	return []sdk.AccAddress{sdk.MustAccAddressFromBech32(m.Operator)}
-}
-
-func (m MsgUnblockAccount) Route() string {
-	return ModuleName
-}
-
-func (m MsgUnblockAccount) Type() string {
-	return TypeMsgUnblockAccount
 }
 
 func (m MsgUnblockAccount) ValidateBasic() error {
@@ -127,11 +80,6 @@ func (m MsgUnblockAccount) ValidateBasic() error {
 		return errors.New("operator missing")
 	}
 	return nil
-}
-
-func (m MsgUnblockAccount) GetSignBytes() []byte {
-	bz := amino.MustMarshalJSON(&m)
-	return sdk.MustSortJSON(bz)
 }
 
 func (m MsgUnblockAccount) GetSigners() []sdk.AccAddress {

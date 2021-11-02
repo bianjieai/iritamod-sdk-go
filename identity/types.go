@@ -19,20 +19,12 @@ const (
 	DoNotModifyDesc = "[do-not-modify]" // description used to indicate not to modify a field
 
 	ModuleName = "identity"
-
-	RouterKey = ModuleName
 )
 
 var (
 	_ sdk.Msg = &MsgCreateIdentity{}
 	_ sdk.Msg = &MsgUpdateIdentity{}
 )
-
-// Route implements Msg
-func (m MsgCreateIdentity) Route() string { return RouterKey }
-
-// Type implements Msg
-func (m MsgCreateIdentity) Type() string { return TypeMsgCreateIdentity }
 
 // ValidateBasic implements Msg
 func (m MsgCreateIdentity) ValidateBasic() error {
@@ -45,27 +37,9 @@ func (m MsgCreateIdentity) ValidateBasic() error {
 	)
 }
 
-// GetSignBytes implements Msg
-func (m MsgCreateIdentity) GetSignBytes() []byte {
-	bz := amino.MustMarshalJSON(&m)
-	return sdk.MustSortJSON(bz)
-}
-
 // GetSigners implements Msg
 func (m MsgCreateIdentity) GetSigners() []sdk.AccAddress {
 	return []sdk.AccAddress{sdk.MustAccAddressFromBech32(m.Owner)}
-}
-
-// Route implements m.
-func (m MsgUpdateIdentity) Route() string { return RouterKey }
-
-// Type implements m.
-func (m MsgUpdateIdentity) Type() string { return TypeMsgUpdateIdentity }
-
-// GetSignBytes implements m.
-func (m MsgUpdateIdentity) GetSignBytes() []byte {
-	b := amino.MustMarshalJSON(&m)
-	return sdk.MustSortJSON(b)
 }
 
 // ValidateBasic implements m.

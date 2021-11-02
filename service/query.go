@@ -8,9 +8,6 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/irisnet/core-sdk-go/codec"
-	"github.com/irisnet/core-sdk-go/types/tx"
-
 	sdk "github.com/irisnet/core-sdk-go/types"
 )
 
@@ -25,7 +22,7 @@ func (s serviceClient) queryRequestContextByTxQuery(reqCtxID string) (RequestCon
 	if err != nil {
 		return RequestContext{}, err
 	}
-	txInterface, err := tx.DefaultTxDecoder(s.Codec.(*codec.ProtoCodec))(txInfo.Tx)
+	txInterface, err := s.TxConfig().TxDecoder()(txInfo.Tx)
 	if err != nil {
 		return RequestContext{}, err
 	}
@@ -148,7 +145,7 @@ func (s serviceClient) queryResponseByTxQuery(requestID string) (Response, error
 	if err != nil {
 		return Response{}, err
 	}
-	txInterface, err := tx.DefaultTxDecoder(s.Codec.(*codec.ProtoCodec))(result.Txs[0].Tx)
+	txInterface, err := s.TxConfig().TxDecoder()(result.Txs[0].Tx)
 	if err != nil {
 		return Response{}, err
 	}

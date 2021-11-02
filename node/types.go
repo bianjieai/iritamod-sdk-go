@@ -19,14 +19,6 @@ var (
 	_ sdk.Msg = &MsgRevokeNode{}
 )
 
-func (m MsgCreateValidator) Route() string {
-	return ModuleName
-}
-
-func (m MsgCreateValidator) Type() string {
-	return "create_validator"
-}
-
 func (m MsgCreateValidator) ValidateBasic() error {
 	if len(m.Operator) == 0 {
 		return errors.New("operator missing")
@@ -44,21 +36,8 @@ func (m MsgCreateValidator) ValidateBasic() error {
 	return nil
 }
 
-func (m MsgCreateValidator) GetSignBytes() []byte {
-	bz := amino.MustMarshalJSON(&m)
-	return sdk.MustSortJSON(bz)
-}
-
 func (m MsgCreateValidator) GetSigners() []sdk.AccAddress {
 	return []sdk.AccAddress{sdk.MustAccAddressFromBech32(m.Operator)}
-}
-
-func (m MsgUpdateValidator) Route() string {
-	return ModuleName
-}
-
-func (m MsgUpdateValidator) Type() string {
-	return "update_validator"
 }
 
 func (m MsgUpdateValidator) ValidateBasic() error {
@@ -75,21 +54,8 @@ func (m MsgUpdateValidator) ValidateBasic() error {
 	return nil
 }
 
-func (m MsgUpdateValidator) GetSignBytes() []byte {
-	bz := amino.MustMarshalJSON(&m)
-	return sdk.MustSortJSON(bz)
-}
-
 func (m MsgUpdateValidator) GetSigners() []sdk.AccAddress {
 	return []sdk.AccAddress{sdk.MustAccAddressFromBech32(m.Operator)}
-}
-
-func (m MsgRemoveValidator) Route() string {
-	return ModuleName
-}
-
-func (m MsgRemoveValidator) Type() string {
-	return "remove_validator"
 }
 
 func (m MsgRemoveValidator) ValidateBasic() error {
@@ -102,21 +68,8 @@ func (m MsgRemoveValidator) ValidateBasic() error {
 	return nil
 }
 
-func (m MsgRemoveValidator) GetSignBytes() []byte {
-	bz := amino.MustMarshalJSON(&m)
-	return sdk.MustSortJSON(bz)
-}
-
 func (m MsgRemoveValidator) GetSigners() []sdk.AccAddress {
 	return []sdk.AccAddress{sdk.MustAccAddressFromBech32(m.Operator)}
-}
-
-func (m MsgGrantNode) Route() string {
-	return ModuleName
-}
-
-func (m MsgGrantNode) Type() string {
-	return "grant_node"
 }
 
 func (m MsgGrantNode) ValidateBasic() error {
@@ -126,21 +79,8 @@ func (m MsgGrantNode) ValidateBasic() error {
 	return nil
 }
 
-func (m MsgGrantNode) GetSignBytes() []byte {
-	bz := amino.MustMarshalJSON(&m)
-	return sdk.MustSortJSON(bz)
-}
-
 func (m MsgGrantNode) GetSigners() []sdk.AccAddress {
 	return []sdk.AccAddress{sdk.MustAccAddressFromBech32(m.Operator)}
-}
-
-func (m MsgRevokeNode) Route() string {
-	return ModuleName
-}
-
-func (m MsgRevokeNode) Type() string {
-	return "revoke_node"
 }
 
 func (m MsgRevokeNode) ValidateBasic() error {
@@ -151,11 +91,6 @@ func (m MsgRevokeNode) ValidateBasic() error {
 		return errors.New("validator id cannot be blank")
 	}
 	return nil
-}
-
-func (m MsgRevokeNode) GetSignBytes() []byte {
-	bz := amino.MustMarshalJSON(&m)
-	return sdk.MustSortJSON(bz)
 }
 
 func (m MsgRevokeNode) GetSigners() []sdk.AccAddress {

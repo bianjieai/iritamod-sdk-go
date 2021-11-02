@@ -14,24 +14,11 @@ var (
 	_ sdk.Msg = &MsgUpdateParams{}
 )
 
-func (m MsgUpdateParams) Route() string {
-	return ModuleName
-}
-
-func (m MsgUpdateParams) Type() string {
-	return "update_params"
-}
-
 func (m MsgUpdateParams) ValidateBasic() error {
 	if len(m.Operator) == 0 {
 		return errors.New("operator missing")
 	}
 	return validateChanges(m.Changes)
-}
-
-func (m MsgUpdateParams) GetSignBytes() []byte {
-	bz := amino.MustMarshalJSON(&m)
-	return sdk.MustSortJSON(bz)
 }
 
 func (m MsgUpdateParams) GetSigners() []sdk.AccAddress {

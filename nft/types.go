@@ -19,14 +19,6 @@ var (
 	_ sdk.Msg = &MsgBurnNFT{}
 )
 
-func (m MsgIssueDenom) Route() string {
-	return ModuleName
-}
-
-func (m MsgIssueDenom) Type() string {
-	return "issue_denom"
-}
-
 func (m MsgIssueDenom) ValidateBasic() error {
 	if len(m.Sender) == 0 {
 		return errors.New("missing sender address")
@@ -42,24 +34,8 @@ func (m MsgIssueDenom) ValidateBasic() error {
 	return nil
 }
 
-func (m MsgIssueDenom) GetSignBytes() []byte {
-	bz, err := amino.MarshalJSON(&m)
-	if err != nil {
-		panic(err)
-	}
-	return sdk.MustSortJSON(bz)
-}
-
 func (m MsgIssueDenom) GetSigners() []sdk.AccAddress {
 	return []sdk.AccAddress{sdk.MustAccAddressFromBech32(m.Sender)}
-}
-
-func (m MsgTransferNFT) Route() string {
-	return ModuleName
-}
-
-func (m MsgTransferNFT) Type() string {
-	return "transfer_nft"
 }
 
 func (m MsgTransferNFT) ValidateBasic() error {
@@ -89,24 +65,8 @@ func (m MsgTransferNFT) ValidateBasic() error {
 	return nil
 }
 
-func (m MsgTransferNFT) GetSignBytes() []byte {
-	bz, err := amino.MarshalJSON(&m)
-	if err != nil {
-		panic(err)
-	}
-	return sdk.MustSortJSON(bz)
-}
-
 func (m MsgTransferNFT) GetSigners() []sdk.AccAddress {
 	return []sdk.AccAddress{sdk.MustAccAddressFromBech32(m.Sender)}
-}
-
-func (m MsgEditNFT) Route() string {
-	return ModuleName
-}
-
-func (m MsgEditNFT) Type() string {
-	return "edit_nft"
 }
 
 func (m MsgEditNFT) ValidateBasic() error {
@@ -129,24 +89,8 @@ func (m MsgEditNFT) ValidateBasic() error {
 	return nil
 }
 
-func (m MsgEditNFT) GetSignBytes() []byte {
-	bz, err := amino.MarshalJSON(&m)
-	if err != nil {
-		panic(err)
-	}
-	return sdk.MustSortJSON(bz)
-}
-
 func (m MsgEditNFT) GetSigners() []sdk.AccAddress {
 	return []sdk.AccAddress{sdk.MustAccAddressFromBech32(m.Sender)}
-}
-
-func (m MsgMintNFT) Route() string {
-	return ModuleName
-}
-
-func (m MsgMintNFT) Type() string {
-	return "mint_nft"
 }
 
 func (m MsgMintNFT) ValidateBasic() error {
@@ -169,24 +113,8 @@ func (m MsgMintNFT) ValidateBasic() error {
 	return nil
 }
 
-func (m MsgMintNFT) GetSignBytes() []byte {
-	bz, err := amino.MarshalJSON(&m)
-	if err != nil {
-		panic(err)
-	}
-	return sdk.MustSortJSON(bz)
-}
-
 func (m MsgMintNFT) GetSigners() []sdk.AccAddress {
 	return []sdk.AccAddress{sdk.MustAccAddressFromBech32(m.Sender)}
-}
-
-func (m MsgBurnNFT) Route() string {
-	return ModuleName
-}
-
-func (m MsgBurnNFT) Type() string {
-	return "burn_nft"
 }
 
 func (m MsgBurnNFT) ValidateBasic() error {
@@ -207,14 +135,6 @@ func (m MsgBurnNFT) ValidateBasic() error {
 		return errors.New("missing ID")
 	}
 	return nil
-}
-
-func (m MsgBurnNFT) GetSignBytes() []byte {
-	bz, err := amino.MarshalJSON(&m)
-	if err != nil {
-		panic(err)
-	}
-	return sdk.MustSortJSON(bz)
 }
 
 func (m MsgBurnNFT) GetSigners() []sdk.AccAddress {
