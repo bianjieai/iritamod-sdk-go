@@ -7,13 +7,12 @@ import (
 	"context"
 	"strconv"
 
-	"github.com/irisnet/core-sdk-go/types/errors"
-
 	ctypes "github.com/tendermint/tendermint/rpc/core/types"
 
 	"github.com/irisnet/core-sdk-go/codec"
 	"github.com/irisnet/core-sdk-go/codec/types"
 	sdk "github.com/irisnet/core-sdk-go/types"
+	"github.com/irisnet/core-sdk-go/types/errors"
 	"github.com/irisnet/core-sdk-go/types/query"
 )
 
