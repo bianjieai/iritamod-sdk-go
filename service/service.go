@@ -434,7 +434,7 @@ func (s serviceClient) SubscribeServiceRequest(serviceName string,
 			)
 		}
 		if _, err = s.SendBatch(msgs, baseTx); err != nil {
-			s.Logger().Error("provider respond failed", "errMsg", err.Error())
+			s.Logger().Error("provider respond faild", "errMsg", err.Error())
 		}
 	})
 }

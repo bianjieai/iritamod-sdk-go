@@ -2,8 +2,9 @@ package token
 
 import (
 	json2 "encoding/json"
-	"errors"
 	"strconv"
+
+	"github.com/irisnet/core-sdk-go/types/errors"
 
 	sdk "github.com/irisnet/core-sdk-go/types"
 )
@@ -22,23 +23,23 @@ var (
 // ValidateBasic Implements Msg.
 func (msg MsgIssueToken) ValidateBasic() error {
 	if len(msg.Owner) == 0 {
-		return errors.New("owner must be not empty")
+		return errors.Wrap(ErrValidateBasic, "owner must be not empty")
 	}
 
 	if err := sdk.ValidateAccAddress(msg.Owner); err != nil {
-		return err
+		return errors.Wrap(ErrValidateAccAddress, err.Error())
 	}
 
 	if len(msg.Symbol) == 0 {
-		return errors.New("symbol must be not empty")
+		return errors.Wrap(ErrValidateBasic, "symbol must be not empty")
 	}
 
 	if len(msg.Name) == 0 {
-		return errors.New("name must be not empty")
+		return errors.Wrap(ErrValidateBasic, "name must be not empty")
 	}
 
 	if len(msg.MinUnit) == 0 {
-		return errors.New("minUnit must be not empty")
+		return errors.Wrap(ErrValidateBasic, "minUnit must be not empty")
 	}
 
 	return nil
@@ -56,23 +57,23 @@ func (msg MsgTransferTokenOwner) GetSigners() []sdk.AccAddress {
 
 func (msg MsgTransferTokenOwner) ValidateBasic() error {
 	if len(msg.SrcOwner) == 0 {
-		return errors.New("srcOwner must be not empty")
+		return errors.Wrap(ErrValidateBasic, "srcOwner must be not empty")
 	}
 
 	if err := sdk.ValidateAccAddress(msg.SrcOwner); err != nil {
-		return err
+		return errors.Wrap(ErrValidateAccAddress, err.Error())
 	}
 
 	if len(msg.DstOwner) == 0 {
-		return errors.New("dstOwner must be not empty")
+		return errors.Wrap(ErrValidateBasic, "dstOwner must be not empty")
 	}
 
 	if err := sdk.ValidateAccAddress(msg.DstOwner); err != nil {
-		return err
+		return errors.Wrap(ErrValidateAccAddress, err.Error())
 	}
 
 	if len(msg.Symbol) == 0 {
-		return errors.New("symbol must be not empty")
+		return errors.Wrap(ErrValidateBasic, "symbol must be not empty")
 	}
 
 	return nil
@@ -81,15 +82,15 @@ func (msg MsgTransferTokenOwner) ValidateBasic() error {
 // ValidateBasic implements Msg
 func (msg MsgEditToken) ValidateBasic() error {
 	if len(msg.Owner) == 0 {
-		return errors.New("owner must be not empty")
+		return errors.Wrap(ErrValidateBasic, "owner must be not empty")
 	}
 
 	if err := sdk.ValidateAccAddress(msg.Owner); err != nil {
-		return err
+		return errors.Wrap(ErrValidateAccAddress, err.Error())
 	}
 
 	if len(msg.Symbol) == 0 {
-		return errors.New("symbol must be not empty")
+		return errors.Wrap(ErrValidateBasic, "symbol must be not empty")
 	}
 	return nil
 }
@@ -107,15 +108,15 @@ func (msg MsgMintToken) GetSigners() []sdk.AccAddress {
 // ValidateBasic implements Msg
 func (msg MsgMintToken) ValidateBasic() error {
 	if len(msg.Owner) == 0 {
-		return errors.New("owner must be not empty")
+		return errors.Wrap(ErrValidateBasic, "owner must be not empty")
 	}
 
 	if err := sdk.ValidateAccAddress(msg.Owner); err != nil {
-		return err
+		return errors.Wrap(ErrValidateAccAddress, err.Error())
 	}
 
 	if len(msg.Symbol) == 0 {
-		return errors.New("symbol must be not empty")
+		return errors.Wrap(ErrValidateBasic, "symbol must be not empty")
 	}
 	return nil
 }
@@ -156,7 +157,7 @@ func (b *Bool) UnmarshalJSON(data []byte) error {
 	var s string
 	err := json2.Unmarshal(data, &s)
 	if err != nil {
-		return nil
+		return errors.Wrap(ErrUnmarshal, err.Error())
 	}
 	*b = Bool(s)
 	return nil

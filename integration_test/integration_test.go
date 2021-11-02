@@ -91,7 +91,7 @@ func (s *IntegrationTestSuite) initAccount() {
 		pwd := s.RandStringOfLength(16)
 		address, _, err := s.Add(name, "1234567890")
 		if err != nil {
-			panic("generate test account failed")
+			panic("generate test account fail")
 		}
 
 		s.randAccounts = append(s.randAccounts, MockAccount{

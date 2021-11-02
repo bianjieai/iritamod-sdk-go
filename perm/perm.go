@@ -3,6 +3,8 @@ package perm
 import (
 	"context"
 
+	"github.com/irisnet/core-sdk-go/types/errors"
+
 	ctypes "github.com/tendermint/tendermint/rpc/core/types"
 
 	"github.com/irisnet/core-sdk-go/codec"
@@ -33,12 +35,12 @@ func (a permClient) RegisterInterfaceTypes(registry types.InterfaceRegistry) {
 func (a permClient) AssignRoles(address string, roles []Role, baseTx sdk.BaseTx) (ctypes.ResultTx, error) {
 	sender, err := a.QueryAddress(baseTx.From, baseTx.Password)
 	if err != nil {
-		return ctypes.ResultTx{}, err
+		return ctypes.ResultTx{}, errors.Wrap(ErrQueryAddress, err.Error())
 	}
 
 	acc, err := sdk.AccAddressFromBech32(address)
 	if err != nil {
-		return ctypes.ResultTx{}, err
+		return ctypes.ResultTx{}, errors.Wrap(ErrBench32, err.Error())
 	}
 
 	msg := &MsgAssignRoles{
@@ -46,18 +48,22 @@ func (a permClient) AssignRoles(address string, roles []Role, baseTx sdk.BaseTx)
 		Roles:    roles,
 		Operator: sender.String(),
 	}
-	return a.BuildAndSend([]sdk.Msg{msg}, baseTx)
+	send, err := a.BuildAndSend([]sdk.Msg{msg}, baseTx)
+	if err != nil {
+		return ctypes.ResultTx{}, errors.Wrap(ErrBuildAndSend, err.Error())
+	}
+	return send, nil
 }
 
 func (a permClient) UnassignRoles(address string, roles []Role, baseTx sdk.BaseTx) (ctypes.ResultTx, error) {
 	sender, err := a.QueryAddress(baseTx.From, baseTx.Password)
 	if err != nil {
-		return ctypes.ResultTx{}, err
+		return ctypes.ResultTx{}, errors.Wrap(ErrQueryAddress, err.Error())
 	}
 
 	acc, err := sdk.AccAddressFromBech32(address)
 	if err != nil {
-		return ctypes.ResultTx{}, err
+		return ctypes.ResultTx{}, errors.Wrap(ErrBench32, err.Error())
 	}
 
 	msg := &MsgUnassignRoles{
@@ -65,55 +71,70 @@ func (a permClient) UnassignRoles(address string, roles []Role, baseTx sdk.BaseT
 		Roles:    roles,
 		Operator: sender.String(),
 	}
-	return a.BuildAndSend([]sdk.Msg{msg}, baseTx)
+
+	send, err := a.BuildAndSend([]sdk.Msg{msg}, baseTx)
+	if err != nil {
+		return ctypes.ResultTx{}, errors.Wrap(ErrBuildAndSend, err.Error())
+	}
+	return send, nil
 }
 
 func (a permClient) BlockAccount(address string, baseTx sdk.BaseTx) (ctypes.ResultTx, error) {
 	sender, err := a.QueryAddress(baseTx.From, baseTx.Password)
 	if err != nil {
-		return ctypes.ResultTx{}, err
+		return ctypes.ResultTx{}, errors.Wrap(ErrQueryAddress, err.Error())
 	}
 
 	acc, err := sdk.AccAddressFromBech32(address)
 	if err != nil {
-		return ctypes.ResultTx{}, err
+		return ctypes.ResultTx{}, errors.Wrap(ErrBench32, err.Error())
 	}
 
 	msg := &MsgBlockAccount{
 		Address:  acc.String(),
 		Operator: sender.String(),
 	}
-	return a.BuildAndSend([]sdk.Msg{msg}, baseTx)
+
+	send, err := a.BuildAndSend([]sdk.Msg{msg}, baseTx)
+	if err != nil {
+		return ctypes.ResultTx{}, errors.Wrap(ErrBuildAndSend, err.Error())
+	}
+	return send, nil
 }
 
 func (a permClient) UnblockAccount(address string, baseTx sdk.BaseTx) (ctypes.ResultTx, error) {
 	sender, err := a.QueryAddress(baseTx.From, baseTx.Password)
 	if err != nil {
-		return ctypes.ResultTx{}, err
+		return ctypes.ResultTx{}, errors.Wrap(ErrQueryAddress, err.Error())
 	}
 
 	acc, err := sdk.AccAddressFromBech32(address)
 	if err != nil {
-		return ctypes.ResultTx{}, err
+		return ctypes.ResultTx{}, errors.Wrap(ErrBench32, err.Error())
 	}
 
 	msg := &MsgUnblockAccount{
 		Address:  acc.String(),
 		Operator: sender.String(),
 	}
-	return a.BuildAndSend([]sdk.Msg{msg}, baseTx)
+
+	send, err := a.BuildAndSend([]sdk.Msg{msg}, baseTx)
+	if err != nil {
+		return ctypes.ResultTx{}, errors.Wrap(ErrBuildAndSend, err.Error())
+	}
+	return send, nil
 }
 
 func (a permClient) QueryRoles(address string) ([]Role, error) {
 	conn, err := a.GenConn()
 
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrap(ErrGenConn, err.Error())
 	}
 
 	acc, err := sdk.AccAddressFromBech32(address)
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrap(ErrBench32, err.Error())
 	}
 
 	resp, err := NewQueryClient(conn).Roles(
@@ -121,7 +142,7 @@ func (a permClient) QueryRoles(address string) ([]Role, error) {
 		&QueryRolesRequest{Address: acc.String()},
 	)
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrap(ErrQueryPerm, err.Error())
 	}
 
 	return resp.Roles, nil
@@ -131,7 +152,7 @@ func (a permClient) QueryBlacklist(page, limit int) ([]string, error) {
 	conn, err := a.GenConn()
 
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrap(ErrGenConn, err.Error())
 	}
 
 	resp, err := NewQueryClient(conn).Blacklist(
@@ -139,7 +160,7 @@ func (a permClient) QueryBlacklist(page, limit int) ([]string, error) {
 		&QueryBlacklistRequest{},
 	)
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrap(ErrQueryPerm, err.Error())
 	}
 
 	return resp.Addresses, nil

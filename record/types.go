@@ -1,7 +1,7 @@
 package record
 
 import (
-	"fmt"
+	"github.com/irisnet/core-sdk-go/types/errors"
 
 	sdk "github.com/irisnet/core-sdk-go/types"
 )
@@ -22,10 +22,10 @@ var (
 // ValidateBasic implements Msg.
 func (msg MsgCreateRecord) ValidateBasic() error {
 	if len(msg.Contents) == 0 {
-		return fmt.Errorf("contents missing")
+		return errors.Wrap(ErrValidateBasic, "contents missing")
 	}
 	if len(msg.Creator) == 0 {
-		return fmt.Errorf("creator missing")
+		return errors.Wrap(ErrValidateBasic, "creator missing")
 	}
 
 	if err := sdk.ValidateAccAddress(msg.Creator); err != nil {
@@ -34,10 +34,10 @@ func (msg MsgCreateRecord) ValidateBasic() error {
 
 	for i, content := range msg.Contents {
 		if len(content.Digest) == 0 {
-			return fmt.Errorf("content[%d] digest missing", i)
+			return errors.Wrapf(ErrValidateBasic, "content[%d] digest missing", i)
 		}
 		if len(content.DigestAlgo) == 0 {
-			return fmt.Errorf("content[%d] digest algo missing", i)
+			return errors.Wrapf(ErrValidateBasic, "content[%d] digest algo missing", i)
 		}
 	}
 	return nil

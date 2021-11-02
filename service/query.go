@@ -5,10 +5,9 @@ import (
 	"encoding/binary"
 	"encoding/hex"
 	"encoding/json"
-	"errors"
-	"fmt"
 
 	sdk "github.com/irisnet/core-sdk-go/types"
+	"github.com/irisnet/core-sdk-go/types/errors"
 )
 
 // queryRequestContextByTxQuery will query for a single request context via a direct txs tags query.
@@ -20,11 +19,11 @@ func (s serviceClient) queryRequestContextByTxQuery(reqCtxID string) (RequestCon
 
 	txInfo, err := s.QueryTx(hex.EncodeToString(txHash))
 	if err != nil {
-		return RequestContext{}, err
+		return RequestContext{}, errors.Wrap(ErrQueryTx, err.Error())
 	}
 	txInterface, err := s.TxConfig().TxDecoder()(txInfo.Tx)
 	if err != nil {
-		return RequestContext{}, err
+		return RequestContext{}, errors.Wrap(ErrTxDecoder, err.Error())
 	}
 	if int64(len(txInterface.GetMsgs())) > msgIndex {
 		msg := txInterface.GetMsgs()[msgIndex]
@@ -49,7 +48,7 @@ func (s serviceClient) queryRequestContextByTxQuery(reqCtxID string) (RequestCon
 			}, nil
 		}
 	}
-	return RequestContext{}, fmt.Errorf("invalid reqCtxID:%s", reqCtxID)
+	return RequestContext{}, errors.Wrapf(ErrContext, "invalid reqCtxID:%s", reqCtxID)
 }
 
 // queryRequestByTxQuery will query for a single request via a direct txs tags query.
@@ -62,12 +61,12 @@ func (s serviceClient) queryRequestByTxQuery(requestID string) (Request, error) 
 	// query request context
 	reqCtx, err := s.QueryRequestContext(hex.EncodeToString(reqCtxID))
 	if err != nil {
-		return Request{}, err
+		return Request{}, errors.Wrap(ErrContext, err.Error())
 	}
 
 	blockResult, err := s.BlockResults(context.Background(), &requestHeight)
 	if err != nil {
-		return Request{}, err
+		return Request{}, errors.Wrap(ErrQueryBlock, err.Error())
 	}
 
 	for _, event := range blockResult.EndBlockEvents {
@@ -87,7 +86,7 @@ func (s serviceClient) queryRequestByTxQuery(requestID string) (Request, error) 
 			if found {
 				var requests []CompactRequest
 				if err := json.Unmarshal(requestsBz, &requests); err != nil {
-					return Request{}, err
+					return Request{}, errors.Wrap(ErrUnmarshal, err.Error())
 				}
 				if len(requests) > int(batchRequestIndex) {
 					compactRequest := requests[batchRequestIndex]
@@ -107,7 +106,7 @@ func (s serviceClient) queryRequestByTxQuery(requestID string) (Request, error) 
 			}
 		}
 	}
-	return Request{}, fmt.Errorf("invalid requestID:%s", requestID)
+	return Request{}, errors.Wrapf(ErrContext, "invalid requestID:%s", requestID)
 }
 
 // queryResponseByTxQuery will query for a single request via a direct txs tags query.
@@ -128,11 +127,11 @@ func (s serviceClient) queryResponseByTxQuery(requestID string) (Response, error
 	pageSize := 1
 	var result, err = s.QueryTxs(builder, &page, &pageSize)
 	if err != nil {
-		return Response{}, err
+		return Response{}, errors.Wrap(ErrQueryTx, err.Error())
 	}
 
 	if len(result.Txs) == 0 {
-		return Response{}, fmt.Errorf("unknown response: %s", requestID)
+		return Response{}, errors.Wrapf(ErrQueryTx, "unknown response: %s", requestID)
 	}
 
 	reqCtxID, batchCounter, _, _, err := splitRequestID(requestID)
@@ -172,11 +171,11 @@ func (s serviceClient) queryResponseByTxQuery(requestID string) (Response, error
 func splitRequestContextID(reqCtxID string) (sdk.HexBytes, int64, error) {
 	contextID, err := hex.DecodeString(reqCtxID)
 	if err != nil {
-		return nil, 0, errors.New("invalid request context id")
+		return nil, 0, errors.Wrap(ErrHex, "invalid request context id")
 	}
 
 	if len(contextID) != contextIDLen {
-		return nil, 0, fmt.Errorf("invalid request context id:%s", reqCtxID)
+		return nil, 0, errors.Wrapf(ErrContext, "invalid request context id:%s", reqCtxID)
 	}
 
 	txHash := contextID[0:32]
@@ -189,11 +188,11 @@ func splitRequestContextID(reqCtxID string) (sdk.HexBytes, int64, error) {
 func splitRequestID(reqID string) (sdk.HexBytes, uint64, int64, int16, error) {
 	requestID, err := hex.DecodeString(reqID)
 	if err != nil {
-		return nil, 0, 0, 0, errors.New("invalid request id")
+		return nil, 0, 0, 0, errors.Wrap(ErrHex, "invalid request id")
 	}
 
 	if len(requestID) != requestIDLen {
-		return nil, 0, 0, 0, errors.New("invalid request id")
+		return nil, 0, 0, 0, errors.Wrap(ErrRequest, "invalid request id")
 	}
 
 	reqCtxID := requestID[0:40]

@@ -2,8 +2,9 @@ package perm
 
 import (
 	"encoding/json"
-	"errors"
 	"fmt"
+
+	"github.com/irisnet/core-sdk-go/types/errors"
 
 	sdk "github.com/irisnet/core-sdk-go/types"
 )
@@ -26,13 +27,14 @@ var (
 
 func (m MsgAssignRoles) ValidateBasic() error {
 	if len(m.Address) == 0 {
-		return errors.New("address missing")
+		return errors.Wrap(ErrValidateBasic, "address missing")
 	}
+
 	if len(m.Operator) == 0 {
-		return errors.New("operator missing")
+		return errors.Wrap(ErrValidateBasic, "operator missing")
 	}
 	if len(m.Roles) == 0 {
-		return errors.New("roles missing")
+		return errors.Wrap(ErrValidateBasic, "roles missing")
 	}
 	return nil
 }
@@ -43,13 +45,13 @@ func (m MsgAssignRoles) GetSigners() []sdk.AccAddress {
 
 func (m MsgUnassignRoles) ValidateBasic() error {
 	if len(m.Address) == 0 {
-		return errors.New("address missing")
+		return errors.Wrap(ErrValidateBasic, "address missing")
 	}
 	if len(m.Operator) == 0 {
-		return errors.New("operator missing")
+		return errors.Wrap(ErrValidateBasic, "operator missing")
 	}
 	if len(m.Roles) == 0 {
-		return errors.New("roles missing")
+		return errors.Wrap(ErrValidateBasic, "roles missing")
 	}
 	return nil
 }
@@ -60,10 +62,10 @@ func (m MsgUnassignRoles) GetSigners() []sdk.AccAddress {
 
 func (m MsgBlockAccount) ValidateBasic() error {
 	if len(m.Address) == 0 {
-		return errors.New("address missing")
+		return errors.Wrap(ErrValidateBasic, "address missing")
 	}
 	if len(m.Operator) == 0 {
-		return errors.New("operator missing")
+		return errors.Wrap(ErrValidateBasic, "operator missing")
 	}
 	return nil
 }
@@ -74,10 +76,10 @@ func (m MsgBlockAccount) GetSigners() []sdk.AccAddress {
 
 func (m MsgUnblockAccount) ValidateBasic() error {
 	if len(m.Address) == 0 {
-		return errors.New("address missing")
+		return errors.Wrap(ErrValidateBasic, "address missing")
 	}
 	if len(m.Operator) == 0 {
-		return errors.New("operator missing")
+		return errors.Wrap(ErrValidateBasic, "operator missing")
 	}
 	return nil
 }

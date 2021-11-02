@@ -8,6 +8,7 @@ import (
 	"github.com/irisnet/core-sdk-go/codec"
 	"github.com/irisnet/core-sdk-go/codec/types"
 	sdk "github.com/irisnet/core-sdk-go/types"
+	"github.com/irisnet/core-sdk-go/types/errors"
 )
 
 type oracleClient struct {
@@ -33,7 +34,7 @@ func (o oracleClient) RegisterInterfaceTypes(registry types.InterfaceRegistry) {
 func (o oracleClient) CreateFeed(request CreateFeedRequest, baseTx sdk.BaseTx) (ctypes.ResultTx, error) {
 	creator, err := o.QueryAddress(baseTx.From, baseTx.Password)
 	if err != nil {
-		return ctypes.ResultTx{}, err
+		return ctypes.ResultTx{}, errors.Wrap(ErrQueryAddress, err.Error())
 	}
 
 	msg := &MsgCreateFeed{
@@ -51,14 +52,17 @@ func (o oracleClient) CreateFeed(request CreateFeedRequest, baseTx sdk.BaseTx) (
 		ResponseThreshold: request.ResponseThreshold,
 		Creator:           creator.String(),
 	}
-
-	return o.BuildAndSend([]sdk.Msg{msg}, baseTx)
+	send, err := o.BuildAndSend([]sdk.Msg{msg}, baseTx)
+	if err != nil {
+		return ctypes.ResultTx{}, errors.Wrap(ErrBuildAndSend, err.Error())
+	}
+	return send, nil
 }
 
 func (o oracleClient) StartFeed(feedName string, baseTx sdk.BaseTx) (ctypes.ResultTx, error) {
 	creator, err := o.QueryAddress(baseTx.From, baseTx.Password)
 	if err != nil {
-		return ctypes.ResultTx{}, err
+		return ctypes.ResultTx{}, errors.Wrap(ErrQueryAddress, err.Error())
 	}
 
 	msg := &MsgStartFeed{
@@ -66,13 +70,17 @@ func (o oracleClient) StartFeed(feedName string, baseTx sdk.BaseTx) (ctypes.Resu
 		Creator:  creator.String(),
 	}
 
-	return o.BuildAndSend([]sdk.Msg{msg}, baseTx)
+	send, err := o.BuildAndSend([]sdk.Msg{msg}, baseTx)
+	if err != nil {
+		return ctypes.ResultTx{}, errors.Wrap(ErrBuildAndSend, err.Error())
+	}
+	return send, nil
 }
 
 func (o oracleClient) PauseFeed(feedName string, baseTx sdk.BaseTx) (ctypes.ResultTx, error) {
 	creator, err := o.QueryAddress(baseTx.From, baseTx.Password)
 	if err != nil {
-		return ctypes.ResultTx{}, err
+		return ctypes.ResultTx{}, errors.Wrap(ErrQueryAddress, err.Error())
 	}
 
 	msg := &MsgPauseFeed{
@@ -80,13 +88,17 @@ func (o oracleClient) PauseFeed(feedName string, baseTx sdk.BaseTx) (ctypes.Resu
 		Creator:  creator.String(),
 	}
 
-	return o.BuildAndSend([]sdk.Msg{msg}, baseTx)
+	send, err := o.BuildAndSend([]sdk.Msg{msg}, baseTx)
+	if err != nil {
+		return ctypes.ResultTx{}, errors.Wrap(ErrBuildAndSend, err.Error())
+	}
+	return send, nil
 }
 
 func (o oracleClient) EditFeedRequest(request EditFeedRequest, baseTx sdk.BaseTx) (ctypes.ResultTx, error) {
 	creator, err := o.QueryAddress(baseTx.From, baseTx.Password)
 	if err != nil {
-		return ctypes.ResultTx{}, err
+		return ctypes.ResultTx{}, errors.Wrap(ErrQueryAddress, err.Error())
 	}
 
 	msg := &MsgEditFeed{
@@ -101,14 +113,18 @@ func (o oracleClient) EditFeedRequest(request EditFeedRequest, baseTx sdk.BaseTx
 		Creator:           creator.String(),
 	}
 
-	return o.BuildAndSend([]sdk.Msg{msg}, baseTx)
+	send, err := o.BuildAndSend([]sdk.Msg{msg}, baseTx)
+	if err != nil {
+		return ctypes.ResultTx{}, errors.Wrap(ErrBuildAndSend, err.Error())
+	}
+	return send, nil
 }
 
 func (o oracleClient) QueryFeed(feedName string) (QueryFeedResp, error) {
 	conn, err := o.GenConn()
 
 	if err != nil {
-		return QueryFeedResp{}, err
+		return QueryFeedResp{}, errors.Wrap(ErrQueryAddress, err.Error())
 	}
 
 	resp, err := NewQueryClient(conn).Feed(
@@ -118,7 +134,7 @@ func (o oracleClient) QueryFeed(feedName string) (QueryFeedResp, error) {
 		},
 	)
 	if err != nil {
-		return QueryFeedResp{}, err
+		return QueryFeedResp{}, errors.Wrap(ErrQueryOracle, err.Error())
 	}
 
 	return resp.Feed.Convert().(QueryFeedResp), nil
@@ -128,7 +144,7 @@ func (o oracleClient) QueryFeeds(state string) ([]QueryFeedResp, error) {
 	conn, err := o.GenConn()
 
 	if err != nil {
-		return []QueryFeedResp{}, err
+		return []QueryFeedResp{}, errors.Wrap(ErrGenConn, err.Error())
 	}
 
 	resp, err := NewQueryClient(conn).Feeds(
@@ -138,7 +154,7 @@ func (o oracleClient) QueryFeeds(state string) ([]QueryFeedResp, error) {
 		},
 	)
 	if err != nil {
-		return []QueryFeedResp{}, err
+		return []QueryFeedResp{}, errors.Wrap(ErrQueryOracle, err.Error())
 	}
 
 	return Feeds(resp.Feeds).Convert().([]QueryFeedResp), nil
@@ -148,7 +164,7 @@ func (o oracleClient) QueryFeedValue(feedName string) ([]QueryFeedValueResp, err
 	conn, err := o.GenConn()
 
 	if err != nil {
-		return []QueryFeedValueResp{}, err
+		return []QueryFeedValueResp{}, errors.Wrap(ErrGenConn, err.Error())
 	}
 
 	resp, err := NewQueryClient(conn).FeedValue(
@@ -158,7 +174,7 @@ func (o oracleClient) QueryFeedValue(feedName string) ([]QueryFeedValueResp, err
 		},
 	)
 	if err != nil {
-		return []QueryFeedValueResp{}, err
+		return []QueryFeedValueResp{}, errors.Wrap(ErrQueryOracle, err.Error())
 	}
 
 	return FeedValues(resp.FeedValues).Convert().([]QueryFeedValueResp), nil

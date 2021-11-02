@@ -4,6 +4,8 @@ import (
 	context "context"
 	"io/ioutil"
 
+	"github.com/irisnet/core-sdk-go/types/errors"
+
 	ctypes "github.com/tendermint/tendermint/rpc/core/types"
 
 	"github.com/spf13/cast"
@@ -45,7 +47,7 @@ func (wasm wasmClient) RegisterInterfaceTypes(registry codectypes.InterfaceRegis
 func (wasm wasmClient) Store(request StoreRequest, config sdk.BaseTx) (string, error) {
 	sender, err := wasm.QueryAddress(config.From, config.Password)
 	if err != nil {
-		return "", err
+		return "", errors.Wrap(ErrQueryAddress, err.Error())
 	}
 
 	var byteCode []byte
@@ -54,7 +56,7 @@ func (wasm wasmClient) Store(request StoreRequest, config sdk.BaseTx) (string, e
 	} else if len(request.WASMFile) > 0 {
 		bz, err := ioutil.ReadFile(request.WASMFile)
 		if err != nil {
-			return "", err
+			return "", errors.Wrap(ErrReadFile, err.Error())
 		}
 		byteCode = bz
 	}
@@ -67,17 +69,21 @@ func (wasm wasmClient) Store(request StoreRequest, config sdk.BaseTx) (string, e
 	}
 	result, err := wasm.BuildAndSend(sdk.Msgs{msg}, config)
 	if err != nil {
-		return "", err
+		return "", errors.Wrap(ErrBuildAndSend, err.Error())
 	}
-	//return sdk.StringifyEvents(result.TxResult.Events).GetValue(sdk.EventTypeMessage, "code_id")
-	return sdk.StringifyEvents(result.TxResult.Events).GetValue(TypeMsgStoreCode, "code_id")
+	value, err := sdk.StringifyEvents(result.TxResult.Events).GetValue(TypeMsgStoreCode, "code_id")
+	if err != nil {
+		return "", errors.Wrap(ErrGetEvents, err.Error())
+	}
+	return value, nil
+
 }
 
 //Instantiate instantiate the contract state
 func (wasm wasmClient) Instantiate(request InstantiateRequest, config sdk.BaseTx) (string, error) {
 	sender, err := wasm.QueryAddress(config.From, config.Password)
 	if err != nil {
-		return "", err
+		return "", errors.Wrap(ErrQueryAddress, err.Error())
 	}
 
 	msg := &MsgInstantiateContract{
@@ -90,10 +96,13 @@ func (wasm wasmClient) Instantiate(request InstantiateRequest, config sdk.BaseTx
 	}
 	result, err := wasm.BuildAndSend(sdk.Msgs{msg}, config)
 	if err != nil {
-		return "", err
+		return "", errors.Wrap(ErrBuildAndSend, err.Error())
 	}
-	//return sdk.StringifyEvents(result.TxResult.Events).GetValue(sdk.EventTypeMessage, "_contract_address")
-	return sdk.StringifyEvents(result.TxResult.Events).GetValue(TypeMsgInstantiateContract, "_contract_address")
+	value, err := sdk.StringifyEvents(result.TxResult.Events).GetValue(TypeMsgInstantiateContract, "_contract_address")
+	if err != nil {
+		return "", errors.Wrap(ErrGetEvents, err.Error())
+	}
+	return value, nil
 }
 
 //Execute execute the contract method
@@ -103,12 +112,12 @@ func (wasm wasmClient) Execute(contractAddress string,
 	config sdk.BaseTx) (ctypes.ResultTx, error) {
 	sender, err := wasm.QueryAddress(config.From, config.Password)
 	if err != nil {
-		return ctypes.ResultTx{}, err
+		return ctypes.ResultTx{}, errors.Wrap(ErrQueryAddress, err.Error())
 	}
 
 	msgBytes, er := abi.Build()
 	if er != nil {
-		return ctypes.ResultTx{}, er
+		return ctypes.ResultTx{}, errors.Wrap(ErrAbiBuild, er.Error())
 	}
 
 	msg := &MsgExecuteContract{
@@ -117,17 +126,20 @@ func (wasm wasmClient) Execute(contractAddress string,
 		SentFunds: sentFunds,
 		Msg:       msgBytes,
 	}
-	return wasm.BuildAndSend(sdk.Msgs{msg}, config)
+	send, err := wasm.BuildAndSend(sdk.Msgs{msg}, config)
+	if err != nil {
+		return ctypes.ResultTx{}, errors.Wrap(ErrBuildAndSend, err.Error())
+	}
+	return send, nil
 }
 
-//Execute execute the contract method
 func (wasm wasmClient) Migrate(contractAddress string,
 	newCodeID string,
 	msgByte []byte,
 	config sdk.BaseTx) (ctypes.ResultTx, error) {
 	sender, err := wasm.QueryAddress(config.From, config.Password)
 	if err != nil {
-		return ctypes.ResultTx{}, err
+		return ctypes.ResultTx{}, errors.Wrap(ErrQueryAddress, err.Error())
 	}
 
 	msg := &MsgMigrateContract{
@@ -136,14 +148,18 @@ func (wasm wasmClient) Migrate(contractAddress string,
 		CodeID:     cast.ToUint64(newCodeID),
 		MigrateMsg: msgByte,
 	}
-	return wasm.BuildAndSend(sdk.Msgs{msg}, config)
+	send, err := wasm.BuildAndSend(sdk.Msgs{msg}, config)
+	if err != nil {
+		return ctypes.ResultTx{}, errors.Wrap(ErrBuildAndSend, err.Error())
+	}
+	return send, nil
 }
 
 //QueryContractInfo return the contract information
 func (wasm wasmClient) QueryContractInfo(address string) (*ContractInfo, error) {
 	conn, err := wasm.GenConn()
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrap(ErrGenConn, err.Error())
 	}
 
 	req := &QueryContractInfoRequest{
@@ -152,7 +168,7 @@ func (wasm wasmClient) QueryContractInfo(address string) (*ContractInfo, error) 
 
 	res, err := NewQueryClient(conn).ContractInfo(context.Background(), req)
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrap(ErrQueryWasm, err.Error())
 	}
 	return res.ContractInfo, nil
 }
@@ -161,7 +177,7 @@ func (wasm wasmClient) QueryContractInfo(address string) (*ContractInfo, error) 
 func (wasm wasmClient) ExportContractState(address string) (map[string][]byte, error) {
 	conn, err := wasm.GenConn()
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrap(ErrGenConn, err.Error())
 	}
 
 	req := &QueryAllContractStateRequest{
@@ -170,7 +186,7 @@ func (wasm wasmClient) ExportContractState(address string) (map[string][]byte, e
 
 	res, err := NewQueryClient(conn).AllContractState(context.Background(), req)
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrap(ErrQueryWasm, err.Error())
 	}
 
 	var states = make(map[string][]byte, len(res.Models))
@@ -185,12 +201,12 @@ func (wasm wasmClient) ExportContractState(address string) (map[string][]byte, e
 func (wasm wasmClient) QueryContract(address string, abi *ContractABI) ([]byte, error) {
 	conn, err := wasm.GenConn()
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrap(ErrGenConn, err.Error())
 	}
 
 	msgBytes, err := abi.Build()
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrap(ErrAbiBuild, err.Error())
 	}
 
 	req := &QuerySmartContractStateRequest{
@@ -200,7 +216,7 @@ func (wasm wasmClient) QueryContract(address string, abi *ContractABI) ([]byte, 
 
 	res, err := NewQueryClient(conn).SmartContractState(context.Background(), req)
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrap(ErrQueryWasm, err.Error())
 	}
 	return res.Data, nil
 }

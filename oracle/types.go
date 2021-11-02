@@ -1,9 +1,8 @@
 package oracle
 
 import (
-	"errors"
-
 	sdk "github.com/irisnet/core-sdk-go/types"
+	"github.com/irisnet/core-sdk-go/types/errors"
 )
 
 const (
@@ -19,23 +18,23 @@ var (
 
 func (m MsgCreateFeed) ValidateBasic() error {
 	if len(m.FeedName) == 0 {
-		return errors.New("feedName missing")
+		return errors.Wrap(ErrValidateBasic, "feedName missing")
 	}
 
 	if len(m.Providers) == 0 {
-		return errors.New("providers missing")
+		return errors.Wrap(ErrValidateBasic, "providers missing")
 	}
 
 	if len(m.ServiceName) == 0 {
-		return errors.New("serviceName missing")
+		return errors.Wrap(ErrValidateBasic, "serviceName missing")
 	}
 
 	if len(m.AggregateFunc) == 0 {
-		return errors.New("aggregateFunc missing")
+		return errors.Wrap(ErrValidateBasic, "aggregateFunc missing")
 	}
 
 	if len(m.ValueJsonPath) == 0 {
-		return errors.New("valueJsonPath missing")
+		return errors.Wrap(ErrValidateBasic, "valueJsonPath missing")
 	}
 
 	return nil
@@ -47,7 +46,7 @@ func (m MsgCreateFeed) GetSigners() []sdk.AccAddress {
 
 func (m MsgStartFeed) ValidateBasic() error {
 	if len(m.FeedName) == 0 {
-		return errors.New("feedName missing")
+		return errors.Wrap(ErrValidateBasic, "feedName missing")
 	}
 	return nil
 }
@@ -58,7 +57,7 @@ func (m MsgStartFeed) GetSigners() []sdk.AccAddress {
 
 func (m MsgPauseFeed) ValidateBasic() error {
 	if len(m.FeedName) == 0 {
-		return errors.New("feedName missing")
+		return errors.Wrap(ErrValidateBasic, "feedName missing")
 	}
 	return nil
 }
@@ -69,7 +68,7 @@ func (m MsgPauseFeed) GetSigners() []sdk.AccAddress {
 
 func (m MsgEditFeed) ValidateBasic() error {
 	if len(m.FeedName) == 0 {
-		return errors.New("feedName missing")
+		return errors.Wrap(ErrValidateBasic, "feedName missing")
 	}
 	return nil
 }

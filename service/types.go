@@ -2,9 +2,9 @@ package service
 
 import (
 	json2 "encoding/json"
-	"errors"
-	"fmt"
 	"strings"
+
+	"github.com/irisnet/core-sdk-go/types/errors"
 
 	sdk "github.com/irisnet/core-sdk-go/types"
 )
@@ -63,18 +63,18 @@ var (
 
 func (msg MsgDefineService) ValidateBasic() error {
 	if len(msg.Author) == 0 {
-		return errors.New("author missing")
+		return errors.Wrap(ErrValidateBasic, "author missing")
 	}
 	if err := sdk.ValidateAccAddress(msg.Author); err != nil {
 		return err
 	}
 
 	if len(msg.Name) == 0 {
-		return errors.New("author missing")
+		return errors.Wrap(ErrValidateBasic, "author missing")
 	}
 
 	if len(msg.Schemas) == 0 {
-		return errors.New("schemas missing")
+		return errors.Wrap(ErrValidateBasic, "schemas missing")
 	}
 
 	return nil
@@ -86,25 +86,25 @@ func (msg MsgDefineService) GetSigners() []sdk.AccAddress {
 
 func (msg MsgBindService) ValidateBasic() error {
 	if len(msg.Owner) == 0 {
-		return errors.New("owner missing")
+		return errors.Wrap(ErrValidateBasic, "owner missing")
 	}
 	if err := sdk.ValidateAccAddress(msg.Owner); err != nil {
 		return err
 	}
 
 	if len(msg.Provider) == 0 {
-		return errors.New("provider missing")
+		return errors.Wrap(ErrValidateBasic, "provider missing")
 	}
 	if err := sdk.ValidateAccAddress(msg.Provider); err != nil {
 		return err
 	}
 
 	if len(msg.ServiceName) == 0 {
-		return errors.New("serviceName missing")
+		return errors.Wrap(ErrValidateBasic, "serviceName missing")
 	}
 
 	if len(msg.Pricing) == 0 {
-		return errors.New("pricing missing")
+		return errors.Wrap(ErrValidateBasic, "pricing missing")
 	}
 	return nil
 }
@@ -115,14 +115,14 @@ func (msg MsgBindService) GetSigners() []sdk.AccAddress {
 
 func (msg MsgCallService) ValidateBasic() error {
 	if len(msg.Consumer) == 0 {
-		return errors.New("consumer missing")
+		return errors.Wrap(ErrValidateBasic, "consumer missing")
 	}
 	if err := sdk.ValidateAccAddress(msg.Consumer); err != nil {
 		return err
 	}
 
 	if len(msg.Providers) == 0 {
-		return errors.New("providers missing")
+		return errors.Wrap(ErrValidateBasic, "providers missing")
 	}
 	for _, provider := range msg.Providers {
 		if err := sdk.ValidateAccAddress(provider); err != nil {
@@ -131,11 +131,11 @@ func (msg MsgCallService) ValidateBasic() error {
 	}
 
 	if len(msg.ServiceName) == 0 {
-		return errors.New("serviceName missing")
+		return errors.Wrap(ErrValidateBasic, "serviceName missing")
 	}
 
 	if len(msg.Input) == 0 {
-		return errors.New("input missing")
+		return errors.Wrap(ErrValidateBasic, "input missing")
 	}
 	return nil
 }
@@ -152,19 +152,19 @@ func (msg MsgRespondService) Type() string {
 
 func (msg MsgRespondService) ValidateBasic() error {
 	if len(msg.Provider) == 0 {
-		return errors.New("provider missing")
+		return errors.Wrap(ErrValidateBasic, "provider missing")
 	}
 	if err := sdk.ValidateAccAddress(msg.Provider); err != nil {
 		return err
 	}
 
 	if len(msg.Result) == 0 {
-		return errors.New("result missing")
+		return errors.Wrap(ErrValidateBasic, "result missing")
 	}
 
 	if len(msg.Output) > 0 {
 		if !json2.Valid([]byte(msg.Output)) {
-			return errors.New("output is not valid JSON")
+			return errors.Wrap(ErrValidateBasic, "output is not valid JSON")
 		}
 	}
 
@@ -178,25 +178,25 @@ func (msg MsgRespondService) GetSigners() []sdk.AccAddress {
 // ValidateBasic implements Msg.
 func (msg MsgUpdateServiceBinding) ValidateBasic() error {
 	if len(msg.Provider) == 0 {
-		return errors.New("provider missing")
+		return errors.Wrap(ErrValidateBasic, "provider missing")
 	}
 	if err := sdk.ValidateAccAddress(msg.Provider); err != nil {
 		return err
 	}
 
 	if len(msg.Owner) == 0 {
-		return errors.New("owner missing")
+		return errors.Wrap(ErrValidateBasic, "owner missing")
 	}
 	if err := sdk.ValidateAccAddress(msg.Owner); err != nil {
 		return err
 	}
 
 	if len(msg.ServiceName) == 0 {
-		return errors.New("service name missing")
+		return errors.Wrap(ErrValidateBasic, "service name missing")
 	}
 
 	if !msg.Deposit.Empty() {
-		return fmt.Errorf("invalid deposit: %s", msg.Deposit)
+		return errors.Wrapf(ErrMsg, "invalid deposit: %s", msg.Deposit)
 	}
 
 	return nil
@@ -210,14 +210,14 @@ func (msg MsgUpdateServiceBinding) GetSigners() []sdk.AccAddress {
 // ValidateBasic implements Msg.
 func (msg MsgSetWithdrawAddress) ValidateBasic() error {
 	if len(msg.Owner) == 0 {
-		return errors.New("owner missing")
+		return errors.Wrap(ErrValidateBasic, "owner missing")
 	}
 	if err := sdk.ValidateAccAddress(msg.Owner); err != nil {
 		return err
 	}
 
 	if len(msg.WithdrawAddress) == 0 {
-		return errors.New("withdrawal address missing")
+		return errors.Wrap(ErrValidateBasic, "withdrawal address missing")
 	}
 
 	return nil
@@ -231,21 +231,21 @@ func (msg MsgSetWithdrawAddress) GetSigners() []sdk.AccAddress {
 // ValidateBasic implements Msg.
 func (msg MsgDisableServiceBinding) ValidateBasic() error {
 	if len(msg.Provider) == 0 {
-		return errors.New("provider missing")
+		return errors.Wrap(ErrValidateBasic, "provider missing")
 	}
 	if err := sdk.ValidateAccAddress(msg.Provider); err != nil {
-		return err
+		return errors.Wrap(ErrValidateAccAddress, err.Error())
 	}
 
 	if len(msg.Owner) == 0 {
-		return errors.New("owner missing")
+		return errors.Wrap(ErrValidateBasic, "owner missing")
 	}
 	if err := sdk.ValidateAccAddress(msg.Owner); err != nil {
-		return err
+		return errors.Wrap(ErrValidateAccAddress, err.Error())
 	}
 
 	if len(msg.ServiceName) == 0 {
-		return errors.New("service name missing")
+		return errors.Wrap(ErrValidateBasic, "service name missing")
 	}
 
 	return nil
@@ -259,25 +259,25 @@ func (msg MsgDisableServiceBinding) GetSigners() []sdk.AccAddress {
 // ValidateBasic implements Msg.
 func (msg MsgEnableServiceBinding) ValidateBasic() error {
 	if len(msg.Provider) == 0 {
-		return errors.New("provider missing")
+		return errors.Wrap(ErrValidateBasic, "provider missing")
 	}
 	if err := sdk.ValidateAccAddress(msg.Provider); err != nil {
-		return err
+		return errors.Wrap(ErrValidateAccAddress, err.Error())
 	}
 
 	if len(msg.Owner) == 0 {
-		return errors.New("owner missing")
+		return errors.Wrap(ErrValidateBasic, "owner missing")
 	}
 	if err := sdk.ValidateAccAddress(msg.Owner); err != nil {
-		return err
+		return errors.Wrap(ErrValidateAccAddress, err.Error())
 	}
 
 	if len(msg.ServiceName) == 0 {
-		return errors.New("service name missing")
+		return errors.Wrap(ErrValidateBasic, "service name missing")
 	}
 
 	if !msg.Deposit.Empty() {
-		return fmt.Errorf("invalid deposit: %s", msg.Deposit)
+		return errors.Wrapf(ErrValidateBasic, "invalid deposit: %s", msg.Deposit)
 	}
 
 	return nil
@@ -291,21 +291,21 @@ func (msg MsgEnableServiceBinding) GetSigners() []sdk.AccAddress {
 // ValidateBasic implements Msg.
 func (msg MsgRefundServiceDeposit) ValidateBasic() error {
 	if len(msg.Provider) == 0 {
-		return errors.New("provider missing")
+		return errors.Wrap(ErrValidateBasic, "provider missing")
 	}
 	if err := sdk.ValidateAccAddress(msg.Provider); err != nil {
-		return err
+		return errors.Wrap(ErrValidateAccAddress, err.Error())
 	}
 
 	if len(msg.Owner) == 0 {
-		return errors.New("owner missing")
+		return errors.Wrap(ErrValidateBasic, "owner missing")
 	}
 	if err := sdk.ValidateAccAddress(msg.Owner); err != nil {
-		return err
+		return errors.Wrap(ErrValidateAccAddress, err.Error())
 	}
 
 	if len(msg.ServiceName) == 0 {
-		return errors.New("service name missing")
+		return errors.Wrap(ErrValidateBasic, "service name missing")
 	}
 
 	return nil
@@ -319,10 +319,10 @@ func (msg MsgRefundServiceDeposit) GetSigners() []sdk.AccAddress {
 // ValidateBasic implements Msg.
 func (msg MsgPauseRequestContext) ValidateBasic() error {
 	if len(msg.Consumer) == 0 {
-		return errors.New("consumer missing")
+		return errors.Wrap(ErrValidateBasic, "consumer missing")
 	}
 	if err := sdk.ValidateAccAddress(msg.Consumer); err != nil {
-		return err
+		return errors.Wrap(ErrValidateAccAddress, err.Error())
 	}
 	return nil
 }
@@ -335,10 +335,10 @@ func (msg MsgPauseRequestContext) GetSigners() []sdk.AccAddress {
 // ValidateBasic implements Msg.
 func (msg MsgStartRequestContext) ValidateBasic() error {
 	if len(msg.Consumer) == 0 {
-		return errors.New("consumer missing")
+		return errors.Wrap(ErrValidateBasic, "consumer missing")
 	}
 	if err := sdk.ValidateAccAddress(msg.Consumer); err != nil {
-		return err
+		return errors.Wrap(ErrValidateAccAddress, err.Error())
 	}
 	return nil
 }
@@ -351,10 +351,10 @@ func (msg MsgStartRequestContext) GetSigners() []sdk.AccAddress {
 // ValidateBasic implements Msg.
 func (msg MsgKillRequestContext) ValidateBasic() error {
 	if len(msg.Consumer) == 0 {
-		return errors.New("consumer missing")
+		return errors.Wrap(ErrValidateBasic, "consumer missing")
 	}
 	if err := sdk.ValidateAccAddress(msg.Consumer); err != nil {
-		return err
+		return errors.Wrap(ErrValidateAccAddress, err.Error())
 	}
 
 	return nil
@@ -368,10 +368,10 @@ func (msg MsgKillRequestContext) GetSigners() []sdk.AccAddress {
 // ValidateBasic implements Msg.
 func (msg MsgUpdateRequestContext) ValidateBasic() error {
 	if len(msg.Consumer) == 0 {
-		return errors.New("consumer missing")
+		return errors.Wrap(ErrValidateBasic, "consumer missing")
 	}
 	if err := sdk.ValidateAccAddress(msg.Consumer); err != nil {
-		return err
+		return errors.Wrap(ErrValidateAccAddress, err.Error())
 	}
 
 	return nil
@@ -385,17 +385,17 @@ func (msg MsgUpdateRequestContext) GetSigners() []sdk.AccAddress {
 // ValidateBasic implements Msg.
 func (msg MsgWithdrawEarnedFees) ValidateBasic() error {
 	if len(msg.Provider) == 0 {
-		return errors.New("provider missing")
+		return errors.Wrap(ErrValidateBasic, "provider missing")
 	}
 	if err := sdk.ValidateAccAddress(msg.Provider); err != nil {
-		return err
+		return errors.Wrap(ErrValidateAccAddress, err.Error())
 	}
 
 	if len(msg.Owner) == 0 {
-		return errors.New("owner missing")
+		return errors.Wrap(ErrValidateBasic, "owner missing")
 	}
 	if err := sdk.ValidateAccAddress(msg.Owner); err != nil {
-		return err
+		return errors.Wrap(ErrValidateAccAddress, err.Error())
 	}
 
 	return nil
@@ -501,7 +501,7 @@ func RequestContextStateFromString(str string) (RequestContextState, error) {
 	if state, ok := StringToRequestContextStateMap[strings.ToLower(str)]; ok {
 		return state, nil
 	}
-	return RequestContextState(0xff), fmt.Errorf("'%s' is not a valid request context state", str)
+	return RequestContextState(0xff), errors.Wrapf(ErrContext, "'%s' is not a valid request context state", str)
 }
 
 // MarshalJSON returns the JSON representation
@@ -513,7 +513,7 @@ func RequestContextBatchStateFromString(str string) (RequestContextBatchState, e
 	if state, ok := StringToRequestContextBatchStateMap[strings.ToLower(str)]; ok {
 		return state, nil
 	}
-	return RequestContextBatchState(0xff), fmt.Errorf("'%s' is not a valid request context batch state", str)
+	return RequestContextBatchState(0xff), errors.Wrapf(ErrContext, "'%s' is not a valid request context batch state", str)
 }
 
 // MarshalJSON returns the JSON representation
@@ -525,7 +525,7 @@ func (state RequestContextBatchState) MarshalJSON() ([]byte, error) {
 func (state *RequestContextBatchState) UnmarshalJSON(data []byte) error {
 	var s string
 	if err := json2.Unmarshal(data, &s); err != nil {
-		return nil
+		return errors.Wrap(ErrUnmarshal, err.Error())
 	}
 
 	bz, err := RequestContextBatchStateFromString(s)
@@ -541,7 +541,7 @@ func (state *RequestContextBatchState) UnmarshalJSON(data []byte) error {
 func (state *RequestContextState) UnmarshalJSON(data []byte) error {
 	var s string
 	if err := json2.Unmarshal(data, &s); err != nil {
-		return nil
+		return errors.Wrap(ErrUnmarshal, err.Error())
 	}
 
 	bz, err := RequestContextStateFromString(s)

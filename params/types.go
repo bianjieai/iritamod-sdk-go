@@ -1,9 +1,8 @@
 package params
 
 import (
-	"errors"
-
 	sdk "github.com/irisnet/core-sdk-go/types"
+	"github.com/irisnet/core-sdk-go/types/errors"
 )
 
 const (
@@ -16,7 +15,7 @@ var (
 
 func (m MsgUpdateParams) ValidateBasic() error {
 	if len(m.Operator) == 0 {
-		return errors.New("operator missing")
+		return errors.Wrap(ErrValidateBasic, "operator missing")
 	}
 	return validateChanges(m.Changes)
 }
@@ -29,18 +28,18 @@ func (m MsgUpdateParams) GetSigners() []sdk.AccAddress {
 // returns an error if any ParamChange is invalid.
 func validateChanges(changes []ParamChange) error {
 	if len(changes) == 0 {
-		return errors.New("no change params")
+		return errors.Wrap(ErrValidateBasic, "no change params")
 	}
 
 	for _, pc := range changes {
 		if len(pc.Subspace) == 0 {
-			return errors.New("empty subspace")
+			return errors.Wrap(ErrValidateBasic, "empty subspace")
 		}
 		if len(pc.Key) == 0 {
-			return errors.New("empty params key")
+			return errors.Wrap(ErrValidateBasic, "empty params key")
 		}
 		if len(pc.Value) == 0 {
-			return errors.New("empty params value")
+			return errors.Wrap(ErrValidateBasic, "empty params value")
 		}
 	}
 

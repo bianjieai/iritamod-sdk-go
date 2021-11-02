@@ -1,10 +1,10 @@
 package nft
 
 import (
-	"errors"
 	"strings"
 
 	sdk "github.com/irisnet/core-sdk-go/types"
+	"github.com/irisnet/core-sdk-go/types/errors"
 )
 
 const (
@@ -21,7 +21,7 @@ var (
 
 func (m MsgIssueDenom) ValidateBasic() error {
 	if len(m.Sender) == 0 {
-		return errors.New("missing sender address")
+		return errors.Wrap(ErrValidateBasic, "missing sender address")
 	}
 
 	if err := sdk.ValidateAccAddress(m.Sender); err != nil {
@@ -29,7 +29,7 @@ func (m MsgIssueDenom) ValidateBasic() error {
 	}
 	id := strings.TrimSpace(m.Id)
 	if len(id) == 0 {
-		return errors.New("missing id")
+		return errors.Wrap(ErrValidateBasic, "missing id")
 	}
 	return nil
 }
@@ -40,14 +40,14 @@ func (m MsgIssueDenom) GetSigners() []sdk.AccAddress {
 
 func (m MsgTransferNFT) ValidateBasic() error {
 	if len(m.Sender) == 0 {
-		return errors.New("missing sender address")
+		return errors.Wrap(ErrValidateBasic, "missing sender address")
 	}
 	if err := sdk.ValidateAccAddress(m.Sender); err != nil {
 		return err
 	}
 
 	if len(m.Recipient) == 0 {
-		return errors.New("missing recipient address")
+		return errors.Wrap(ErrValidateBasic, "missing recipient address")
 	}
 	if err := sdk.ValidateAccAddress(m.Recipient); err != nil {
 		return err
@@ -55,12 +55,12 @@ func (m MsgTransferNFT) ValidateBasic() error {
 
 	denom := strings.TrimSpace(m.DenomId)
 	if len(denom) == 0 {
-		return errors.New("missing denom")
+		return errors.Wrap(ErrValidateBasic, "missing denom")
 	}
 
 	tokenID := strings.TrimSpace(m.Id)
 	if len(tokenID) == 0 {
-		return errors.New("missing ID")
+		return errors.Wrap(ErrValidateBasic, "missing ID")
 	}
 	return nil
 }
@@ -71,20 +71,20 @@ func (m MsgTransferNFT) GetSigners() []sdk.AccAddress {
 
 func (m MsgEditNFT) ValidateBasic() error {
 	if len(m.Sender) == 0 {
-		return errors.New("missing sender address")
+		return errors.Wrap(ErrValidateBasic, "missing sender address")
 	}
 	if err := sdk.ValidateAccAddress(m.Sender); err != nil {
-		return err
+		return errors.Wrap(ErrValidateAccAddress, err.Error())
 	}
 
 	denom := strings.TrimSpace(m.DenomId)
 	if len(denom) == 0 {
-		return errors.New("missing denom")
+		return errors.Wrap(ErrValidateBasic, "missing denom")
 	}
 
 	tokenID := strings.TrimSpace(m.Id)
 	if len(tokenID) == 0 {
-		return errors.New("missing ID")
+		return errors.Wrap(ErrValidateBasic, "missing ID")
 	}
 	return nil
 }
@@ -95,7 +95,7 @@ func (m MsgEditNFT) GetSigners() []sdk.AccAddress {
 
 func (m MsgMintNFT) ValidateBasic() error {
 	if len(m.Sender) == 0 {
-		return errors.New("missing sender address")
+		return errors.Wrap(ErrValidateBasic, "missing sender address")
 	}
 	if err := sdk.ValidateAccAddress(m.Sender); err != nil {
 		return err
@@ -103,12 +103,12 @@ func (m MsgMintNFT) ValidateBasic() error {
 
 	denom := strings.TrimSpace(m.DenomId)
 	if len(denom) == 0 {
-		return errors.New("missing denom")
+		return errors.Wrap(ErrValidateBasic, "missing denom")
 	}
 
 	tokenID := strings.TrimSpace(m.Id)
 	if len(tokenID) == 0 {
-		return errors.New("missing ID")
+		return errors.Wrap(ErrValidateBasic, "missing ID")
 	}
 	return nil
 }
@@ -119,20 +119,20 @@ func (m MsgMintNFT) GetSigners() []sdk.AccAddress {
 
 func (m MsgBurnNFT) ValidateBasic() error {
 	if len(m.Sender) == 0 {
-		return errors.New("missing sender address")
+		return errors.Wrap(ErrValidateBasic, "missing sender address")
 	}
 	if err := sdk.ValidateAccAddress(m.Sender); err != nil {
-		return err
+		return errors.Wrap(ErrValidateAccAddress, err.Error())
 	}
 
 	denom := strings.TrimSpace(m.DenomId)
 	if len(denom) == 0 {
-		return errors.New("missing denom")
+		return errors.Wrap(ErrValidateBasic, "missing denom")
 	}
 
 	tokenID := strings.TrimSpace(m.Id)
 	if len(tokenID) == 0 {
-		return errors.New("missing ID")
+		return errors.Wrap(ErrValidateBasic, "missing ID")
 	}
 	return nil
 }

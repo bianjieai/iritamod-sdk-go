@@ -1,8 +1,9 @@
 package params
 
 import (
-	"errors"
 	"fmt"
+
+	"github.com/irisnet/core-sdk-go/types/errors"
 
 	"github.com/irisnet/core-sdk-go/codec"
 	"github.com/irisnet/core-sdk-go/codec/types"
@@ -34,14 +35,11 @@ func (p paramsClient) RegisterInterfaceTypes(registry types.InterfaceRegistry) {
 func (p paramsClient) UpdateParams(requests []UpdateParamRequest, baseTx sdk.BaseTx) (ctypes.ResultTx, error) {
 	sender, err := p.QueryAddress(baseTx.From, baseTx.Password)
 	if err != nil {
-		return ctypes.ResultTx{}, errors.New(fmt.Sprintf("%s not found", baseTx.From))
+		return ctypes.ResultTx{}, errors.Wrapf(ErrQueryAddress, fmt.Sprintf("%s not found", baseTx.From))
 	}
 
 	var changes []ParamChange
 	for _, req := range requests {
-		if err != nil {
-			return ctypes.ResultTx{}, err
-		}
 		changes = append(changes, ParamChange{
 			Subspace: req.Module,
 			Key:      req.Key,
@@ -53,5 +51,9 @@ func (p paramsClient) UpdateParams(requests []UpdateParamRequest, baseTx sdk.Bas
 		Changes:  changes,
 		Operator: sender.String(),
 	}
-	return p.BuildAndSend([]sdk.Msg{msg}, baseTx)
+	send, err := p.BuildAndSend([]sdk.Msg{msg}, baseTx)
+	if err != nil {
+		return ctypes.ResultTx{}, errors.Wrap(ErrBuildAndSend, err.Error())
+	}
+	return send, nil
 }

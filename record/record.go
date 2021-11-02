@@ -2,8 +2,8 @@ package record
 
 import (
 	"encoding/hex"
-	"errors"
-	"fmt"
+
+	"github.com/irisnet/core-sdk-go/types/errors"
 
 	"github.com/bianjieai/iritamod-sdk-go/types"
 
@@ -35,7 +35,7 @@ func (r recordClient) RegisterInterfaceTypes(registry codectypes.InterfaceRegist
 func (r recordClient) CreateRecord(request CreateRecordRequest, baseTx sdk.BaseTx) (string, error) {
 	creator, err := r.QueryAddress(baseTx.From, baseTx.Password)
 	if err != nil {
-		return "", err
+		return "", errors.Wrap(ErrQueryAddress, err.Error())
 	}
 
 	msg := &MsgCreateRecord{
@@ -45,12 +45,12 @@ func (r recordClient) CreateRecord(request CreateRecordRequest, baseTx sdk.BaseT
 
 	res, err := r.BuildAndSend([]sdk.Msg{msg}, baseTx)
 	if err != nil {
-		return "", err
+		return "", errors.Wrap(ErrBuildAndSend, err.Error())
 	}
 
 	recordID, er := sdk.StringifyEvents(res.TxResult.Events).GetValue(eventTypeCreateRecord, attributeKeyRecordID)
 	if er != nil {
-		return "", er
+		return "", errors.Wrap(ErrGetEvents, er.Error())
 	}
 
 	return recordID, nil
@@ -59,18 +59,18 @@ func (r recordClient) CreateRecord(request CreateRecordRequest, baseTx sdk.BaseT
 func (r recordClient) QueryRecord(request QueryRecordReq) (QueryRecordResp, error) {
 	rID, err := hex.DecodeString(request.RecordID)
 	if err != nil {
-		return QueryRecordResp{}, errors.New(fmt.Sprintf("invalid record id, must be hex encoded string,but got %s", request.RecordID))
+		return QueryRecordResp{}, errors.Wrapf(ErrHex, "invalid record id, must be hex encoded string,but got %s", request.RecordID)
 	}
 
 	recordKey := GetRecordKey(rID)
 
 	res, err := r.QueryStore(recordKey, ModuleName, request.Height, request.Prove)
 	if err != nil {
-		return QueryRecordResp{}, err
+		return QueryRecordResp{}, errors.Wrap(ErrQueryStore, err.Error())
 	}
 	var record Record
 	if err := r.Codec.Unmarshal(res.Value, &record); err != nil {
-		return QueryRecordResp{}, err
+		return QueryRecordResp{}, errors.Wrap(ErrUnmarshal, err.Error())
 	}
 
 	result := record.Convert().(QueryRecordResp)

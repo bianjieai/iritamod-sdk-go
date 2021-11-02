@@ -1,10 +1,10 @@
 package node
 
 import (
-	"errors"
 	"strings"
 
 	sdk "github.com/irisnet/core-sdk-go/types"
+	"github.com/irisnet/core-sdk-go/types/errors"
 )
 
 const (
@@ -21,17 +21,17 @@ var (
 
 func (m MsgCreateValidator) ValidateBasic() error {
 	if len(m.Operator) == 0 {
-		return errors.New("operator missing")
+		return errors.Wrap(ErrValidateBasic, "operator missing")
 	}
 	if len(strings.TrimSpace(m.Name)) == 0 {
-		return errors.New("validator name cannot be blank")
+		return errors.Wrap(ErrValidateBasic, "validator name cannot be blank")
 	}
 
 	if len(m.Certificate) == 0 {
-		return errors.New("certificate missing")
+		return errors.Wrap(ErrValidateBasic, "certificate missing")
 	}
 	if m.Power <= 0 {
-		return errors.New("power must be positive")
+		return errors.Wrap(ErrValidateBasic, "power must be positive")
 	}
 	return nil
 }
@@ -42,14 +42,14 @@ func (m MsgCreateValidator) GetSigners() []sdk.AccAddress {
 
 func (m MsgUpdateValidator) ValidateBasic() error {
 	if len(m.Operator) == 0 {
-		return errors.New("operator missing")
+		return errors.Wrap(ErrValidateBasic, "operator missing")
 	}
 	if len(m.Id) == 0 {
-		return errors.New("validator id cannot be blank")
+		return errors.Wrap(ErrValidateBasic, "validator id cannot be blank")
 	}
 
 	if m.Power < 0 {
-		return errors.New("power can not be negative")
+		return errors.Wrap(ErrValidateBasic, "power can not be negative")
 	}
 	return nil
 }
@@ -60,10 +60,10 @@ func (m MsgUpdateValidator) GetSigners() []sdk.AccAddress {
 
 func (m MsgRemoveValidator) ValidateBasic() error {
 	if len(m.Operator) == 0 {
-		return errors.New("operator missing")
+		return errors.Wrap(ErrValidateBasic, "operator missing")
 	}
 	if len(m.Id) == 0 {
-		return errors.New("validator id cannot be blank")
+		return errors.Wrap(ErrValidateBasic, "validator id cannot be blank")
 	}
 	return nil
 }
@@ -74,7 +74,7 @@ func (m MsgRemoveValidator) GetSigners() []sdk.AccAddress {
 
 func (m MsgGrantNode) ValidateBasic() error {
 	if len(m.Operator) == 0 {
-		return errors.New("operator missing")
+		return errors.Wrap(ErrValidateBasic, "operator missing")
 	}
 	return nil
 }
@@ -85,10 +85,10 @@ func (m MsgGrantNode) GetSigners() []sdk.AccAddress {
 
 func (m MsgRevokeNode) ValidateBasic() error {
 	if len(m.Operator) == 0 {
-		return errors.New("operator missing")
+		return errors.Wrap(ErrValidateBasic, "operator missing")
 	}
 	if len(m.Id) == 0 {
-		return errors.New("validator id cannot be blank")
+		return errors.Wrap(ErrValidateBasic, "validator id cannot be blank")
 	}
 	return nil
 }
