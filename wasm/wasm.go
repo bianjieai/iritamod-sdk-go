@@ -70,7 +70,7 @@ func (wasm wasmClient) Store(request StoreRequest, config sdk.BaseTx) (string, e
 		return "", err
 	}
 	//return sdk.StringifyEvents(result.TxResult.Events).GetValue(sdk.EventTypeMessage, "code_id")
-	return sdk.StringifyEvents(result.TxResult.Events).GetValue("store_code", "code_id")
+	return sdk.StringifyEvents(result.TxResult.Events).GetValue(TypeMsgStoreCode, "code_id")
 }
 
 //Instantiate instantiate the contract state
@@ -93,7 +93,7 @@ func (wasm wasmClient) Instantiate(request InstantiateRequest, config sdk.BaseTx
 		return "", err
 	}
 	//return sdk.StringifyEvents(result.TxResult.Events).GetValue(sdk.EventTypeMessage, "_contract_address")
-	return sdk.StringifyEvents(result.TxResult.Events).GetValue("instantiate", "_contract_address")
+	return sdk.StringifyEvents(result.TxResult.Events).GetValue(TypeMsgInstantiateContract, "_contract_address")
 }
 
 //Execute execute the contract method

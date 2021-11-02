@@ -10,7 +10,7 @@ import (
 // message types for the wasm client
 const (
 	RouterKey                  string = "wasm"
-	TypeMsgStoreCode           string = "store-code"
+	TypeMsgStoreCode           string = "store_code"
 	TypeMsgInstantiateContract string = "instantiate"
 	TypeMsgExecuteContract     string = "execute"
 	TypeMsgMigrateContract     string = "migrate"

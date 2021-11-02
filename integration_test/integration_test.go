@@ -9,11 +9,11 @@ import (
 	"time"
 
 	"github.com/stretchr/testify/require"
+	"github.com/stretchr/testify/suite"
 
 	"github.com/irisnet/core-sdk-go/log"
 	"github.com/irisnet/core-sdk-go/types"
 	"github.com/irisnet/core-sdk-go/types/store"
-	"github.com/stretchr/testify/suite"
 )
 
 const (

@@ -2,6 +2,7 @@ package perm
 
 import (
 	sdk "github.com/irisnet/core-sdk-go/types"
+
 	ctypes "github.com/tendermint/tendermint/rpc/core/types"
 )
 

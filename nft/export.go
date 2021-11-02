@@ -6,7 +6,7 @@ import (
 	ctypes "github.com/tendermint/tendermint/rpc/core/types"
 )
 
-// expose NFT module api for user
+//Client expose NFT module api for user
 type Client interface {
 	sdk.Module
 
@@ -72,7 +72,6 @@ type QueryOwnerResp struct {
 	IDCs    []IDC  `json:"idcs" yaml:"idcs"`
 }
 
-// BaseNFT non fungible token definition
 type QueryNFTResp struct {
 	ID      string `json:"id"`
 	Name    string `json:"name"`

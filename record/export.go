@@ -2,6 +2,7 @@ package record
 
 import (
 	"github.com/bianjieai/iritamod-sdk-go/types"
+
 	sdk "github.com/irisnet/core-sdk-go/types"
 )
 
