@@ -3,7 +3,6 @@ package integration
 import (
 	"context"
 	"encoding/hex"
-	"fmt"
 	"strings"
 
 	iritaidentity "github.com/bianjieai/iritamod-sdk-go/identity"
@@ -16,11 +15,8 @@ import (
 
 func (s IntegrationTestSuite) Test_GetStatus() {
 	status, err := s.Client.Status(context.Background())
-	if err != nil {
-		return
-	}
-	fmt.Println("------------------------------------------------")
-	fmt.Println(status)
+	require.NoError(s.T(), err)
+	require.NotEmpty(s.T(), status)
 }
 
 func (s IntegrationTestSuite) Test_Identity() {
