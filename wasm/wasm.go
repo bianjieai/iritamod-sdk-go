@@ -61,10 +61,10 @@ func (wasm wasmClient) Store(request StoreRequest, config sdk.BaseTx) (string, e
 		byteCode = bz
 	}
 	msg := &MsgStoreCode{
-		Sender:                sender.String(),
-		WASMByteCode:          byteCode,
-		Source:                request.Source,
-		Builder:               request.Builder,
+		Sender:       sender.String(),
+		WASMByteCode: byteCode,
+		//Source:                request.Source,
+		//Builder:               request.Builder,
 		InstantiatePermission: request.permission,
 	}
 	result, err := wasm.BuildAndSend(sdk.Msgs{msg}, config)
@@ -87,12 +87,14 @@ func (wasm wasmClient) Instantiate(request InstantiateRequest, config sdk.BaseTx
 	}
 
 	msg := &MsgInstantiateContract{
-		Sender:    sender.String(),
-		Admin:     request.Admin,
-		CodeID:    cast.ToUint64(request.CodeID),
-		Label:     request.Label,
-		InitMsg:   request.InitMsg.MarshallJson(),
-		InitFunds: request.InitFunds,
+		Sender: sender.String(),
+		Admin:  request.Admin,
+		CodeID: cast.ToUint64(request.CodeID),
+		Label:  request.Label,
+		//InitMsg:   request.InitMsg.MarshallJson(),
+		//InitFunds: request.InitFunds,
+		Msg:   request.InitMsg.MarshallJson(),
+		Funds: request.InitFunds,
 	}
 	result, err := wasm.BuildAndSend(sdk.Msgs{msg}, config)
 	if err != nil {
@@ -121,10 +123,11 @@ func (wasm wasmClient) Execute(contractAddress string,
 	}
 
 	msg := &MsgExecuteContract{
-		Sender:    sender.String(),
-		Contract:  contractAddress,
-		SentFunds: sentFunds,
-		Msg:       msgBytes,
+		Sender:   sender.String(),
+		Contract: contractAddress,
+		Funds:    sentFunds,
+		//SentFunds: sentFunds,
+		Msg: msgBytes,
 	}
 	send, err := wasm.BuildAndSend(sdk.Msgs{msg}, config)
 	if err != nil {
@@ -143,10 +146,11 @@ func (wasm wasmClient) Migrate(contractAddress string,
 	}
 
 	msg := &MsgMigrateContract{
-		Sender:     sender.String(),
-		Contract:   contractAddress,
-		CodeID:     cast.ToUint64(newCodeID),
-		MigrateMsg: msgByte,
+		Sender:   sender.String(),
+		Contract: contractAddress,
+		CodeID:   cast.ToUint64(newCodeID),
+		Msg:      msgByte,
+		//MigrateMsg: msgByte,
 	}
 	send, err := wasm.BuildAndSend(sdk.Msgs{msg}, config)
 	if err != nil {
@@ -170,7 +174,8 @@ func (wasm wasmClient) QueryContractInfo(address string) (*ContractInfo, error) 
 	if err != nil {
 		return nil, errors.Wrap(ErrQueryWasm, err.Error())
 	}
-	return res.ContractInfo, nil
+	returnArg := res.ContractInfo
+	return &returnArg, nil
 }
 
 //ExportContractState export all state data of the contract

@@ -1,7 +1,7 @@
 package wasm
 
 import (
-	"encoding/json"
+	"fmt"
 
 	"github.com/irisnet/core-sdk-go/types/errors"
 
@@ -30,14 +30,19 @@ var (
 
 // ValidateBasic implement sdk.Msg
 func (msg MsgStoreCode) ValidateBasic() error {
-	if err := sdk.ValidateAccAddress(msg.Sender); err != nil {
-		return errors.Wrap(ErrValidateAccAddress, err.Error())
+	if _, err := sdk.AccAddressFromBech32(msg.Sender); err != nil {
+		return err
 	}
 
-	if len(msg.WASMByteCode) == 0 {
-		return errors.Wrap(ErrValidateBasic, "WASMByteCode should not be empty")
+	if err := validateWasmCode(msg.WASMByteCode); err != nil {
+		return errors.Wrapf(errors.ErrInvalidRequest, "code bytes %s", err.Error())
 	}
 
+	if msg.InstantiatePermission != nil {
+		if err := msg.InstantiatePermission.ValidateBasic(); err != nil {
+			return errors.Wrap(err, "instantiate permission")
+		}
+	}
 	return nil
 }
 
@@ -48,23 +53,30 @@ func (msg MsgStoreCode) GetSigners() []sdk.AccAddress {
 
 // ValidateBasic implement sdk.Msg
 func (msg MsgInstantiateContract) ValidateBasic() error {
+	if _, err := sdk.AccAddressFromBech32(msg.Sender); err != nil {
+		return errors.Wrap(err, "sender")
+	}
+
 	if msg.CodeID == 0 {
-		return errors.Wrap(ErrValidateBasic, "code id is required")
+		return errors.Wrap(errors.ErrInvalidRequest, "code id is required")
 	}
-	if msg.Label == "" {
-		return errors.Wrap(ErrValidateBasic, "label is required")
+
+	if err := validateLabel(msg.Label); err != nil {
+		return errors.Wrap(errors.ErrInvalidRequest, "label is required")
+
 	}
+
+	if !msg.Funds.IsValid() {
+		return ErrInvalidCoins
+	}
+
 	if len(msg.Admin) != 0 {
-		if err := sdk.ValidateAccAddress(msg.Admin); err != nil {
-			return errors.Wrap(ErrValidateAccAddress, err.Error())
+		if _, err := sdk.AccAddressFromBech32(msg.Admin); err != nil {
+			return errors.Wrap(err, "admin")
 		}
 	}
-	if !json.Valid(msg.InitMsg) {
-		return errors.Wrap(ErrValidateBasic, "InitMsg is not valid json")
-	}
-	err := sdk.ValidateAccAddress(msg.Sender)
-	if err != nil {
-		return errors.Wrap(ErrValidateAccAddress, err.Error())
+	if err := msg.Msg.ValidateBasic(); err != nil {
+		return errors.Wrap(err, "payload msg")
 	}
 	return nil
 }
@@ -76,15 +88,19 @@ func (msg MsgInstantiateContract) GetSigners() []sdk.AccAddress {
 
 // ValidateBasic implement sdk.Msg
 func (msg MsgExecuteContract) ValidateBasic() error {
-	if err := sdk.ValidateAccAddress(msg.Contract); err != nil {
-		return errors.Wrap(ErrValidateAccAddress, err.Error())
+
+	if _, err := sdk.AccAddressFromBech32(msg.Sender); err != nil {
+		return errors.Wrap(err, "sender")
 	}
-	if !json.Valid(msg.Msg) {
-		return errors.Wrap(ErrValidateBasic, "InitMsg is not valid json")
+	if _, err := sdk.AccAddressFromBech32(msg.Contract); err != nil {
+		return errors.Wrap(err, "contract")
 	}
-	err := sdk.ValidateAccAddress(msg.Sender)
-	if err != nil {
-		return errors.Wrap(ErrValidateAccAddress, err.Error())
+
+	if !msg.Funds.IsValid() {
+		return errors.Wrap(ErrInvalidCoins, "sentFunds")
+	}
+	if err := msg.Msg.ValidateBasic(); err != nil {
+		return errors.Wrap(err, "payload msg")
 	}
 	return nil
 }
@@ -97,20 +113,19 @@ func (msg MsgExecuteContract) GetSigners() []sdk.AccAddress {
 // ValidateBasic implement sdk.Msg
 func (msg MsgMigrateContract) ValidateBasic() error {
 	if msg.CodeID == 0 {
-		return errors.Wrap(ErrValidateBasic, "code id is required")
+		return errors.Wrap(errors.ErrInvalidRequest, "code id is required")
+	}
+	if _, err := sdk.AccAddressFromBech32(msg.Sender); err != nil {
+		return errors.Wrap(err, "sender")
+	}
+	if _, err := sdk.AccAddressFromBech32(msg.Contract); err != nil {
+		return errors.Wrap(err, "contract")
 	}
 
-	if err := sdk.ValidateAccAddress(msg.Contract); err != nil {
-		return errors.Wrap(ErrValidateAccAddress, err.Error())
+	if err := msg.Msg.ValidateBasic(); err != nil {
+		return errors.Wrap(err, "payload msg")
 	}
 
-	if !json.Valid(msg.MigrateMsg) {
-		return errors.Wrap(ErrValidateBasic, "migrate msg json")
-	}
-	err := sdk.ValidateAccAddress(msg.Sender)
-	if err != nil {
-		return errors.Wrap(ErrValidateAccAddress, err.Error())
-	}
 	return nil
 }
 
@@ -141,4 +156,77 @@ func (msg MsgClearAdmin) ValidateBasic() error {
 // GetSigners implement sdk.Msg
 func (msg MsgClearAdmin) GetSigners() []sdk.AccAddress {
 	return []sdk.AccAddress{sdk.MustAccAddressFromBech32(msg.Sender)}
+}
+
+// String implements the Stringer interface.
+func (p MigrateContractProposal) String() string {
+	return fmt.Sprintf(`Migrate Contract Proposal:
+  Title:       %s
+  Description: %s
+  Contract:    %s
+  Code id:     %d
+  Run as:      %s
+  Msg          %q
+`, p.Title, p.Description, p.Contract, p.CodeID, p.RunAs, p.Msg)
+}
+
+// String implements the Stringer interface.
+func (p StoreCodeProposal) String() string {
+	return fmt.Sprintf(`Store Code Proposal:
+  Title:       %s
+  Description: %s
+  Run as:      %s
+  WasmCode:    %X
+`, p.Title, p.Description, p.RunAs, p.WASMByteCode)
+}
+
+// String implements the Stringer interface.
+func (p InstantiateContractProposal) String() string {
+	return fmt.Sprintf(`Instantiate Code Proposal:
+  Title:       %s
+  Description: %s
+  Run as:      %s
+  Admin:       %s
+  Code id:     %d
+  Label:       %s
+  Msg:         %q
+  Funds:       %s
+`, p.Title, p.Description, p.RunAs, p.Admin, p.CodeID, p.Label, p.Msg, p.Funds)
+}
+
+// String implements the Stringer interface.
+func (p UpdateAdminProposal) String() string {
+	return fmt.Sprintf(`Update Contract Admin Proposal:
+  Title:       %s
+  Description: %s
+  Contract:    %s
+  New Admin:   %s
+`, p.Title, p.Description, p.Contract, p.NewAdmin)
+}
+
+// String implements the Stringer interface.
+func (p ClearAdminProposal) String() string {
+	return fmt.Sprintf(`Clear Contract Admin Proposal:
+  Title:       %s
+  Description: %s
+  Contract:    %s
+`, p.Title, p.Description, p.Contract)
+}
+
+// String implements the Stringer interface.
+func (p PinCodesProposal) String() string {
+	return fmt.Sprintf(`Pin Wasm Codes Proposal:
+  Title:       %s
+  Description: %s
+  Codes:       %v
+`, p.Title, p.Description, p.CodeIDs)
+}
+
+// String implements the Stringer interface.
+func (p UnpinCodesProposal) String() string {
+	return fmt.Sprintf(`Unpin Wasm Codes Proposal:
+  Title:       %s
+  Description: %s
+  Codes:       %v
+`, p.Title, p.Description, p.CodeIDs)
 }
