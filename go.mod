@@ -5,8 +5,7 @@ go 1.16
 require (
 	github.com/gogo/protobuf v1.3.3
 	github.com/golang/protobuf v1.5.2
-	github.com/irisnet/core-sdk-go v0.0.0-20211104064902-e26c6107c96e
-	github.com/niemeyer/pretty v0.0.0-20200227124842-a10e7caefd8e // indirect
+	github.com/irisnet/core-sdk-go v0.0.0-20211118114422-2efa1178f1e2
 	github.com/petermattis/goid v0.0.0-20180202154549-b0b1615b78e5 // indirect
 	github.com/regen-network/cosmos-proto v0.3.1
 	github.com/spf13/cast v1.3.1
