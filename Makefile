@@ -13,3 +13,6 @@ test-integration:
 	sleep 5
 	@go test -v $(PACKAGES_INTEGRATION)
 	cd integration_test/scripts/ && sh clean.sh
+
+proto-gen:
+	@./third_party/protocgen.sh

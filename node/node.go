@@ -3,24 +3,21 @@ package node
 import (
 	"context"
 
-	ctypes "github.com/tendermint/tendermint/rpc/core/types"
-
-	"github.com/irisnet/core-sdk-go/codec"
-	"github.com/irisnet/core-sdk-go/codec/types"
+	"github.com/irisnet/core-sdk-go/common/codec"
+	"github.com/irisnet/core-sdk-go/common/codec/types"
 	sdk "github.com/irisnet/core-sdk-go/types"
-	"github.com/irisnet/core-sdk-go/types/errors"
 	query "github.com/irisnet/core-sdk-go/types/query"
 )
 
 type nodeClient struct {
 	sdk.BaseClient
-	codec.Codec
+	codec.Marshaler
 }
 
-func NewClient(bc sdk.BaseClient, cdc codec.Codec) Client {
+func NewClient(bc sdk.BaseClient, cdc codec.Marshaler) Client {
 	return nodeClient{
 		BaseClient: bc,
-		Codec:      cdc,
+		Marshaler:  cdc,
 	}
 }
 
@@ -32,10 +29,10 @@ func (n nodeClient) RegisterInterfaceTypes(registry types.InterfaceRegistry) {
 	RegisterInterfaces(registry)
 }
 
-func (n nodeClient) CreateValidator(request CreateValidatorRequest, baseTx sdk.BaseTx) (ctypes.ResultTx, error) {
+func (n nodeClient) CreateValidator(request CreateValidatorRequest, baseTx sdk.BaseTx) (sdk.ResultTx, error) {
 	creator, err := n.QueryAddress(baseTx.From, baseTx.Password)
 	if err != nil {
-		return ctypes.ResultTx{}, errors.Wrap(ErrQueryAddress, err.Error())
+		return sdk.ResultTx{}, sdk.WrapWithMessage(ErrQueryAddress, err.Error())
 	}
 
 	msg := &MsgCreateValidator{
@@ -47,20 +44,20 @@ func (n nodeClient) CreateValidator(request CreateValidatorRequest, baseTx sdk.B
 	}
 	send, err := n.BuildAndSend([]sdk.Msg{msg}, baseTx)
 	if err != nil {
-		return ctypes.ResultTx{}, errors.Wrap(ErrBuildAndSend, err.Error())
+		return sdk.ResultTx{}, sdk.WrapWithMessage(ErrBuildAndSend, err.Error())
 	}
 	return send, nil
 }
 
-func (n nodeClient) UpdateValidator(request UpdateValidatorRequest, baseTx sdk.BaseTx) (ctypes.ResultTx, error) {
+func (n nodeClient) UpdateValidator(request UpdateValidatorRequest, baseTx sdk.BaseTx) (sdk.ResultTx, error) {
 	creator, err := n.QueryAddress(baseTx.From, baseTx.Password)
 	if err != nil {
-		return ctypes.ResultTx{}, errors.Wrap(ErrQueryAddress, err.Error())
+		return sdk.ResultTx{}, sdk.WrapWithMessage(ErrQueryAddress, err.Error())
 	}
 
 	vID, er := sdk.HexBytesFrom(request.ID)
 	if er != nil {
-		return ctypes.ResultTx{}, errors.Wrap(ErrHex, err.Error())
+		return sdk.ResultTx{}, sdk.WrapWithMessage(ErrHex, err.Error())
 	}
 
 	msg := &MsgUpdateValidator{
@@ -74,20 +71,20 @@ func (n nodeClient) UpdateValidator(request UpdateValidatorRequest, baseTx sdk.B
 
 	send, err := n.BuildAndSend([]sdk.Msg{msg}, baseTx)
 	if err != nil {
-		return ctypes.ResultTx{}, errors.Wrap(ErrBuildAndSend, err.Error())
+		return sdk.ResultTx{}, sdk.WrapWithMessage(ErrBuildAndSend, err.Error())
 	}
 	return send, nil
 }
 
-func (n nodeClient) RemoveValidator(id string, baseTx sdk.BaseTx) (ctypes.ResultTx, error) {
+func (n nodeClient) RemoveValidator(id string, baseTx sdk.BaseTx) (sdk.ResultTx, error) {
 	creator, err := n.QueryAddress(baseTx.From, baseTx.Password)
 	if err != nil {
-		return ctypes.ResultTx{}, errors.Wrap(ErrQueryAddress, err.Error())
+		return sdk.ResultTx{}, sdk.WrapWithMessage(ErrQueryAddress, err.Error())
 	}
 
 	vID, er := sdk.HexBytesFrom(id)
 	if er != nil {
-		return ctypes.ResultTx{}, errors.Wrap(ErrHex, err.Error())
+		return sdk.ResultTx{}, sdk.WrapWithMessage(ErrHex, err.Error())
 	}
 	msg := &MsgRemoveValidator{
 		Id:       vID.String(),
@@ -96,15 +93,15 @@ func (n nodeClient) RemoveValidator(id string, baseTx sdk.BaseTx) (ctypes.Result
 
 	send, err := n.BuildAndSend([]sdk.Msg{msg}, baseTx)
 	if err != nil {
-		return ctypes.ResultTx{}, errors.Wrap(ErrBuildAndSend, err.Error())
+		return sdk.ResultTx{}, sdk.WrapWithMessage(ErrBuildAndSend, err.Error())
 	}
 	return send, nil
 }
 
-func (n nodeClient) GrantNode(request GrantNodeRequest, baseTx sdk.BaseTx) (ctypes.ResultTx, error) {
+func (n nodeClient) GrantNode(request GrantNodeRequest, baseTx sdk.BaseTx) (sdk.ResultTx, error) {
 	creator, err := n.QueryAddress(baseTx.From, baseTx.Password)
 	if err != nil {
-		return ctypes.ResultTx{}, errors.Wrap(ErrQueryAddress, err.Error())
+		return sdk.ResultTx{}, sdk.WrapWithMessage(ErrQueryAddress, err.Error())
 	}
 
 	msg := &MsgGrantNode{
@@ -115,20 +112,20 @@ func (n nodeClient) GrantNode(request GrantNodeRequest, baseTx sdk.BaseTx) (ctyp
 
 	send, err := n.BuildAndSend([]sdk.Msg{msg}, baseTx)
 	if err != nil {
-		return ctypes.ResultTx{}, errors.Wrap(ErrBuildAndSend, err.Error())
+		return sdk.ResultTx{}, sdk.WrapWithMessage(ErrBuildAndSend, err.Error())
 	}
 	return send, nil
 }
 
-func (n nodeClient) RevokeNode(nodeId string, baseTx sdk.BaseTx) (ctypes.ResultTx, error) {
+func (n nodeClient) RevokeNode(nodeId string, baseTx sdk.BaseTx) (sdk.ResultTx, error) {
 	creator, err := n.QueryAddress(baseTx.From, baseTx.Password)
 	if err != nil {
-		return ctypes.ResultTx{}, errors.Wrap(ErrQueryAddress, err.Error())
+		return sdk.ResultTx{}, sdk.WrapWithMessage(ErrQueryAddress, err.Error())
 	}
 
 	vID, er := sdk.HexBytesFrom(nodeId)
 	if er != nil {
-		return ctypes.ResultTx{}, errors.Wrap(ErrHex, er.Error())
+		return sdk.ResultTx{}, sdk.WrapWithMessage(ErrHex, er.Error())
 	}
 
 	msg := &MsgRevokeNode{
@@ -138,7 +135,7 @@ func (n nodeClient) RevokeNode(nodeId string, baseTx sdk.BaseTx) (ctypes.ResultT
 
 	send, err := n.BuildAndSend([]sdk.Msg{msg}, baseTx)
 	if err != nil {
-		return ctypes.ResultTx{}, errors.Wrap(ErrBuildAndSend, err.Error())
+		return sdk.ResultTx{}, sdk.WrapWithMessage(ErrBuildAndSend, err.Error())
 	}
 	return send, nil
 }
@@ -147,7 +144,7 @@ func (n nodeClient) QueryValidators(pageReq *query.PageRequest) ([]QueryValidato
 	conn, err := n.GenConn()
 
 	if err != nil {
-		return nil, errors.Wrap(ErrGenConn, err.Error())
+		return nil, sdk.WrapWithMessage(ErrGenConn, err.Error())
 	}
 
 	resp, err := NewQueryClient(conn).Validators(
@@ -157,7 +154,7 @@ func (n nodeClient) QueryValidators(pageReq *query.PageRequest) ([]QueryValidato
 		},
 	)
 	if err != nil {
-		return nil, errors.Wrap(ErrQueryNode, err.Error())
+		return nil, sdk.WrapWithMessage(ErrQueryNode, err.Error())
 	}
 
 	return validators(resp.Validators).Convert().([]QueryValidatorResp), nil
@@ -167,12 +164,12 @@ func (n nodeClient) QueryValidator(id string) (QueryValidatorResp, error) {
 	conn, err := n.GenConn()
 
 	if err != nil {
-		return QueryValidatorResp{}, errors.Wrap(ErrGenConn, err.Error())
+		return QueryValidatorResp{}, sdk.WrapWithMessage(ErrGenConn, err.Error())
 	}
 
 	vID, err := sdk.HexBytesFrom(id)
 	if err != nil {
-		return QueryValidatorResp{}, errors.Wrap(ErrHex, err.Error())
+		return QueryValidatorResp{}, sdk.WrapWithMessage(ErrHex, err.Error())
 	}
 
 	resp, err := NewQueryClient(conn).Validator(
@@ -182,7 +179,7 @@ func (n nodeClient) QueryValidator(id string) (QueryValidatorResp, error) {
 		},
 	)
 	if err != nil {
-		return QueryValidatorResp{}, errors.Wrap(ErrQueryNode, err.Error())
+		return QueryValidatorResp{}, sdk.WrapWithMessage(ErrQueryNode, err.Error())
 	}
 
 	return resp.Validator.Convert().(QueryValidatorResp), nil
@@ -192,7 +189,7 @@ func (n nodeClient) QueryNodes(pageReq *query.PageRequest) ([]QueryNodeResp, err
 	conn, err := n.GenConn()
 
 	if err != nil {
-		return nil, errors.Wrap(ErrGenConn, err.Error())
+		return nil, sdk.WrapWithMessage(ErrGenConn, err.Error())
 	}
 
 	resp, err := NewQueryClient(conn).Nodes(
@@ -202,7 +199,7 @@ func (n nodeClient) QueryNodes(pageReq *query.PageRequest) ([]QueryNodeResp, err
 		},
 	)
 	if err != nil {
-		return nil, errors.Wrap(ErrQueryNode, err.Error())
+		return nil, sdk.WrapWithMessage(ErrQueryNode, err.Error())
 	}
 
 	return nodes(resp.Nodes).Convert().([]QueryNodeResp), nil
@@ -212,12 +209,12 @@ func (n nodeClient) QueryNode(id string) (QueryNodeResp, error) {
 	conn, err := n.GenConn()
 
 	if err != nil {
-		return QueryNodeResp{}, errors.Wrap(ErrGenConn, err.Error())
+		return QueryNodeResp{}, sdk.WrapWithMessage(ErrGenConn, err.Error())
 	}
 
 	vID, err := sdk.HexBytesFrom(id)
 	if err != nil {
-		return QueryNodeResp{}, errors.Wrap(ErrHex, err.Error())
+		return QueryNodeResp{}, sdk.WrapWithMessage(ErrHex, err.Error())
 	}
 
 	resp, err := NewQueryClient(conn).Node(
@@ -227,7 +224,7 @@ func (n nodeClient) QueryNode(id string) (QueryNodeResp, error) {
 		},
 	)
 	if err != nil {
-		return QueryNodeResp{}, errors.Wrap(ErrQueryNode, err.Error())
+		return QueryNodeResp{}, sdk.WrapWithMessage(ErrQueryNode, err.Error())
 	}
 
 	return resp.Node.Convert().(QueryNodeResp), nil
@@ -237,7 +234,7 @@ func (n nodeClient) QueryParams() (QueryParamsResp, error) {
 	conn, err := n.GenConn()
 
 	if err != nil {
-		return QueryParamsResp{}, errors.Wrap(ErrGenConn, err.Error())
+		return QueryParamsResp{}, sdk.WrapWithMessage(ErrGenConn, err.Error())
 	}
 
 	resp, err := NewQueryClient(conn).Params(
@@ -245,7 +242,7 @@ func (n nodeClient) QueryParams() (QueryParamsResp, error) {
 		&QueryParamsRequest{},
 	)
 	if err != nil {
-		return QueryParamsResp{}, errors.Wrap(ErrQueryNode, err.Error())
+		return QueryParamsResp{}, sdk.WrapWithMessage(ErrQueryNode, err.Error())
 	}
 
 	return resp.Params.Convert().(QueryParamsResp), nil

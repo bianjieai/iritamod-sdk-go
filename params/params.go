@@ -3,24 +3,20 @@ package params
 import (
 	"fmt"
 
-	"github.com/irisnet/core-sdk-go/types/errors"
-
-	"github.com/irisnet/core-sdk-go/codec"
-	"github.com/irisnet/core-sdk-go/codec/types"
+	"github.com/irisnet/core-sdk-go/common/codec"
+	"github.com/irisnet/core-sdk-go/common/codec/types"
 	sdk "github.com/irisnet/core-sdk-go/types"
-
-	ctypes "github.com/tendermint/tendermint/rpc/core/types"
 )
 
 type paramsClient struct {
 	sdk.BaseClient
-	codec.Codec
+	codec.Marshaler
 }
 
-func NewClient(bc sdk.BaseClient, cdc codec.Codec) Client {
+func NewClient(bc sdk.BaseClient, cdc codec.Marshaler) Client {
 	return paramsClient{
 		BaseClient: bc,
-		Codec:      cdc,
+		Marshaler:  cdc,
 	}
 }
 
@@ -32,10 +28,10 @@ func (p paramsClient) RegisterInterfaceTypes(registry types.InterfaceRegistry) {
 	RegisterInterfaces(registry)
 }
 
-func (p paramsClient) UpdateParams(requests []UpdateParamRequest, baseTx sdk.BaseTx) (ctypes.ResultTx, error) {
+func (p paramsClient) UpdateParams(requests []UpdateParamRequest, baseTx sdk.BaseTx) (sdk.ResultTx, error) {
 	sender, err := p.QueryAddress(baseTx.From, baseTx.Password)
 	if err != nil {
-		return ctypes.ResultTx{}, errors.Wrapf(ErrQueryAddress, fmt.Sprintf("%s not found", baseTx.From))
+		return sdk.ResultTx{}, sdk.WrapWithMessage(ErrQueryAddress, fmt.Sprintf("%s not found", baseTx.From))
 	}
 
 	var changes []ParamChange
@@ -53,7 +49,7 @@ func (p paramsClient) UpdateParams(requests []UpdateParamRequest, baseTx sdk.Bas
 	}
 	send, err := p.BuildAndSend([]sdk.Msg{msg}, baseTx)
 	if err != nil {
-		return ctypes.ResultTx{}, errors.Wrap(ErrBuildAndSend, err.Error())
+		return sdk.ResultTx{}, sdk.WrapWithMessage(ErrBuildAndSend, err.Error())
 	}
 	return send, nil
 }

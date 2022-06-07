@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 
 	sdk "github.com/irisnet/core-sdk-go/types"
-	"github.com/irisnet/core-sdk-go/types/errors"
 )
 
 // Identity message types and params
@@ -25,6 +24,22 @@ var (
 	_ sdk.Msg = &MsgUpdateIdentity{}
 )
 
+func (m MsgCreateIdentity) Route() string {
+	return ModuleName
+}
+
+func (m MsgCreateIdentity) Type() string {
+	return TypeMsgCreateIdentity
+}
+
+func (m MsgCreateIdentity) GetSignBytes() []byte {
+	bz, err := ModuleCdc.MarshalJSON(&m)
+	if err != nil {
+		panic(err)
+	}
+	return sdk.MustSortJSON(bz)
+}
+
 // ValidateBasic implements Msg
 func (m MsgCreateIdentity) ValidateBasic() error {
 	return ValidateIdentityFields(
@@ -39,6 +54,22 @@ func (m MsgCreateIdentity) ValidateBasic() error {
 // GetSigners implements Msg
 func (m MsgCreateIdentity) GetSigners() []sdk.AccAddress {
 	return []sdk.AccAddress{sdk.MustAccAddressFromBech32(m.Owner)}
+}
+
+func (m MsgUpdateIdentity) Route() string {
+	return ModuleName
+}
+
+func (m MsgUpdateIdentity) Type() string {
+	return TypeMsgUpdateIdentity
+}
+
+func (m MsgUpdateIdentity) GetSignBytes() []byte {
+	bz, err := ModuleCdc.MarshalJSON(&m)
+	if err != nil {
+		panic(err)
+	}
+	return sdk.MustSortJSON(bz)
 }
 
 // ValidateBasic implements m.
@@ -66,15 +97,15 @@ func ValidateIdentityFields(
 	owner string,
 ) error {
 	if len(owner) == 0 {
-		return errors.Wrap(ErrValidateBasic, "owner missing")
+		return sdk.WrapWithMessage(ErrValidateBasic, "owner missing")
 	}
 
 	if len(id) != IDLength*2 {
-		return errors.Wrapf(ErrValidateBasic, "size of the ID must be %d in bytes", IDLength)
+		return sdk.WrapWithMessage(ErrValidateBasic, "size of the ID must be %d in bytes", IDLength)
 	}
 
 	if len(credentials) > MaxURILength {
-		return errors.Wrapf(ErrValidateBasic, "length of the credentials uri must not be greater than %d", MaxURILength)
+		return sdk.WrapWithMessage(ErrValidateBasic, "length of the credentials uri must not be greater than %d", MaxURILength)
 	}
 
 	return nil
@@ -107,7 +138,7 @@ func (p PubKeyAlgorithm) MarshalJSON() ([]byte, error) {
 func (p *PubKeyAlgorithm) UnmarshalJSON(data []byte) error {
 	var s string
 	if err := json.Unmarshal(data, &s); err != nil {
-		return errors.Wrap(ErrUnmarshal, err.Error())
+		return sdk.WrapWithMessage(ErrUnmarshal, err.Error())
 	}
 
 	algo := PubKeyAlgorithm_value[s]

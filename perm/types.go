@@ -4,8 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/irisnet/core-sdk-go/types/errors"
-
 	sdk "github.com/irisnet/core-sdk-go/types"
 )
 
@@ -25,16 +23,32 @@ var (
 	_ sdk.Msg = &MsgUnblockAccount{}
 )
 
+func (m MsgAssignRoles) Route() string {
+	return ModuleName
+}
+
+func (m MsgAssignRoles) Type() string {
+	return TypeMsgAssignRoles
+}
+
+func (m MsgAssignRoles) GetSignBytes() []byte {
+	bz, err := ModuleCdc.MarshalJSON(&m)
+	if err != nil {
+		panic(err)
+	}
+	return sdk.MustSortJSON(bz)
+}
+
 func (m MsgAssignRoles) ValidateBasic() error {
 	if len(m.Address) == 0 {
-		return errors.Wrap(ErrValidateBasic, "address missing")
+		return sdk.WrapWithMessage(ErrValidateBasic, "address missing")
 	}
 
 	if len(m.Operator) == 0 {
-		return errors.Wrap(ErrValidateBasic, "operator missing")
+		return sdk.WrapWithMessage(ErrValidateBasic, "operator missing")
 	}
 	if len(m.Roles) == 0 {
-		return errors.Wrap(ErrValidateBasic, "roles missing")
+		return sdk.WrapWithMessage(ErrValidateBasic, "roles missing")
 	}
 	return nil
 }
@@ -43,15 +57,31 @@ func (m MsgAssignRoles) GetSigners() []sdk.AccAddress {
 	return []sdk.AccAddress{sdk.MustAccAddressFromBech32(m.Operator)}
 }
 
+func (m MsgUnassignRoles) Route() string {
+	return ModuleName
+}
+
+func (m MsgUnassignRoles) Type() string {
+	return TypeMsgUnassignRoles
+}
+
+func (m MsgUnassignRoles) GetSignBytes() []byte {
+	bz, err := ModuleCdc.MarshalJSON(&m)
+	if err != nil {
+		panic(err)
+	}
+	return sdk.MustSortJSON(bz)
+}
+
 func (m MsgUnassignRoles) ValidateBasic() error {
 	if len(m.Address) == 0 {
-		return errors.Wrap(ErrValidateBasic, "address missing")
+		return sdk.WrapWithMessage(ErrValidateBasic, "address missing")
 	}
 	if len(m.Operator) == 0 {
-		return errors.Wrap(ErrValidateBasic, "operator missing")
+		return sdk.WrapWithMessage(ErrValidateBasic, "operator missing")
 	}
 	if len(m.Roles) == 0 {
-		return errors.Wrap(ErrValidateBasic, "roles missing")
+		return sdk.WrapWithMessage(ErrValidateBasic, "roles missing")
 	}
 	return nil
 }
@@ -60,12 +90,28 @@ func (m MsgUnassignRoles) GetSigners() []sdk.AccAddress {
 	return []sdk.AccAddress{sdk.MustAccAddressFromBech32(m.Operator)}
 }
 
+func (m MsgBlockAccount) Route() string {
+	return ModuleName
+}
+
+func (m MsgBlockAccount) Type() string {
+	return TypeMsgBlockAccount
+}
+
+func (m MsgBlockAccount) GetSignBytes() []byte {
+	bz, err := ModuleCdc.MarshalJSON(&m)
+	if err != nil {
+		panic(err)
+	}
+	return sdk.MustSortJSON(bz)
+}
+
 func (m MsgBlockAccount) ValidateBasic() error {
 	if len(m.Address) == 0 {
-		return errors.Wrap(ErrValidateBasic, "address missing")
+		return sdk.WrapWithMessage(ErrValidateBasic, "address missing")
 	}
 	if len(m.Operator) == 0 {
-		return errors.Wrap(ErrValidateBasic, "operator missing")
+		return sdk.WrapWithMessage(ErrValidateBasic, "operator missing")
 	}
 	return nil
 }
@@ -74,12 +120,28 @@ func (m MsgBlockAccount) GetSigners() []sdk.AccAddress {
 	return []sdk.AccAddress{sdk.MustAccAddressFromBech32(m.Operator)}
 }
 
+func (m MsgUnblockAccount) Route() string {
+	return ModuleName
+}
+
+func (m MsgUnblockAccount) Type() string {
+	return TypeMsgUnblockAccount
+}
+
+func (m MsgUnblockAccount) GetSignBytes() []byte {
+	bz, err := ModuleCdc.MarshalJSON(&m)
+	if err != nil {
+		panic(err)
+	}
+	return sdk.MustSortJSON(bz)
+}
+
 func (m MsgUnblockAccount) ValidateBasic() error {
 	if len(m.Address) == 0 {
-		return errors.Wrap(ErrValidateBasic, "address missing")
+		return sdk.WrapWithMessage(ErrValidateBasic, "address missing")
 	}
 	if len(m.Operator) == 0 {
-		return errors.Wrap(ErrValidateBasic, "operator missing")
+		return sdk.WrapWithMessage(ErrValidateBasic, "operator missing")
 	}
 	return nil
 }

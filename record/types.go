@@ -1,8 +1,6 @@
 package record
 
 import (
-	"github.com/irisnet/core-sdk-go/types/errors"
-
 	sdk "github.com/irisnet/core-sdk-go/types"
 )
 
@@ -19,13 +17,29 @@ var (
 	recordKey = []byte{0x01} // record key
 )
 
+func (m MsgCreateRecord) Route() string {
+	return ModuleName
+}
+
+func (m MsgCreateRecord) Type() string {
+	return "create_record"
+}
+
+func (m MsgCreateRecord) GetSignBytes() []byte {
+	bz, err := ModuleCdc.MarshalJSON(&m)
+	if err != nil {
+		panic(err)
+	}
+	return sdk.MustSortJSON(bz)
+}
+
 // ValidateBasic implements Msg.
 func (msg MsgCreateRecord) ValidateBasic() error {
 	if len(msg.Contents) == 0 {
-		return errors.Wrap(ErrValidateBasic, "contents missing")
+		return sdk.WrapWithMessage(ErrValidateBasic, "contents missing")
 	}
 	if len(msg.Creator) == 0 {
-		return errors.Wrap(ErrValidateBasic, "creator missing")
+		return sdk.WrapWithMessage(ErrValidateBasic, "creator missing")
 	}
 
 	if err := sdk.ValidateAccAddress(msg.Creator); err != nil {
@@ -34,10 +48,10 @@ func (msg MsgCreateRecord) ValidateBasic() error {
 
 	for i, content := range msg.Contents {
 		if len(content.Digest) == 0 {
-			return errors.Wrapf(ErrValidateBasic, "content[%d] digest missing", i)
+			return sdk.WrapWithMessage(ErrValidateBasic, "content[%d] digest missing", i)
 		}
 		if len(content.DigestAlgo) == 0 {
-			return errors.Wrapf(ErrValidateBasic, "content[%d] digest algo missing", i)
+			return sdk.WrapWithMessage(ErrValidateBasic, "content[%d] digest algo missing", i)
 		}
 	}
 	return nil

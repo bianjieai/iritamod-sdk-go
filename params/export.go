@@ -2,8 +2,6 @@ package params
 
 import (
 	sdk "github.com/irisnet/core-sdk-go/types"
-
-	ctypes "github.com/tendermint/tendermint/rpc/core/types"
 )
 
 var (
@@ -14,7 +12,7 @@ var (
 type Client interface {
 	sdk.Module
 
-	UpdateParams(request []UpdateParamRequest, baseTx sdk.BaseTx) (ctypes.ResultTx, error)
+	UpdateParams(request []UpdateParamRequest, baseTx sdk.BaseTx) (sdk.ResultTx, error)
 }
 
 type UpdateParamRequest struct {

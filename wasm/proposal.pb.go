@@ -1494,7 +1494,10 @@ func (m *StoreCodeProposal) Unmarshal(dAtA []byte) error {
 			if err != nil {
 				return err
 			}
-			if (skippy < 0) || (iNdEx+skippy) < 0 {
+			if skippy < 0 {
+				return ErrInvalidLengthProposal
+			}
+			if (iNdEx + skippy) < 0 {
 				return ErrInvalidLengthProposal
 			}
 			if (iNdEx + skippy) > l {
@@ -1791,7 +1794,10 @@ func (m *InstantiateContractProposal) Unmarshal(dAtA []byte) error {
 			if err != nil {
 				return err
 			}
-			if (skippy < 0) || (iNdEx+skippy) < 0 {
+			if skippy < 0 {
+				return ErrInvalidLengthProposal
+			}
+			if (iNdEx + skippy) < 0 {
 				return ErrInvalidLengthProposal
 			}
 			if (iNdEx + skippy) > l {
@@ -2022,7 +2028,10 @@ func (m *MigrateContractProposal) Unmarshal(dAtA []byte) error {
 			if err != nil {
 				return err
 			}
-			if (skippy < 0) || (iNdEx+skippy) < 0 {
+			if skippy < 0 {
+				return ErrInvalidLengthProposal
+			}
+			if (iNdEx + skippy) < 0 {
 				return ErrInvalidLengthProposal
 			}
 			if (iNdEx + skippy) > l {
@@ -2200,7 +2209,10 @@ func (m *UpdateAdminProposal) Unmarshal(dAtA []byte) error {
 			if err != nil {
 				return err
 			}
-			if (skippy < 0) || (iNdEx+skippy) < 0 {
+			if skippy < 0 {
+				return ErrInvalidLengthProposal
+			}
+			if (iNdEx + skippy) < 0 {
 				return ErrInvalidLengthProposal
 			}
 			if (iNdEx + skippy) > l {
@@ -2346,7 +2358,10 @@ func (m *ClearAdminProposal) Unmarshal(dAtA []byte) error {
 			if err != nil {
 				return err
 			}
-			if (skippy < 0) || (iNdEx+skippy) < 0 {
+			if skippy < 0 {
+				return ErrInvalidLengthProposal
+			}
+			if (iNdEx + skippy) < 0 {
 				return ErrInvalidLengthProposal
 			}
 			if (iNdEx + skippy) > l {
@@ -2536,7 +2551,10 @@ func (m *PinCodesProposal) Unmarshal(dAtA []byte) error {
 			if err != nil {
 				return err
 			}
-			if (skippy < 0) || (iNdEx+skippy) < 0 {
+			if skippy < 0 {
+				return ErrInvalidLengthProposal
+			}
+			if (iNdEx + skippy) < 0 {
 				return ErrInvalidLengthProposal
 			}
 			if (iNdEx + skippy) > l {
@@ -2726,7 +2744,10 @@ func (m *UnpinCodesProposal) Unmarshal(dAtA []byte) error {
 			if err != nil {
 				return err
 			}
-			if (skippy < 0) || (iNdEx+skippy) < 0 {
+			if skippy < 0 {
+				return ErrInvalidLengthProposal
+			}
+			if (iNdEx + skippy) < 0 {
 				return ErrInvalidLengthProposal
 			}
 			if (iNdEx + skippy) > l {

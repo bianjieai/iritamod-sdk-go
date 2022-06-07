@@ -2,15 +2,13 @@ package identity
 
 import (
 	sdk "github.com/irisnet/core-sdk-go/types"
-
-	ctypes "github.com/tendermint/tendermint/rpc/core/types"
 )
 
 type Client interface {
 	sdk.Module
 
-	CreateIdentity(request CreateIdentityRequest, baseTx sdk.BaseTx) (ctypes.ResultTx, error)
-	UpdateIdentity(request UpdateIdentityRequest, baseTx sdk.BaseTx) (ctypes.ResultTx, error)
+	CreateIdentity(request CreateIdentityRequest, baseTx sdk.BaseTx) (sdk.ResultTx, error)
+	UpdateIdentity(request UpdateIdentityRequest, baseTx sdk.BaseTx) (sdk.ResultTx, error)
 
 	QueryIdentity(id string) (QueryIdentityResp, error)
 }
