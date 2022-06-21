@@ -334,6 +334,158 @@ func (m *MsgUnblockAccountResponse) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_MsgUnblockAccountResponse proto.InternalMessageInfo
 
+// MsgBlockContract defines an SDK message for blocking an contract.
+type MsgBlockContract struct {
+	ContractAddress string `protobuf:"bytes,1,opt,name=contract_address,json=contractAddress,proto3" json:"contract_address,omitempty"`
+	Operator        string `protobuf:"bytes,2,opt,name=operator,proto3" json:"operator,omitempty"`
+}
+
+func (m *MsgBlockContract) Reset()         { *m = MsgBlockContract{} }
+func (m *MsgBlockContract) String() string { return proto.CompactTextString(m) }
+func (*MsgBlockContract) ProtoMessage()    {}
+func (*MsgBlockContract) Descriptor() ([]byte, []int) {
+	return fileDescriptor_ad797c02944c52e5, []int{8}
+}
+func (m *MsgBlockContract) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *MsgBlockContract) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_MsgBlockContract.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *MsgBlockContract) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgBlockContract.Merge(m, src)
+}
+func (m *MsgBlockContract) XXX_Size() int {
+	return m.Size()
+}
+func (m *MsgBlockContract) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgBlockContract.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MsgBlockContract proto.InternalMessageInfo
+
+// MsgBlockContractResponse defines the Msg/MsgBlockContract response type.
+type MsgBlockContractResponse struct {
+}
+
+func (m *MsgBlockContractResponse) Reset()         { *m = MsgBlockContractResponse{} }
+func (m *MsgBlockContractResponse) String() string { return proto.CompactTextString(m) }
+func (*MsgBlockContractResponse) ProtoMessage()    {}
+func (*MsgBlockContractResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_ad797c02944c52e5, []int{9}
+}
+func (m *MsgBlockContractResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *MsgBlockContractResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_MsgBlockContractResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *MsgBlockContractResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgBlockContractResponse.Merge(m, src)
+}
+func (m *MsgBlockContractResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *MsgBlockContractResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgBlockContractResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MsgBlockContractResponse proto.InternalMessageInfo
+
+// MsgUnblockContract defines an SDK message for unblocking an contract.
+type MsgUnblockContract struct {
+	ContractAddress string `protobuf:"bytes,1,opt,name=contract_address,json=contractAddress,proto3" json:"contract_address,omitempty"`
+	Operator        string `protobuf:"bytes,2,opt,name=operator,proto3" json:"operator,omitempty"`
+}
+
+func (m *MsgUnblockContract) Reset()         { *m = MsgUnblockContract{} }
+func (m *MsgUnblockContract) String() string { return proto.CompactTextString(m) }
+func (*MsgUnblockContract) ProtoMessage()    {}
+func (*MsgUnblockContract) Descriptor() ([]byte, []int) {
+	return fileDescriptor_ad797c02944c52e5, []int{10}
+}
+func (m *MsgUnblockContract) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *MsgUnblockContract) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_MsgUnblockContract.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *MsgUnblockContract) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgUnblockContract.Merge(m, src)
+}
+func (m *MsgUnblockContract) XXX_Size() int {
+	return m.Size()
+}
+func (m *MsgUnblockContract) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgUnblockContract.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MsgUnblockContract proto.InternalMessageInfo
+
+// MsgUnblockAccountResponse defines the Msg/MsgUnblockContract response type.
+type MsgUnblockContractResponse struct {
+}
+
+func (m *MsgUnblockContractResponse) Reset()         { *m = MsgUnblockContractResponse{} }
+func (m *MsgUnblockContractResponse) String() string { return proto.CompactTextString(m) }
+func (*MsgUnblockContractResponse) ProtoMessage()    {}
+func (*MsgUnblockContractResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_ad797c02944c52e5, []int{11}
+}
+func (m *MsgUnblockContractResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *MsgUnblockContractResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_MsgUnblockContractResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *MsgUnblockContractResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgUnblockContractResponse.Merge(m, src)
+}
+func (m *MsgUnblockContractResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *MsgUnblockContractResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgUnblockContractResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MsgUnblockContractResponse proto.InternalMessageInfo
+
 func init() {
 	proto.RegisterType((*MsgAssignRoles)(nil), "iritamod.perm.MsgAssignRoles")
 	proto.RegisterType((*MsgAssignRolesResponse)(nil), "iritamod.perm.MsgAssignRolesResponse")
@@ -343,37 +495,46 @@ func init() {
 	proto.RegisterType((*MsgBlockAccountResponse)(nil), "iritamod.perm.MsgBlockAccountResponse")
 	proto.RegisterType((*MsgUnblockAccount)(nil), "iritamod.perm.MsgUnblockAccount")
 	proto.RegisterType((*MsgUnblockAccountResponse)(nil), "iritamod.perm.MsgUnblockAccountResponse")
+	proto.RegisterType((*MsgBlockContract)(nil), "iritamod.perm.MsgBlockContract")
+	proto.RegisterType((*MsgBlockContractResponse)(nil), "iritamod.perm.MsgBlockContractResponse")
+	proto.RegisterType((*MsgUnblockContract)(nil), "iritamod.perm.MsgUnblockContract")
+	proto.RegisterType((*MsgUnblockContractResponse)(nil), "iritamod.perm.MsgUnblockContractResponse")
 }
 
 func init() { proto.RegisterFile("perm/tx.proto", fileDescriptor_ad797c02944c52e5) }
 
 var fileDescriptor_ad797c02944c52e5 = []byte{
-	// 391 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xbc, 0x53, 0xcb, 0x4e, 0xc2, 0x40,
-	0x14, 0x6d, 0xc1, 0xe7, 0x55, 0x40, 0xab, 0xd1, 0x32, 0xc6, 0x81, 0x90, 0xa8, 0xb0, 0xa0, 0x4d,
-	0x70, 0xe7, 0x0e, 0x36, 0xae, 0x1a, 0x93, 0x1a, 0x4d, 0x34, 0x6e, 0xfa, 0xca, 0x58, 0x81, 0x4e,
-	0xd3, 0x29, 0x51, 0xff, 0xc2, 0x4f, 0xf0, 0x73, 0x58, 0xb2, 0x74, 0xa9, 0xb0, 0x31, 0xf1, 0x27,
-	0x4c, 0x4b, 0xda, 0xb4, 0x85, 0xc0, 0xc6, 0xb8, 0x69, 0x66, 0xe6, 0x9c, 0x7b, 0xce, 0xc9, 0xbd,
-	0xbd, 0x50, 0x70, 0x2d, 0xaf, 0x2f, 0xfb, 0x2f, 0x92, 0xeb, 0x51, 0x9f, 0x0a, 0x05, 0xdb, 0xb3,
-	0x7d, 0xad, 0x4f, 0x4d, 0x29, 0x78, 0x47, 0xa5, 0x10, 0x0d, 0x3e, 0x53, 0x1c, 0xed, 0x13, 0x4a,
-	0x68, 0x78, 0x94, 0x83, 0xd3, 0xf4, 0xb5, 0xf6, 0x0c, 0x45, 0x85, 0x91, 0x36, 0x63, 0x36, 0x71,
-	0x54, 0xda, 0xb3, 0x98, 0x20, 0xc2, 0xba, 0x66, 0x9a, 0x9e, 0xc5, 0x98, 0xc8, 0x57, 0xf9, 0xfa,
-	0xa6, 0x1a, 0x5d, 0x85, 0x06, 0xac, 0x7a, 0x01, 0x45, 0xcc, 0x55, 0xf3, 0xf5, 0x62, 0x6b, 0x4f,
-	0x4a, 0x39, 0x4a, 0x41, 0xb9, 0x3a, 0x65, 0x08, 0x08, 0x36, 0xa8, 0x6b, 0x79, 0x9a, 0x4f, 0x3d,
-	0x31, 0x1f, 0xaa, 0xc4, 0xf7, 0x8b, 0x95, 0xef, 0xf7, 0x0a, 0x5f, 0x13, 0xe1, 0x20, 0x6d, 0xac,
-	0x5a, 0xcc, 0xa5, 0x0e, 0xb3, 0x6a, 0xaf, 0xb0, 0xa3, 0x30, 0x72, 0xe3, 0x68, 0xff, 0x1f, 0x0a,
-	0x81, 0x98, 0xb5, 0x8e, 0x63, 0x29, 0x50, 0x52, 0x18, 0xe9, 0xf4, 0xa8, 0xd1, 0x6d, 0x1b, 0x06,
-	0x1d, 0x38, 0xfe, 0x82, 0x54, 0x49, 0xab, 0xdc, 0x5c, 0xab, 0x32, 0x1c, 0x66, 0xe4, 0x62, 0xa7,
-	0x2b, 0xd8, 0x0d, 0x53, 0xe8, 0x7f, 0xe5, 0x75, 0x04, 0xe5, 0x19, 0xc1, 0xc8, 0xad, 0xf5, 0x93,
-	0x83, 0xbc, 0xc2, 0x88, 0x70, 0x0d, 0x5b, 0xc9, 0xdf, 0xe0, 0x38, 0xd3, 0xc8, 0xf4, 0xb0, 0xd0,
-	0xc9, 0x42, 0x38, 0x12, 0x17, 0xee, 0xa0, 0x90, 0x1e, 0x64, 0x65, 0xb6, 0x2e, 0x45, 0x40, 0x67,
-	0x4b, 0x08, 0xb1, 0xf4, 0x2d, 0x6c, 0xa7, 0x86, 0x81, 0x67, 0x0b, 0x93, 0x38, 0x3a, 0x5d, 0x8c,
-	0xc7, 0xba, 0x0f, 0x50, 0xcc, 0xb4, 0xbe, 0x3a, 0x2f, 0x52, 0x92, 0x81, 0xea, 0xcb, 0x18, 0x91,
-	0x7a, 0xe7, 0x72, 0xf8, 0x85, 0xb9, 0xe1, 0x18, 0xf3, 0xa3, 0x31, 0xe6, 0x3f, 0xc7, 0x98, 0x7f,
-	0x9b, 0x60, 0x6e, 0x34, 0xc1, 0xdc, 0xc7, 0x04, 0x73, 0xf7, 0x0d, 0x62, 0xfb, 0x8f, 0x03, 0x5d,
-	0x32, 0x68, 0x5f, 0xd6, 0x6d, 0xcd, 0x79, 0xb2, 0x2d, 0xcd, 0x96, 0x23, 0xed, 0x26, 0x33, 0xbb,
-	0x4d, 0x42, 0xc3, 0xa5, 0xd6, 0xd7, 0xc2, 0xfd, 0x3d, 0xff, 0x0d, 0x00, 0x00, 0xff, 0xff, 0x0f,
-	0x74, 0x57, 0x59, 0x06, 0x04, 0x00, 0x00,
+	// 472 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xbc, 0x94, 0x4f, 0x6f, 0xd3, 0x30,
+	0x18, 0xc6, 0x9b, 0x75, 0xfc, 0x7b, 0xa1, 0xed, 0x30, 0x08, 0x32, 0x03, 0x6e, 0xa9, 0x04, 0xb4,
+	0x87, 0xa5, 0xd2, 0xb8, 0x71, 0xeb, 0x38, 0x70, 0x8a, 0x90, 0x8a, 0x40, 0x02, 0x21, 0x55, 0x6e,
+	0x1a, 0x99, 0xb0, 0x35, 0x8e, 0x6c, 0x4f, 0xc0, 0xb7, 0xe0, 0x23, 0x70, 0xe3, 0xab, 0xec, 0xb8,
+	0x23, 0x47, 0x68, 0x2f, 0x7c, 0x0c, 0x14, 0x87, 0x98, 0x38, 0xc9, 0x5a, 0x0e, 0xb0, 0x4b, 0xe5,
+	0xf8, 0x7d, 0xfc, 0xfc, 0x1e, 0x59, 0x4f, 0x0d, 0xad, 0x24, 0x14, 0x8b, 0x91, 0xfa, 0xe8, 0x25,
+	0x82, 0x2b, 0x8e, 0x5a, 0x91, 0x88, 0x14, 0x5d, 0xf0, 0xb9, 0x97, 0xee, 0xe3, 0x8e, 0x9e, 0xa6,
+	0x3f, 0xd9, 0x1c, 0xdf, 0x64, 0x9c, 0x71, 0xbd, 0x1c, 0xa5, 0xab, 0x6c, 0xb7, 0xff, 0x01, 0xda,
+	0xbe, 0x64, 0x63, 0x29, 0x23, 0x16, 0x4f, 0xf8, 0x51, 0x28, 0x91, 0x0b, 0x97, 0xe8, 0x7c, 0x2e,
+	0x42, 0x29, 0x5d, 0xa7, 0xe7, 0x0c, 0xae, 0x4c, 0xf2, 0x4f, 0x34, 0x84, 0x0b, 0x22, 0x95, 0xb8,
+	0x5b, 0xbd, 0xe6, 0xa0, 0xbd, 0x7f, 0xc3, 0xb3, 0x88, 0x5e, 0x7a, 0x7c, 0x92, 0x29, 0x10, 0x86,
+	0xcb, 0x3c, 0x09, 0x05, 0x55, 0x5c, 0xb8, 0x4d, 0xed, 0x62, 0xbe, 0x9f, 0x6c, 0xff, 0xfc, 0xd2,
+	0x75, 0xfa, 0x2e, 0xdc, 0xb2, 0xc1, 0x93, 0x50, 0x26, 0x3c, 0x96, 0x61, 0xff, 0x13, 0xec, 0xf8,
+	0x92, 0xbd, 0x8c, 0xe9, 0xf9, 0x87, 0xc2, 0xe0, 0x96, 0xd1, 0x26, 0x96, 0x0f, 0x1d, 0x5f, 0xb2,
+	0x83, 0x23, 0x1e, 0x1c, 0x8e, 0x83, 0x80, 0x1f, 0xc7, 0x6a, 0x4d, 0xaa, 0x22, 0x6a, 0xab, 0x16,
+	0xb5, 0x0b, 0xb7, 0x4b, 0x76, 0x86, 0xf4, 0x1c, 0xae, 0xeb, 0x14, 0xb3, 0x7f, 0xc5, 0xba, 0x03,
+	0xbb, 0x15, 0x43, 0x43, 0x9b, 0xea, 0xeb, 0xd6, 0x41, 0x9e, 0xf2, 0x58, 0x09, 0x1a, 0x28, 0x34,
+	0x84, 0x9d, 0xe0, 0xf7, 0x7a, 0x6a, 0x53, 0x3b, 0xf9, 0xfe, 0xf8, 0xaf, 0xe9, 0xd9, 0xa5, 0x5a,
+	0x00, 0x03, 0xa7, 0x80, 0xfe, 0x24, 0xfb, 0x3f, 0xf8, 0xbb, 0x80, 0xab, 0x88, 0x3c, 0xc0, 0xfe,
+	0xd7, 0x6d, 0x68, 0xfa, 0x92, 0xa1, 0x17, 0x70, 0xb5, 0xf8, 0x27, 0xb8, 0x57, 0xaa, 0x91, 0x5d,
+	0x55, 0xfc, 0x60, 0xed, 0x38, 0x37, 0x47, 0xaf, 0xa1, 0x65, 0xd7, 0xb8, 0x5b, 0x3d, 0x67, 0x09,
+	0xf0, 0xa3, 0x0d, 0x02, 0x63, 0xfd, 0x0a, 0xae, 0x59, 0x55, 0x24, 0xd5, 0x83, 0xc5, 0x39, 0x7e,
+	0xb8, 0x7e, 0x6e, 0x7c, 0xdf, 0x42, 0xbb, 0x54, 0xbc, 0x5e, 0x5d, 0xa4, 0xa2, 0x02, 0x0f, 0x36,
+	0x29, 0x8a, 0x17, 0x62, 0x17, 0xad, 0x7b, 0x46, 0xac, 0x5c, 0x50, 0x77, 0x21, 0xb5, 0x4d, 0x42,
+	0x53, 0xe8, 0x94, 0x6b, 0x74, 0xff, 0xcc, 0x5c, 0xc6, 0x7e, 0xb8, 0x51, 0x92, 0x03, 0x0e, 0x9e,
+	0x9d, 0xfc, 0x20, 0x8d, 0x93, 0x25, 0x71, 0x4e, 0x97, 0xc4, 0xf9, 0xbe, 0x24, 0xce, 0xe7, 0x15,
+	0x69, 0x9c, 0xae, 0x48, 0xe3, 0xdb, 0x8a, 0x34, 0xde, 0x0c, 0x59, 0xa4, 0xde, 0x1d, 0xcf, 0xbc,
+	0x80, 0x2f, 0x46, 0xb3, 0x88, 0xc6, 0xef, 0xa3, 0x90, 0x46, 0xa3, 0xdc, 0x7c, 0x4f, 0xce, 0x0f,
+	0xf7, 0x18, 0xd7, 0xcf, 0xf1, 0xec, 0xa2, 0x7e, 0x79, 0x1f, 0xff, 0x0a, 0x00, 0x00, 0xff, 0xff,
+	0x61, 0x1c, 0x82, 0x67, 0xc0, 0x05, 0x00, 0x00,
 }
 
 func (this *MsgAssignRoles) Equal(that interface{}) bool {
@@ -500,6 +661,60 @@ func (this *MsgUnblockAccount) Equal(that interface{}) bool {
 	}
 	return true
 }
+func (this *MsgBlockContract) Equal(that interface{}) bool {
+	if that == nil {
+		return this == nil
+	}
+
+	that1, ok := that.(*MsgBlockContract)
+	if !ok {
+		that2, ok := that.(MsgBlockContract)
+		if ok {
+			that1 = &that2
+		} else {
+			return false
+		}
+	}
+	if that1 == nil {
+		return this == nil
+	} else if this == nil {
+		return false
+	}
+	if this.ContractAddress != that1.ContractAddress {
+		return false
+	}
+	if this.Operator != that1.Operator {
+		return false
+	}
+	return true
+}
+func (this *MsgUnblockContract) Equal(that interface{}) bool {
+	if that == nil {
+		return this == nil
+	}
+
+	that1, ok := that.(*MsgUnblockContract)
+	if !ok {
+		that2, ok := that.(MsgUnblockContract)
+		if ok {
+			that1 = &that2
+		} else {
+			return false
+		}
+	}
+	if that1 == nil {
+		return this == nil
+	} else if this == nil {
+		return false
+	}
+	if this.ContractAddress != that1.ContractAddress {
+		return false
+	}
+	if this.Operator != that1.Operator {
+		return false
+	}
+	return true
+}
 
 // Reference imports to suppress errors if they are not otherwise used.
 var _ context.Context
@@ -521,6 +736,10 @@ type MsgClient interface {
 	BlockAccount(ctx context.Context, in *MsgBlockAccount, opts ...grpc.CallOption) (*MsgBlockAccountResponse, error)
 	// UnblockAccount defines a method for unblocking a blocked account
 	UnblockAccount(ctx context.Context, in *MsgUnblockAccount, opts ...grpc.CallOption) (*MsgUnblockAccountResponse, error)
+	// BlockContract defines a method for blocking an contract
+	BlockContract(ctx context.Context, in *MsgBlockContract, opts ...grpc.CallOption) (*MsgBlockContractResponse, error)
+	// UnblockContract defines a method for unblocking a blocked contract
+	UnblockContract(ctx context.Context, in *MsgUnblockContract, opts ...grpc.CallOption) (*MsgUnblockContractResponse, error)
 }
 
 type msgClient struct {
@@ -567,6 +786,24 @@ func (c *msgClient) UnblockAccount(ctx context.Context, in *MsgUnblockAccount, o
 	return out, nil
 }
 
+func (c *msgClient) BlockContract(ctx context.Context, in *MsgBlockContract, opts ...grpc.CallOption) (*MsgBlockContractResponse, error) {
+	out := new(MsgBlockContractResponse)
+	err := c.cc.Invoke(ctx, "/iritamod.perm.Msg/BlockContract", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *msgClient) UnblockContract(ctx context.Context, in *MsgUnblockContract, opts ...grpc.CallOption) (*MsgUnblockContractResponse, error) {
+	out := new(MsgUnblockContractResponse)
+	err := c.cc.Invoke(ctx, "/iritamod.perm.Msg/UnblockContract", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // MsgServer is the server API for Msg service.
 type MsgServer interface {
 	// AssignRoles defines a method for assigning roles for the operator.
@@ -577,6 +814,10 @@ type MsgServer interface {
 	BlockAccount(context.Context, *MsgBlockAccount) (*MsgBlockAccountResponse, error)
 	// UnblockAccount defines a method for unblocking a blocked account
 	UnblockAccount(context.Context, *MsgUnblockAccount) (*MsgUnblockAccountResponse, error)
+	// BlockContract defines a method for blocking an contract
+	BlockContract(context.Context, *MsgBlockContract) (*MsgBlockContractResponse, error)
+	// UnblockContract defines a method for unblocking a blocked contract
+	UnblockContract(context.Context, *MsgUnblockContract) (*MsgUnblockContractResponse, error)
 }
 
 // UnimplementedMsgServer can be embedded to have forward compatible implementations.
@@ -594,6 +835,12 @@ func (*UnimplementedMsgServer) BlockAccount(ctx context.Context, req *MsgBlockAc
 }
 func (*UnimplementedMsgServer) UnblockAccount(ctx context.Context, req *MsgUnblockAccount) (*MsgUnblockAccountResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UnblockAccount not implemented")
+}
+func (*UnimplementedMsgServer) BlockContract(ctx context.Context, req *MsgBlockContract) (*MsgBlockContractResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method BlockContract not implemented")
+}
+func (*UnimplementedMsgServer) UnblockContract(ctx context.Context, req *MsgUnblockContract) (*MsgUnblockContractResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UnblockContract not implemented")
 }
 
 func RegisterMsgServer(s grpc1.Server, srv MsgServer) {
@@ -672,6 +919,42 @@ func _Msg_UnblockAccount_Handler(srv interface{}, ctx context.Context, dec func(
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Msg_BlockContract_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MsgBlockContract)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MsgServer).BlockContract(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/iritamod.perm.Msg/BlockContract",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MsgServer).BlockContract(ctx, req.(*MsgBlockContract))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Msg_UnblockContract_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MsgUnblockContract)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MsgServer).UnblockContract(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/iritamod.perm.Msg/UnblockContract",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MsgServer).UnblockContract(ctx, req.(*MsgUnblockContract))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 var _Msg_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "iritamod.perm.Msg",
 	HandlerType: (*MsgServer)(nil),
@@ -691,6 +974,14 @@ var _Msg_serviceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "UnblockAccount",
 			Handler:    _Msg_UnblockAccount_Handler,
+		},
+		{
+			MethodName: "BlockContract",
+			Handler:    _Msg_BlockContract_Handler,
+		},
+		{
+			MethodName: "UnblockContract",
+			Handler:    _Msg_UnblockContract_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
@@ -973,6 +1264,126 @@ func (m *MsgUnblockAccountResponse) MarshalToSizedBuffer(dAtA []byte) (int, erro
 	return len(dAtA) - i, nil
 }
 
+func (m *MsgBlockContract) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *MsgBlockContract) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MsgBlockContract) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if len(m.Operator) > 0 {
+		i -= len(m.Operator)
+		copy(dAtA[i:], m.Operator)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.Operator)))
+		i--
+		dAtA[i] = 0x12
+	}
+	if len(m.ContractAddress) > 0 {
+		i -= len(m.ContractAddress)
+		copy(dAtA[i:], m.ContractAddress)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.ContractAddress)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *MsgBlockContractResponse) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *MsgBlockContractResponse) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MsgBlockContractResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	return len(dAtA) - i, nil
+}
+
+func (m *MsgUnblockContract) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *MsgUnblockContract) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MsgUnblockContract) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if len(m.Operator) > 0 {
+		i -= len(m.Operator)
+		copy(dAtA[i:], m.Operator)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.Operator)))
+		i--
+		dAtA[i] = 0x12
+	}
+	if len(m.ContractAddress) > 0 {
+		i -= len(m.ContractAddress)
+		copy(dAtA[i:], m.ContractAddress)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.ContractAddress)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *MsgUnblockContractResponse) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *MsgUnblockContractResponse) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MsgUnblockContractResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	return len(dAtA) - i, nil
+}
+
 func encodeVarintTx(dAtA []byte, offset int, v uint64) int {
 	offset -= sovTx(v)
 	base := offset
@@ -1094,6 +1505,58 @@ func (m *MsgUnblockAccount) Size() (n int) {
 }
 
 func (m *MsgUnblockAccountResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	return n
+}
+
+func (m *MsgBlockContract) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.ContractAddress)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	l = len(m.Operator)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	return n
+}
+
+func (m *MsgBlockContractResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	return n
+}
+
+func (m *MsgUnblockContract) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.ContractAddress)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	l = len(m.Operator)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	return n
+}
+
+func (m *MsgUnblockContractResponse) Size() (n int) {
 	if m == nil {
 		return 0
 	}
@@ -1276,10 +1739,7 @@ func (m *MsgAssignRoles) Unmarshal(dAtA []byte) error {
 			if err != nil {
 				return err
 			}
-			if skippy < 0 {
-				return ErrInvalidLengthTx
-			}
-			if (iNdEx + skippy) < 0 {
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
 				return ErrInvalidLengthTx
 			}
 			if (iNdEx + skippy) > l {
@@ -1329,10 +1789,7 @@ func (m *MsgAssignRolesResponse) Unmarshal(dAtA []byte) error {
 			if err != nil {
 				return err
 			}
-			if skippy < 0 {
-				return ErrInvalidLengthTx
-			}
-			if (iNdEx + skippy) < 0 {
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
 				return ErrInvalidLengthTx
 			}
 			if (iNdEx + skippy) > l {
@@ -1515,10 +1972,7 @@ func (m *MsgUnassignRoles) Unmarshal(dAtA []byte) error {
 			if err != nil {
 				return err
 			}
-			if skippy < 0 {
-				return ErrInvalidLengthTx
-			}
-			if (iNdEx + skippy) < 0 {
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
 				return ErrInvalidLengthTx
 			}
 			if (iNdEx + skippy) > l {
@@ -1568,10 +2022,7 @@ func (m *MsgUnassignRolesResponse) Unmarshal(dAtA []byte) error {
 			if err != nil {
 				return err
 			}
-			if skippy < 0 {
-				return ErrInvalidLengthTx
-			}
-			if (iNdEx + skippy) < 0 {
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
 				return ErrInvalidLengthTx
 			}
 			if (iNdEx + skippy) > l {
@@ -1685,10 +2136,7 @@ func (m *MsgBlockAccount) Unmarshal(dAtA []byte) error {
 			if err != nil {
 				return err
 			}
-			if skippy < 0 {
-				return ErrInvalidLengthTx
-			}
-			if (iNdEx + skippy) < 0 {
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
 				return ErrInvalidLengthTx
 			}
 			if (iNdEx + skippy) > l {
@@ -1738,10 +2186,7 @@ func (m *MsgBlockAccountResponse) Unmarshal(dAtA []byte) error {
 			if err != nil {
 				return err
 			}
-			if skippy < 0 {
-				return ErrInvalidLengthTx
-			}
-			if (iNdEx + skippy) < 0 {
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
 				return ErrInvalidLengthTx
 			}
 			if (iNdEx + skippy) > l {
@@ -1855,10 +2300,7 @@ func (m *MsgUnblockAccount) Unmarshal(dAtA []byte) error {
 			if err != nil {
 				return err
 			}
-			if skippy < 0 {
-				return ErrInvalidLengthTx
-			}
-			if (iNdEx + skippy) < 0 {
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
 				return ErrInvalidLengthTx
 			}
 			if (iNdEx + skippy) > l {
@@ -1908,10 +2350,335 @@ func (m *MsgUnblockAccountResponse) Unmarshal(dAtA []byte) error {
 			if err != nil {
 				return err
 			}
-			if skippy < 0 {
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
 				return ErrInvalidLengthTx
 			}
-			if (iNdEx + skippy) < 0 {
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *MsgBlockContract) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowTx
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: MsgBlockContract: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: MsgBlockContract: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field ContractAddress", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.ContractAddress = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Operator", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Operator = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipTx(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthTx
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *MsgBlockContractResponse) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowTx
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: MsgBlockContractResponse: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: MsgBlockContractResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		default:
+			iNdEx = preIndex
+			skippy, err := skipTx(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthTx
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *MsgUnblockContract) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowTx
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: MsgUnblockContract: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: MsgUnblockContract: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field ContractAddress", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.ContractAddress = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Operator", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Operator = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipTx(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthTx
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *MsgUnblockContractResponse) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowTx
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: MsgUnblockContractResponse: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: MsgUnblockContractResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		default:
+			iNdEx = preIndex
+			skippy, err := skipTx(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
 				return ErrInvalidLengthTx
 			}
 			if (iNdEx + skippy) > l {

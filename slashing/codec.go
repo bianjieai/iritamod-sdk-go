@@ -1,4 +1,4 @@
-package perm
+package slashing
 
 import (
 	"github.com/irisnet/core-sdk-go/common/codec"
@@ -20,11 +20,6 @@ func init() {
 func RegisterInterfaces(registry types.InterfaceRegistry) {
 	registry.RegisterImplementations(
 		(*sdk.Msg)(nil),
-		&MsgAssignRoles{},
-		&MsgUnassignRoles{},
-		&MsgBlockAccount{},
-		&MsgUnblockAccount{},
-		&MsgBlockContract{},
-		&MsgUnblockContract{},
+		&MsgUnjailValidator{},
 	)
 }

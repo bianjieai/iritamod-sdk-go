@@ -121,6 +121,52 @@ func (a permClient) UnblockAccount(address string, baseTx sdk.BaseTx) (sdk.Resul
 	return send, nil
 }
 
+func (a permClient) BlockContract(address string, baseTx sdk.BaseTx) (sdk.ResultTx, error) {
+	sender, err := a.QueryAddress(baseTx.From, baseTx.Password)
+	if err != nil {
+		return sdk.ResultTx{}, sdk.WrapWithMessage(ErrQueryAddress, err.Error())
+	}
+
+	acc, err := sdk.AccAddressFromBech32(address)
+	if err != nil {
+		return sdk.ResultTx{}, sdk.WrapWithMessage(ErrBench32, err.Error())
+	}
+
+	msg := &MsgBlockAccount{
+		Address:  acc.String(),
+		Operator: sender.String(),
+	}
+
+	send, err := a.BuildAndSend([]sdk.Msg{msg}, baseTx)
+	if err != nil {
+		return sdk.ResultTx{}, sdk.WrapWithMessage(ErrBuildAndSend, err.Error())
+	}
+	return send, nil
+}
+
+func (a permClient) UnblockContract(address string, baseTx sdk.BaseTx) (sdk.ResultTx, error) {
+	sender, err := a.QueryAddress(baseTx.From, baseTx.Password)
+	if err != nil {
+		return sdk.ResultTx{}, sdk.WrapWithMessage(ErrQueryAddress, err.Error())
+	}
+
+	acc, err := sdk.AccAddressFromBech32(address)
+	if err != nil {
+		return sdk.ResultTx{}, sdk.WrapWithMessage(ErrBench32, err.Error())
+	}
+
+	msg := &MsgUnblockAccount{
+		Address:  acc.String(),
+		Operator: sender.String(),
+	}
+
+	send, err := a.BuildAndSend([]sdk.Msg{msg}, baseTx)
+	if err != nil {
+		return sdk.ResultTx{}, sdk.WrapWithMessage(ErrBuildAndSend, err.Error())
+	}
+	return send, nil
+}
+
 func (a permClient) QueryRoles(address string) ([]Role, error) {
 	conn, err := a.GenConn()
 
@@ -144,16 +190,34 @@ func (a permClient) QueryRoles(address string) ([]Role, error) {
 	return resp.Roles, nil
 }
 
-func (a permClient) QueryBlacklist(page, limit int) ([]string, error) {
+func (a permClient) QueryAccountBlockList() ([]string, error) {
 	conn, err := a.GenConn()
 
 	if err != nil {
 		return nil, sdk.WrapWithMessage(ErrGenConn, err.Error())
 	}
 
-	resp, err := NewQueryClient(conn).Blacklist(
+	resp, err := NewQueryClient(conn).AccountBlockList(
 		context.Background(),
-		&QueryBlacklistRequest{},
+		&QueryBlockListRequest{},
+	)
+	if err != nil {
+		return nil, sdk.WrapWithMessage(ErrQueryPerm, err.Error())
+	}
+
+	return resp.Addresses, nil
+}
+
+func (a permClient) QueryContractDenyList() ([]string, error) {
+	conn, err := a.GenConn()
+
+	if err != nil {
+		return nil, sdk.WrapWithMessage(ErrGenConn, err.Error())
+	}
+
+	resp, err := NewQueryClient(conn).ContractDenyList(
+		context.Background(),
+		&QueryContractDenyList{},
 	)
 	if err != nil {
 		return nil, sdk.WrapWithMessage(ErrQueryPerm, err.Error())

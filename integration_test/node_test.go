@@ -1,11 +1,10 @@
 package integration
 
 import (
+	"fmt"
 	"io/ioutil"
 	"os"
 	"path/filepath"
-
-	"github.com/bianjieai/iritamod-sdk-go/params"
 
 	"github.com/stretchr/testify/require"
 
@@ -16,11 +15,12 @@ import (
 
 func (s IntegrationTestSuite) TestValidator() {
 	baseTx := sdk.BaseTx{
-		From:     s.Account().Name,
-		Gas:      0,
-		Memo:     "test",
-		Mode:     sdk.Commit,
-		Password: s.Account().Password,
+		From:          s.Account().Name,
+		Password:      s.Account().Password,
+		Gas:           gasWanted,
+		Fee:           feeWanted,
+		Mode:          sdk.Commit,
+		GasAdjustment: 1.5,
 	}
 
 	cert := string(getRootPem())
@@ -32,29 +32,21 @@ func (s IntegrationTestSuite) TestValidator() {
 		Details:     "this is a test",
 	}
 
-	var request1 = []params.UpdateParamRequest{{
-		Module: "service",
-		Key:    "BaseDenom",
-		Value:  `"upoint"`,
-	}}
-
-	rs1, err := s.Params.UpdateParams(request1, baseTx)
+	res1, err := s.Node.CreateValidator(createReq, baseTx)
 	require.NoError(s.T(), err)
-	require.NotEmpty(s.T(), rs1.Hash)
+	require.NotEmpty(s.T(), res1.Hash)
+	fmt.Println(res1)
 
-	rs, err := s.Node.CreateValidator(createReq, baseTx)
-	require.NoError(s.T(), err)
-	require.NotEmpty(s.T(), rs.Hash)
-
-	validatorID, er := rs.Events.GetValue("create_validator", "validator")
-	require.NoError(s.T(), er)
-
-	v, err := s.Node.QueryValidator(validatorID)
+	validatorID, err := res1.Events.GetValue("create_validator", "validator")
 	require.NoError(s.T(), err)
 
-	vs, err := s.Node.QueryValidators(nil)
+	res2, err := s.Node.QueryValidator(validatorID)
 	require.NoError(s.T(), err)
-	require.NotEmpty(s.T(), vs)
+	require.NotEmpty(s.T(), res2)
+
+	res3, err := s.Node.QueryValidators(nil)
+	require.NoError(s.T(), err)
+	require.NotEmpty(s.T(), res3)
 
 	updateReq := node.UpdateValidatorRequest{
 		ID:          validatorID,
@@ -63,45 +55,46 @@ func (s IntegrationTestSuite) TestValidator() {
 		Power:       10,
 		Details:     "this is a updated test",
 	}
-	rs, err = s.Node.UpdateValidator(updateReq, baseTx)
+	res4, err := s.Node.UpdateValidator(updateReq, baseTx)
 	require.NoError(s.T(), err)
-	require.NotEmpty(s.T(), rs.Hash)
+	require.NotEmpty(s.T(), res4.Hash)
 
-	v, err = s.Node.QueryValidator(validatorID)
+	res5, err := s.Node.QueryValidator(validatorID)
 	require.NoError(s.T(), err)
-	require.Equal(s.T(), updateReq.Name, v.Name)
-	require.Equal(s.T(), updateReq.Details, v.Details)
+	require.Equal(s.T(), updateReq.Name, res5.Name)
+	require.Equal(s.T(), updateReq.Details, res5.Details)
 
-	rs, err = s.Node.RemoveValidator(validatorID, baseTx)
+	res6, err := s.Node.RemoveValidator(validatorID, baseTx)
 	require.NoError(s.T(), err)
-	require.NotEmpty(s.T(), rs.Hash)
+	require.NotEmpty(s.T(), res6.Hash)
 
-	v, err = s.Node.QueryValidator(validatorID)
+	res7, err := s.Node.QueryValidator(validatorID)
 	require.Error(s.T(), err)
+	require.Empty(s.T(), res7.Name)
 
 	grantNodeReq := node.GrantNodeRequest{
 		Name:        "test3",
 		Certificate: cert,
 		Details:     "this is a grantNode test",
 	}
-	rs, err = s.Node.GrantNode(grantNodeReq, baseTx)
+	res8, err := s.Node.GrantNode(grantNodeReq, baseTx)
 	require.NoError(s.T(), err)
-	require.NotEmpty(s.T(), rs.Hash)
+	require.NotEmpty(s.T(), res8.Hash)
 
-	noid, e := rs.Events.GetValue("grant_node", "id")
+	noid, e := res8.Events.GetValue("grant_node", "id")
 	require.NoError(s.T(), e)
 
-	n, err := s.Node.QueryNode(noid)
+	res9, err := s.Node.QueryNode(noid)
 	require.NoError(s.T(), err)
-	require.NotEmpty(s.T(), n)
+	require.NotEmpty(s.T(), res9)
 
 	ns, err := s.Node.QueryNodes(nil)
 	require.NoError(s.T(), err)
 	require.NotEmpty(s.T(), ns)
 
-	rs, err = s.Node.RevokeNode(noid, baseTx)
+	res10, err := s.Node.RevokeNode(noid, baseTx)
 	require.NoError(s.T(), err)
-	require.NotEmpty(s.T(), rs.Hash)
+	require.NotEmpty(s.T(), res10.Hash)
 
 }
 

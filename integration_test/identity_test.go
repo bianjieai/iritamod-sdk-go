@@ -21,11 +21,12 @@ func (s IntegrationTestSuite) Test_GetStatus() {
 
 func (s IntegrationTestSuite) Test_Identity() {
 	baseTx := sdk.BaseTx{
-		From:     s.Account().Name,
-		Gas:      0,
-		Memo:     "test",
-		Mode:     sdk.Commit,
-		Password: s.Account().Password,
+		From:          s.Account().Name,
+		Password:      s.Account().Password,
+		Gas:           gasWanted,
+		Fee:           feeWanted,
+		Mode:          sdk.Commit,
+		GasAdjustment: 1.5,
 	}
 
 	uuidGenerator, _ := uuid.NewV4()
@@ -46,18 +47,19 @@ func (s IntegrationTestSuite) Test_Identity() {
 		Credentials: &testCredentials,
 	}
 
-	rest, err := s.Identity.QueryIdentity(id)
-	require.Empty(s.T(), rest)
+	res1, err := s.Identity.QueryIdentity(id)
+	require.Empty(s.T(), res1)
 	require.Error(s.T(), err)
 
-	rs, err := s.Identity.CreateIdentity(request, baseTx)
+	// create and query
+	res2, err := s.Identity.CreateIdentity(request, baseTx)
 	require.NoError(s.T(), err)
-	require.NotEmpty(s.T(), rs.Hash)
+	require.NotEmpty(s.T(), res2.Hash)
 
-	res, err := s.Identity.QueryIdentity(id)
+	res3, err := s.Identity.QueryIdentity(id)
 	require.NoError(s.T(), err)
-	require.Equal(s.T(), res.Credentials, testCredentials)
-	require.Contains(s.T(), res.PubkeyInfos, pubKeyInfo)
+	require.Equal(s.T(), res3.Credentials, testCredentials)
+	require.Contains(s.T(), res3.PubkeyInfos, pubKeyInfo)
 
 	test2PubKeySM2 := sm2.GenPrivKey().PubKeySm2()
 	pubKeyInfo2 := iritaidentity.PubkeyInfo{
@@ -72,10 +74,12 @@ func (s IntegrationTestSuite) Test_Identity() {
 		Credentials: &testCredentials,
 	}
 
-	rs, err = s.Identity.UpdateIdentity(req2, baseTx)
+	// update and query
+	res4, err := s.Identity.UpdateIdentity(req2, baseTx)
 	require.NoError(s.T(), err)
-	require.NotEmpty(s.T(), rs.Hash)
+	require.NotEmpty(s.T(), res4.Hash)
 
-	res, err = s.Identity.QueryIdentity(id)
+	res5, err := s.Identity.QueryIdentity(id)
 	require.NoError(s.T(), err)
+	require.NotEmpty(s.T(), res5)
 }

@@ -1,19 +1,16 @@
 package integration
 
 import (
+	"github.com/bianjieai/iritamod-sdk-go/slashing"
 	"github.com/irisnet/core-sdk-go/bank"
 	"github.com/irisnet/core-sdk-go/client"
 	"github.com/irisnet/core-sdk-go/common/codec"
-	"github.com/irisnet/core-sdk-go/gov"
-	"github.com/irisnet/core-sdk-go/staking"
 	"github.com/irisnet/core-sdk-go/types"
 
 	"github.com/bianjieai/iritamod-sdk-go/identity"
 	"github.com/bianjieai/iritamod-sdk-go/node"
 	"github.com/bianjieai/iritamod-sdk-go/params"
 	"github.com/bianjieai/iritamod-sdk-go/perm"
-	"github.com/bianjieai/iritamod-sdk-go/record"
-	"github.com/bianjieai/iritamod-sdk-go/token"
 	"github.com/tendermint/tendermint/libs/log"
 
 	cdctypes "github.com/irisnet/core-sdk-go/common/codec/types"
@@ -27,59 +24,50 @@ type Client struct {
 	encodingConfig types.EncodingConfig
 
 	types.BaseClient
+	Key      client.Client
 	Bank     bank.Client
-	Staking  staking.Client
-	Gov      gov.Client
 	Identity identity.Client
 	Node     node.Client
 	Params   params.Client
 	Perm     perm.Client
-	Record   record.Client
-	Token    token.Client
+	Slashing slashing.Client
 }
 
 func NewClient(cfg types.ClientConfig) Client {
 	encodingConfig := makeEncodingConfig()
 
-	// create a instance of baseClient
+	// create an instance of baseClient
 
 	baseClient := client.NewBaseClient(cfg, encodingConfig, nil)
 	bankClient := bank.NewClient(baseClient, encodingConfig.Marshaler)
-
-	stakingClient := staking.NewClient(baseClient, encodingConfig.Marshaler)
-	govClient := gov.NewClient(baseClient, encodingConfig.Marshaler)
+	keysClient := client.NewKeysClient(cfg, baseClient)
 	identityClient := identity.NewClient(baseClient, encodingConfig.Marshaler)
 	nodeClient := node.NewClient(baseClient, encodingConfig.Marshaler)
 	paramsClient := params.NewClient(baseClient, encodingConfig.Marshaler)
 	permClient := perm.NewClient(baseClient, encodingConfig.Marshaler)
-	recordClient := record.NewClient(baseClient, encodingConfig.Marshaler)
-	tokenClient := token.NewClient(baseClient, encodingConfig.Marshaler)
+	slashingClient := slashing.NewClient(baseClient, encodingConfig.Marshaler)
 
 	client := &Client{
 		logger:         baseClient.Logger(),
 		BaseClient:     baseClient,
 		moduleManager:  make(map[string]types.Module),
 		encodingConfig: encodingConfig,
+		Key:            keysClient,
 		Bank:           bankClient,
-		Staking:        stakingClient,
-		Gov:            govClient,
 		Identity:       identityClient,
 		Node:           nodeClient,
 		Params:         paramsClient,
 		Perm:           permClient,
-		Record:         recordClient,
-		Token:          tokenClient,
+		Slashing:       slashingClient,
 	}
 
 	client.RegisterModule(
 		bankClient,
-		stakingClient,
-		govClient,
 		identityClient,
 		nodeClient,
 		paramsClient,
 		permClient,
-		recordClient,
+		slashingClient,
 	)
 	return *client
 }
