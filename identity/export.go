@@ -13,29 +13,27 @@ type Client interface {
 	QueryIdentity(id string) (QueryIdentityResp, error)
 }
 
-type PubkeyInfo struct {
-	PubKey     string          `json:"pub_key"`
-	PubKeyAlgo PubKeyAlgorithm `json:"pub_key_algo"`
-}
-
 type CreateIdentityRequest struct {
-	ID          string      `json:"id"`
-	PubkeyInfo  *PubkeyInfo `json:"pubkey_info"`
+	Id          string      `json:"id"`
+	PubKeyInfo  *PubKeyInfo `json:"pubkey_info"`
 	Certificate string      `json:"certificate"`
 	Credentials *string     `json:"credentials"`
+	Data        string      `json:"data"`
 }
 
 type UpdateIdentityRequest struct {
-	ID          string      `json:"id"`
-	PubkeyInfo  *PubkeyInfo `json:"pubkey_info"`
+	Id          string      `json:"id"`
+	PubKeyInfo  *PubKeyInfo `json:"pubkey_info"`
 	Certificate string      `json:"certificate"`
 	Credentials *string     `json:"credentials"`
+	Data        string      `json:"data"`
 }
 
 type QueryIdentityResp struct {
-	ID           string       `json:"id"`
-	PubkeyInfos  []PubkeyInfo `json:"pubkey_infos"`
+	Id           string       `json:"id"`
+	PubKeyInfos  []PubKeyInfo `json:"pubkey_infos"`
 	Certificates []string     `json:"certificates"`
 	Credentials  string       `json:"credentials"`
 	Owner        string       `json:"owner"`
+	Data         string       `json:"data"`
 }

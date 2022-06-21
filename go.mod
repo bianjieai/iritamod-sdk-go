@@ -86,5 +86,5 @@ require (
 replace (
 	github.com/gogo/protobuf => github.com/regen-network/protobuf v1.3.3-alpha.regen.1
 	github.com/prometheus/common v0.33.0 => github.com/prometheus/common v0.23.0
-	github.com/tendermint/tendermint => github.com/bianjieai/tendermint v0.34.8-irita-210413.0.20211012090339-cee6e09e8ae3
+	github.com/tendermint/tendermint => github.com/bianjieai/tendermint v0.34.1-irita-210113
 )

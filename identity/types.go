@@ -14,8 +14,6 @@ const (
 	IDLength     = 16  // size of the ID in bytes
 	MaxURILength = 140 // maximum size of the URI
 
-	DoNotModifyDesc = "[do-not-modify]" // description used to indicate not to modify a field
-
 	ModuleName = "identity"
 )
 
@@ -48,6 +46,7 @@ func (m MsgCreateIdentity) ValidateBasic() error {
 		m.Certificate,
 		m.Credentials,
 		m.Owner,
+		m.Data,
 	)
 }
 
@@ -80,6 +79,7 @@ func (m MsgUpdateIdentity) ValidateBasic() error {
 		m.Certificate,
 		m.Credentials,
 		m.Owner,
+		m.Data,
 	)
 }
 
@@ -95,6 +95,7 @@ func ValidateIdentityFields(
 	certificate,
 	credentials string,
 	owner string,
+	data string,
 ) error {
 	if len(owner) == 0 {
 		return sdk.WrapWithMessage(ErrValidateBasic, "owner missing")
@@ -112,17 +113,17 @@ func ValidateIdentityFields(
 }
 
 func (m Identity) Convert() interface{} {
-	var pubKeyInfos []PubkeyInfo
+	var pubKeyInfos []PubKeyInfo
 	for _, info := range m.PubKeys {
-		pubKeyInfos = append(pubKeyInfos, PubkeyInfo{
-			PubKey:     info.PubKey,
-			PubKeyAlgo: info.Algorithm,
+		pubKeyInfos = append(pubKeyInfos, PubKeyInfo{
+			PubKey:    info.PubKey,
+			Algorithm: info.Algorithm,
 		})
 	}
 
 	return QueryIdentityResp{
-		ID:           m.Id,
-		PubkeyInfos:  pubKeyInfos,
+		Id:           m.Id,
+		PubKeyInfos:  pubKeyInfos,
 		Certificates: m.Certificates,
 		Credentials:  m.Credentials,
 		Owner:        m.Owner,

@@ -16,7 +16,7 @@ func (s IntegrationTestSuite) TestUpdateParams() {
 		GasAdjustment: 1.5,
 	}
 
-	request := []params.UpdateParamRequest{
+	req1 := []params.UpdateParamRequest{
 		{
 			Module: "node",
 			Key:    "HistoricalEntries",
@@ -24,9 +24,21 @@ func (s IntegrationTestSuite) TestUpdateParams() {
 		},
 	}
 
-	res, err := s.Params.UpdateParams(request, baseTx)
+	// success tx
+	res, err := s.Params.UpdateParams(req1, baseTx)
 	require.NoError(s.T(), err)
 	require.NotEmpty(s.T(), res.Hash)
 
-	// As no query method, we can only check tx hash
+	req2 := []params.UpdateParamRequest{
+		{
+			Module: "node",
+			Key:    "",
+			Value:  "110",
+		},
+	}
+
+	// failed tx
+	res2, err := s.Params.UpdateParams(req2, baseTx)
+	require.Error(s.T(), err)
+	require.Empty(s.T(), res2.Hash)
 }

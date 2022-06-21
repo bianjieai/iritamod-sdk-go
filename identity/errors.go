@@ -7,11 +7,11 @@ import (
 const CodeSpace = ModuleName
 
 var (
-	ErrQueryAddress  = sdk.Wrapf("query address error")
-	ErrBuildAndSend  = sdk.Wrapf("BuildAndSend error")
-	ErrQueryIdentity = sdk.Wrapf("QueryIdentity error")
-	ErrGenConn       = sdk.Wrapf("generate conn error")
-	ErrHex           = sdk.Wrapf("hex fail")
-	ErrValidateBasic = sdk.Wrapf("ValidateBasic fail")
-	ErrUnmarshal     = sdk.Wrapf("unmarshal fail")
+	ErrQueryAddress  = sdk.Wrapf(CodeSpace, 1, "query address error")
+	ErrBuildAndSend  = sdk.Wrapf(CodeSpace, 2, "BuildAndSend error")
+	ErrQueryIdentity = sdk.Wrapf(CodeSpace, 3, "QueryIdentity error")
+	ErrGenConn       = sdk.Wrapf(CodeSpace, 4, "generate conn error")
+	ErrHex           = sdk.Wrapf(CodeSpace, 5, "hex fail")
+	ErrValidateBasic = sdk.Wrapf(CodeSpace, 6, "ValidateBasic fail")
+	ErrUnmarshal     = sdk.Wrapf(CodeSpace, 7, "unmarshal fail")
 )

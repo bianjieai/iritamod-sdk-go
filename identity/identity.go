@@ -2,7 +2,6 @@ package identity
 
 import (
 	"context"
-
 	"github.com/irisnet/core-sdk-go/common/codec"
 	"github.com/irisnet/core-sdk-go/common/codec/types"
 	sdk "github.com/irisnet/core-sdk-go/types"
@@ -34,41 +33,34 @@ func (i identityClient) CreateIdentity(request CreateIdentityRequest, baseTx sdk
 		return sdk.ResultTx{}, sdk.WrapWithMessage(ErrQueryAddress, err.Error())
 	}
 
-	id, e := sdk.HexBytesFrom(request.ID)
-	if e != nil {
-		return sdk.ResultTx{}, sdk.WrapWithMessage(ErrHex, e.Error())
+	// expect request.ID is hex-able.
+	_, hexErr := sdk.HexBytesFrom(request.Id)
+	if hexErr != nil {
+		return sdk.ResultTx{}, sdk.WrapWithMessage(ErrHex, hexErr.Error())
 	}
 
-	var pukKeyInfo *PubKeyInfo
-	if request.PubkeyInfo != nil {
-		if len(request.PubkeyInfo.PubKey) > 0 {
-			pubkey, e := sdk.HexBytesFrom(request.PubkeyInfo.PubKey)
-			if e != nil {
-				return sdk.ResultTx{}, sdk.WrapWithMessage(ErrHex, err.Error())
-			}
-			pukKeyInfo = &PubKeyInfo{
-				PubKey:    pubkey.String(),
-				Algorithm: request.PubkeyInfo.PubKeyAlgo,
-			}
+	// expect pubkey is hex-able
+	if request.PubKeyInfo != nil && len(request.PubKeyInfo.PubKey) > 0 {
+		_, hexErr := sdk.HexBytesFrom(request.PubKeyInfo.PubKey)
+		if hexErr != nil {
+			return sdk.ResultTx{}, sdk.WrapWithMessage(ErrHex, err.Error())
 		}
 	}
 
-	credentials := ""
-	if request.Credentials != nil {
-		credentials = *request.Credentials
-	}
 	msg := &MsgCreateIdentity{
-		Id:          id.String(),
-		PubKey:      pukKeyInfo,
+		Id:          request.Id,
+		PubKey:      request.PubKeyInfo,
 		Certificate: request.Certificate,
-		Credentials: credentials,
+		Credentials: *request.Credentials,
 		Owner:       sender.String(),
+		Data:        request.Data,
 	}
-	send, err := i.BuildAndSend([]sdk.Msg{msg}, baseTx)
+
+	res, err := i.BuildAndSend([]sdk.Msg{msg}, baseTx)
 	if err != nil {
 		return sdk.ResultTx{}, sdk.WrapWithMessage(ErrBuildAndSend, err.Error())
 	}
-	return send, nil
+	return res, nil
 }
 
 func (i identityClient) UpdateIdentity(request UpdateIdentityRequest, baseTx sdk.BaseTx) (sdk.ResultTx, error) {
@@ -77,40 +69,31 @@ func (i identityClient) UpdateIdentity(request UpdateIdentityRequest, baseTx sdk
 		return sdk.ResultTx{}, sdk.WrapWithMessage(ErrQueryAddress, err.Error())
 	}
 
-	id, e := sdk.HexBytesFrom(request.ID)
+	id, e := sdk.HexBytesFrom(request.Id)
 	if e != nil {
 		return sdk.ResultTx{}, sdk.WrapWithMessage(ErrHex, e.Error())
 	}
 
-	var pukKeyInfo PubKeyInfo
-	if request.PubkeyInfo != nil {
-		if len(request.PubkeyInfo.PubKey) > 0 {
-			pubkey, e := sdk.HexBytesFrom(request.PubkeyInfo.PubKey)
-			if e != nil {
-				return sdk.ResultTx{}, sdk.WrapWithMessage(ErrHex, err.Error())
-			}
-			pukKeyInfo.PubKey = pubkey.String()
-			pukKeyInfo.Algorithm = request.PubkeyInfo.PubKeyAlgo
+	if request.PubKeyInfo != nil && len(request.PubKeyInfo.PubKey) > 0 {
+		_, hexErr := sdk.HexBytesFrom(request.PubKeyInfo.PubKey)
+		if hexErr != nil {
+			return sdk.ResultTx{}, sdk.WrapWithMessage(ErrHex, err.Error())
 		}
-	}
-
-	credentials := DoNotModifyDesc
-	if request.Credentials != nil {
-		credentials = *request.Credentials
 	}
 
 	msg := &MsgUpdateIdentity{
 		Id:          id.String(),
-		PubKey:      &pukKeyInfo,
+		PubKey:      request.PubKeyInfo,
 		Certificate: request.Certificate,
-		Credentials: credentials,
+		Credentials: *request.Credentials,
 		Owner:       sender.String(),
 	}
-	send, err := i.BuildAndSend([]sdk.Msg{msg}, baseTx)
+
+	res, err := i.BuildAndSend([]sdk.Msg{msg}, baseTx)
 	if err != nil {
 		return sdk.ResultTx{}, sdk.WrapWithMessage(ErrBuildAndSend, err.Error())
 	}
-	return send, nil
+	return res, nil
 }
 
 func (i identityClient) QueryIdentity(id string) (QueryIdentityResp, error) {

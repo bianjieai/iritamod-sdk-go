@@ -24,8 +24,9 @@ type Client struct {
 	encodingConfig types.EncodingConfig
 
 	types.BaseClient
-	Key      client.Client
-	Bank     bank.Client
+	Key  client.Client
+	Bank bank.Client
+
 	Identity identity.Client
 	Node     node.Client
 	Params   params.Client
@@ -41,6 +42,7 @@ func NewClient(cfg types.ClientConfig) Client {
 	baseClient := client.NewBaseClient(cfg, encodingConfig, nil)
 	bankClient := bank.NewClient(baseClient, encodingConfig.Marshaler)
 	keysClient := client.NewKeysClient(cfg, baseClient)
+
 	identityClient := identity.NewClient(baseClient, encodingConfig.Marshaler)
 	nodeClient := node.NewClient(baseClient, encodingConfig.Marshaler)
 	paramsClient := params.NewClient(baseClient, encodingConfig.Marshaler)

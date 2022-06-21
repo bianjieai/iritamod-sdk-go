@@ -1,7 +1,6 @@
 package integration
 
 import (
-	"fmt"
 	"io/ioutil"
 	"os"
 	"path/filepath"
@@ -35,7 +34,6 @@ func (s IntegrationTestSuite) TestValidator() {
 	res1, err := s.Node.CreateValidator(createReq, baseTx)
 	require.NoError(s.T(), err)
 	require.NotEmpty(s.T(), res1.Hash)
-	fmt.Println(res1)
 
 	validatorID, err := res1.Events.GetValue("create_validator", "validator")
 	require.NoError(s.T(), err)
