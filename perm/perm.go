@@ -2,25 +2,22 @@ package perm
 
 import (
 	"context"
+	"github.com/ethereum/go-ethereum/common"
 
-	"github.com/irisnet/core-sdk-go/types/errors"
-
-	ctypes "github.com/tendermint/tendermint/rpc/core/types"
-
-	"github.com/irisnet/core-sdk-go/codec"
-	"github.com/irisnet/core-sdk-go/codec/types"
+	"github.com/irisnet/core-sdk-go/common/codec"
+	"github.com/irisnet/core-sdk-go/common/codec/types"
 	sdk "github.com/irisnet/core-sdk-go/types"
 )
 
 type permClient struct {
 	sdk.BaseClient
-	codec.Codec
+	codec.Marshaler
 }
 
-func NewClient(bc sdk.BaseClient, cdc codec.Codec) Client {
+func NewClient(bc sdk.BaseClient, cdc codec.Marshaler) Client {
 	return permClient{
 		BaseClient: bc,
-		Codec:      cdc,
+		Marshaler:  cdc,
 	}
 }
 
@@ -32,15 +29,15 @@ func (a permClient) RegisterInterfaceTypes(registry types.InterfaceRegistry) {
 	RegisterInterfaces(registry)
 }
 
-func (a permClient) AssignRoles(address string, roles []Role, baseTx sdk.BaseTx) (ctypes.ResultTx, error) {
+func (a permClient) AssignRoles(address string, roles []Role, baseTx sdk.BaseTx) (sdk.ResultTx, error) {
 	sender, err := a.QueryAddress(baseTx.From, baseTx.Password)
 	if err != nil {
-		return ctypes.ResultTx{}, errors.Wrap(ErrQueryAddress, err.Error())
+		return sdk.ResultTx{}, sdk.WrapWithMessage(ErrQueryAddress, err.Error())
 	}
 
 	acc, err := sdk.AccAddressFromBech32(address)
 	if err != nil {
-		return ctypes.ResultTx{}, errors.Wrap(ErrBench32, err.Error())
+		return sdk.ResultTx{}, sdk.WrapWithMessage(ErrBench32, err.Error())
 	}
 
 	msg := &MsgAssignRoles{
@@ -50,20 +47,20 @@ func (a permClient) AssignRoles(address string, roles []Role, baseTx sdk.BaseTx)
 	}
 	send, err := a.BuildAndSend([]sdk.Msg{msg}, baseTx)
 	if err != nil {
-		return ctypes.ResultTx{}, errors.Wrap(ErrBuildAndSend, err.Error())
+		return sdk.ResultTx{}, sdk.WrapWithMessage(ErrBuildAndSend, err.Error())
 	}
 	return send, nil
 }
 
-func (a permClient) UnassignRoles(address string, roles []Role, baseTx sdk.BaseTx) (ctypes.ResultTx, error) {
+func (a permClient) UnassignRoles(address string, roles []Role, baseTx sdk.BaseTx) (sdk.ResultTx, error) {
 	sender, err := a.QueryAddress(baseTx.From, baseTx.Password)
 	if err != nil {
-		return ctypes.ResultTx{}, errors.Wrap(ErrQueryAddress, err.Error())
+		return sdk.ResultTx{}, sdk.WrapWithMessage(ErrQueryAddress, err.Error())
 	}
 
 	acc, err := sdk.AccAddressFromBech32(address)
 	if err != nil {
-		return ctypes.ResultTx{}, errors.Wrap(ErrBench32, err.Error())
+		return sdk.ResultTx{}, sdk.WrapWithMessage(ErrBench32, err.Error())
 	}
 
 	msg := &MsgUnassignRoles{
@@ -74,20 +71,20 @@ func (a permClient) UnassignRoles(address string, roles []Role, baseTx sdk.BaseT
 
 	send, err := a.BuildAndSend([]sdk.Msg{msg}, baseTx)
 	if err != nil {
-		return ctypes.ResultTx{}, errors.Wrap(ErrBuildAndSend, err.Error())
+		return sdk.ResultTx{}, sdk.WrapWithMessage(ErrBuildAndSend, err.Error())
 	}
 	return send, nil
 }
 
-func (a permClient) BlockAccount(address string, baseTx sdk.BaseTx) (ctypes.ResultTx, error) {
+func (a permClient) BlockAccount(address string, baseTx sdk.BaseTx) (sdk.ResultTx, error) {
 	sender, err := a.QueryAddress(baseTx.From, baseTx.Password)
 	if err != nil {
-		return ctypes.ResultTx{}, errors.Wrap(ErrQueryAddress, err.Error())
+		return sdk.ResultTx{}, sdk.WrapWithMessage(ErrQueryAddress, err.Error())
 	}
 
 	acc, err := sdk.AccAddressFromBech32(address)
 	if err != nil {
-		return ctypes.ResultTx{}, errors.Wrap(ErrBench32, err.Error())
+		return sdk.ResultTx{}, sdk.WrapWithMessage(ErrBench32, err.Error())
 	}
 
 	msg := &MsgBlockAccount{
@@ -97,20 +94,20 @@ func (a permClient) BlockAccount(address string, baseTx sdk.BaseTx) (ctypes.Resu
 
 	send, err := a.BuildAndSend([]sdk.Msg{msg}, baseTx)
 	if err != nil {
-		return ctypes.ResultTx{}, errors.Wrap(ErrBuildAndSend, err.Error())
+		return sdk.ResultTx{}, sdk.WrapWithMessage(ErrBuildAndSend, err.Error())
 	}
 	return send, nil
 }
 
-func (a permClient) UnblockAccount(address string, baseTx sdk.BaseTx) (ctypes.ResultTx, error) {
+func (a permClient) UnblockAccount(address string, baseTx sdk.BaseTx) (sdk.ResultTx, error) {
 	sender, err := a.QueryAddress(baseTx.From, baseTx.Password)
 	if err != nil {
-		return ctypes.ResultTx{}, errors.Wrap(ErrQueryAddress, err.Error())
+		return sdk.ResultTx{}, sdk.WrapWithMessage(ErrQueryAddress, err.Error())
 	}
 
 	acc, err := sdk.AccAddressFromBech32(address)
 	if err != nil {
-		return ctypes.ResultTx{}, errors.Wrap(ErrBench32, err.Error())
+		return sdk.ResultTx{}, sdk.WrapWithMessage(ErrBench32, err.Error())
 	}
 
 	msg := &MsgUnblockAccount{
@@ -120,7 +117,51 @@ func (a permClient) UnblockAccount(address string, baseTx sdk.BaseTx) (ctypes.Re
 
 	send, err := a.BuildAndSend([]sdk.Msg{msg}, baseTx)
 	if err != nil {
-		return ctypes.ResultTx{}, errors.Wrap(ErrBuildAndSend, err.Error())
+		return sdk.ResultTx{}, sdk.WrapWithMessage(ErrBuildAndSend, err.Error())
+	}
+	return send, nil
+}
+
+func (a permClient) BlockContract(contractAddress string, baseTx sdk.BaseTx) (sdk.ResultTx, error) {
+	sender, err := a.QueryAddress(baseTx.From, baseTx.Password)
+	if err != nil {
+		return sdk.ResultTx{}, sdk.WrapWithMessage(ErrQueryAddress, err.Error())
+	}
+
+	if !common.IsHexAddress(contractAddress) {
+		return sdk.ResultTx{}, sdk.WrapWithMessage(ErrHexAddr, "invalid contract address")
+	}
+
+	msg := &MsgBlockContract{
+		ContractAddress: contractAddress,
+		Operator:        sender.String(),
+	}
+
+	send, err := a.BuildAndSend([]sdk.Msg{msg}, baseTx)
+	if err != nil {
+		return sdk.ResultTx{}, sdk.WrapWithMessage(ErrBuildAndSend, err.Error())
+	}
+	return send, nil
+}
+
+func (a permClient) UnblockContract(contractAddress string, baseTx sdk.BaseTx) (sdk.ResultTx, error) {
+	sender, err := a.QueryAddress(baseTx.From, baseTx.Password)
+	if err != nil {
+		return sdk.ResultTx{}, sdk.WrapWithMessage(ErrQueryAddress, err.Error())
+	}
+
+	if !common.IsHexAddress(contractAddress) {
+		return sdk.ResultTx{}, sdk.WrapWithMessage(ErrHexAddr, "invalid contract address")
+	}
+
+	msg := &MsgUnblockContract{
+		ContractAddress: contractAddress,
+		Operator:        sender.String(),
+	}
+
+	send, err := a.BuildAndSend([]sdk.Msg{msg}, baseTx)
+	if err != nil {
+		return sdk.ResultTx{}, sdk.WrapWithMessage(ErrBuildAndSend, err.Error())
 	}
 	return send, nil
 }
@@ -129,12 +170,12 @@ func (a permClient) QueryRoles(address string) ([]Role, error) {
 	conn, err := a.GenConn()
 
 	if err != nil {
-		return nil, errors.Wrap(ErrGenConn, err.Error())
+		return nil, sdk.WrapWithMessage(ErrGenConn, err.Error())
 	}
 
 	acc, err := sdk.AccAddressFromBech32(address)
 	if err != nil {
-		return nil, errors.Wrap(ErrBench32, err.Error())
+		return nil, sdk.WrapWithMessage(ErrBench32, err.Error())
 	}
 
 	resp, err := NewQueryClient(conn).Roles(
@@ -142,25 +183,43 @@ func (a permClient) QueryRoles(address string) ([]Role, error) {
 		&QueryRolesRequest{Address: acc.String()},
 	)
 	if err != nil {
-		return nil, errors.Wrap(ErrQueryPerm, err.Error())
+		return nil, sdk.WrapWithMessage(ErrQueryPerm, err.Error())
 	}
 
 	return resp.Roles, nil
 }
 
-func (a permClient) QueryBlacklist(page, limit int) ([]string, error) {
+func (a permClient) QueryAccountBlockList() ([]string, error) {
 	conn, err := a.GenConn()
 
 	if err != nil {
-		return nil, errors.Wrap(ErrGenConn, err.Error())
+		return nil, sdk.WrapWithMessage(ErrGenConn, err.Error())
 	}
 
-	resp, err := NewQueryClient(conn).Blacklist(
+	resp, err := NewQueryClient(conn).AccountBlockList(
 		context.Background(),
-		&QueryBlacklistRequest{},
+		&QueryBlockListRequest{},
 	)
 	if err != nil {
-		return nil, errors.Wrap(ErrQueryPerm, err.Error())
+		return nil, sdk.WrapWithMessage(ErrQueryPerm, err.Error())
+	}
+
+	return resp.Addresses, nil
+}
+
+func (a permClient) QueryContractDenyList() ([]string, error) {
+	conn, err := a.GenConn()
+
+	if err != nil {
+		return nil, sdk.WrapWithMessage(ErrGenConn, err.Error())
+	}
+
+	resp, err := NewQueryClient(conn).ContractDenyList(
+		context.Background(),
+		&QueryContractDenyList{},
+	)
+	if err != nil {
+		return nil, sdk.WrapWithMessage(ErrQueryPerm, err.Error())
 	}
 
 	return resp.Addresses, nil

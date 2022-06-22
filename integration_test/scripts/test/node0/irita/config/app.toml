@@ -8,7 +8,7 @@
 # The minimum gas prices a validator is willing to accept for processing a
 # transaction. A transaction's fees must meet the minimum of any denomination
 # specified in this config (e.g. 0.25token1;0.0001token2).
-minimum-gas-prices = ""
+minimum-gas-prices = "0aphoton"
 
 # default: the last 100 states are kept in addition to every 500th state; pruning at 10 block intervals
 # nothing: all historic states will be saved, nothing will be deleted (i.e. archiving node)
@@ -72,7 +72,7 @@ service-name = ""
 # Enabled enables the application telemetry functionality. When enabled,
 # an in-memory sink is also enabled by default. Operators may also enabled
 # other sinks such as Prometheus.
-enabled = false
+enabled = true
 
 # Enable prefixing gauge values with hostname.
 enable-hostname = false
@@ -84,7 +84,7 @@ enable-hostname-label = false
 enable-service-label = false
 
 # PrometheusRetentionTime, when positive, enables a Prometheus metrics sink.
-prometheus-retention-time = 0
+prometheus-retention-time = 60
 
 # GlobalLabels defines a global set of name/value label tuples applied to all
 # metrics emitted using the wrapper functions defined in telemetry package.
@@ -92,6 +92,7 @@ prometheus-retention-time = 0
 # Example:
 # [["chain_id", "cosmoshub-1"]]
 global-labels = [
+  ["chain_id", "iritasdk"],
 ]
 
 ###############################################################################
@@ -101,7 +102,7 @@ global-labels = [
 [api]
 
 # Enable defines if the API server should be enabled.
-enable = false
+enable = true
 
 # Swagger defines if swagger documentation should automatically be registered.
 swagger = false
@@ -190,3 +191,61 @@ snapshot-interval = 0
 
 # snapshot-keep-recent specifies the number of recent snapshots to keep and serve (0 to keep all).
 snapshot-keep-recent = 2
+
+###############################################################################
+###                             EVM Configuration                           ###
+###############################################################################
+
+[evm]
+
+# Tracer defines the 'vm.Tracer' type that the EVM will use when the node is run in
+# debug mode. To enable tracing use the '--trace' flag when starting your node.
+# Valid types are: json|struct|access_list|markdown
+tracer = ""
+
+###############################################################################
+###                           JSON RPC Configuration                        ###
+###############################################################################
+
+[json-rpc]
+
+# Enable defines if the gRPC server should be enabled.
+enable = true
+
+# Address defines the EVM RPC HTTP server address to bind to.
+address = "0.0.0.0:8545"
+
+# Address defines the EVM WebSocket server address to bind to.
+ws-address = "0.0.0.0:8546"
+
+# API defines a list of JSON-RPC namespaces that should be enabled
+# Example: "eth,txpool,personal,net,debug,web3"
+api = "eth,net,web3"
+
+# GasCap sets a cap on gas that can be used in eth_call/estimateGas (0=infinite). Default: 25,000,000.
+gas-cap = 25000000
+
+# EVMTimeout is the global timeout for eth_call. Default: 5s.
+evm-timeout = "5s"
+
+# TxFeeCap is the global tx-fee cap for send transaction. Default: 1eth.
+txfee-cap = 1
+
+# FilterCap sets the global cap for total number of filters that can be created
+filter-cap = 200
+
+# FeeHistoryCap sets the global cap for total number of blocks that can be fetched
+feehistory-cap = 100
+
+
+###############################################################################
+###                             TLS Configuration                           ###
+###############################################################################
+
+[tls]
+
+# Certificate path defines the cert.pem file path for the TLS configuration.
+certificate-path = ""
+
+# Key path defines the key.pem file path for the TLS configuration.
+key-path = ""

@@ -1,33 +1,44 @@
 package integration
 
 import (
-	"github.com/irisnet/core-sdk-go/types"
-
-	"github.com/stretchr/testify/require"
-
 	"github.com/bianjieai/iritamod-sdk-go/params"
+	"github.com/irisnet/core-sdk-go/types"
+	"github.com/stretchr/testify/require"
 )
 
-func (s IntegrationTestSuite) TestParams() {
+func (s IntegrationTestSuite) TestUpdateParams() {
 	baseTx := types.BaseTx{
-		From:     s.Account().Name,
-		Gas:      200000,
-		Memo:     "test",
-		Mode:     types.Commit,
-		Password: s.Account().Password,
+		From:          s.Account().Name,
+		Password:      s.Account().Password,
+		Gas:           gasWanted,
+		Fee:           feeWanted,
+		Mode:          types.Commit,
+		GasAdjustment: 1.5,
 	}
 
-	var request = []params.UpdateParamRequest{{
-		Module: "service",
-		Key:    "MaxRequestTimeout",
-		Value:  `"200"`,
-	}}
+	req1 := []params.UpdateParamRequest{
+		{
+			Module: "node",
+			Key:    "HistoricalEntries",
+			Value:  "110",
+		},
+	}
 
-	rs, err := s.Params.UpdateParams(request, baseTx)
+	// success tx
+	res, err := s.Params.UpdateParams(req1, baseTx)
 	require.NoError(s.T(), err)
-	require.NotEmpty(s.T(), rs.Hash)
+	require.NotEmpty(s.T(), res.Hash)
 
-	p, err := s.Service.QueryParams()
-	require.NoError(s.T(), err)
-	require.Equal(s.T(), int64(200), p.MaxRequestTimeout)
+	req2 := []params.UpdateParamRequest{
+		{
+			Module: "node",
+			Key:    "",
+			Value:  "110",
+		},
+	}
+
+	// failed tx
+	res2, err := s.Params.UpdateParams(req2, baseTx)
+	require.Error(s.T(), err)
+	require.Empty(s.T(), res2.Hash)
 }

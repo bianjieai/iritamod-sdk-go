@@ -11,17 +11,28 @@ import (
 	"github.com/stretchr/testify/require"
 	"github.com/stretchr/testify/suite"
 
-	"github.com/irisnet/core-sdk-go/log"
-	"github.com/irisnet/core-sdk-go/types"
+	"github.com/irisnet/core-sdk-go/common/log"
+	sdk "github.com/irisnet/core-sdk-go/types"
 	"github.com/irisnet/core-sdk-go/types/store"
 )
 
 const (
 	nodeURI  = "tcp://localhost:26657"
 	grpcAddr = "localhost:9090"
-	chainID  = "test"
+	chainID  = "iritasdk"
 	charset  = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
-	addr     = "iaa1scwlz30csd2hkfchw7djjpelrc9ltfkp5egxr0"
+
+	addr     = "iaa1d3p96vyvekh8wwrse5s2y7vhq9n6967mefsrav"
+	name     = "node0"
+	password = "iritasdk"
+)
+
+var (
+	gasWanted = uint64(1000000)
+	feeWanted = sdk.NewDecCoins(
+		sdk.NewDecCoin(
+			"ugas",
+			sdk.NewInt(2000000)))
 )
 
 type IntegrationTestSuite struct {
@@ -37,10 +48,11 @@ type SubTest struct {
 	testCase func(s IntegrationTestSuite)
 }
 
-// MockAccount define a account for test
+// MockAccount define an account for test
 type MockAccount struct {
-	Name, Password string
-	Address        types.AccAddress
+	Name     string
+	Password string
+	Address  sdk.AccAddress
 }
 
 func TestSuite(t *testing.T) {
@@ -49,16 +61,17 @@ func TestSuite(t *testing.T) {
 }
 
 func (s *IntegrationTestSuite) SetupSuite() {
-	feeCoin, err := types.ParseDecCoins("100upoint")
+	feeCoin, err := sdk.ParseDecCoins("10000ugas")
 
-	options := []types.Option{
-		types.FeeOption(feeCoin),
-		types.AlgoOption("sm2"),
-		types.KeyDAOOption(store.NewMemory(nil)),
-		types.TimeoutOption(6),
-		types.CachedOption(true),
+	options := []sdk.Option{
+		sdk.FeeOption(feeCoin),
+		sdk.AlgoOption("sm2"),
+		sdk.KeyDAOOption(store.NewMemory(nil)),
+		sdk.TimeoutOption(6),
+		sdk.CachedOption(true),
 	}
-	cfg, err := types.NewClientConfig(nodeURI, grpcAddr, chainID, options...)
+
+	cfg, err := sdk.NewClientConfig(nodeURI, grpcAddr, chainID, options...)
 	if err != nil {
 		panic(err)
 	}
@@ -66,10 +79,11 @@ func (s *IntegrationTestSuite) SetupSuite() {
 	s.Client = NewClient(cfg)
 	s.r = rand.New(rand.NewSource(time.Now().UnixNano()))
 	s.rootAccount = MockAccount{
-		Name:     "v1",
-		Password: "1234567890",
-		Address:  types.MustAccAddressFromBech32(addr),
+		Name:     name,
+		Password: password,
+		Address:  sdk.MustAccAddressFromBech32(addr),
 	}
+
 	s.SetLogger(log.NewLogger(log.Config{
 		Format: log.FormatText,
 		Level:  log.DebugLevel,
@@ -78,13 +92,16 @@ func (s *IntegrationTestSuite) SetupSuite() {
 }
 
 func (s *IntegrationTestSuite) initAccount() {
-	address, err := s.Import(s.Account().Name,
+
+	address, err := s.Import(
+		s.Account().Name,
 		s.Account().Password,
 		string(getPrivKeyArmor()))
 	if err != nil {
 		panic(err)
 	}
 	require.Equal(s.T(), address, addr)
+
 	//var receipts bank.Receipts
 	for i := 0; i < 5; i++ {
 		name := s.RandStringOfLength(10)
@@ -97,7 +114,7 @@ func (s *IntegrationTestSuite) initAccount() {
 		s.randAccounts = append(s.randAccounts, MockAccount{
 			Name:     name,
 			Password: pwd,
-			Address:  types.MustAccAddressFromBech32(address),
+			Address:  sdk.MustAccAddressFromBech32(address),
 		})
 	}
 }

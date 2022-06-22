@@ -1,28 +1,20 @@
 package integration
 
 import (
+	"github.com/bianjieai/iritamod-sdk-go/slashing"
+	"github.com/irisnet/core-sdk-go/bank"
 	"github.com/irisnet/core-sdk-go/client"
-	"github.com/irisnet/core-sdk-go/codec"
-	"github.com/irisnet/core-sdk-go/modules/bank"
-	"github.com/irisnet/core-sdk-go/modules/gov"
-	"github.com/irisnet/core-sdk-go/modules/staking"
+	"github.com/irisnet/core-sdk-go/common/codec"
 	"github.com/irisnet/core-sdk-go/types"
 
-	"github.com/tendermint/tendermint/libs/log"
-
 	"github.com/bianjieai/iritamod-sdk-go/identity"
-	"github.com/bianjieai/iritamod-sdk-go/nft"
 	"github.com/bianjieai/iritamod-sdk-go/node"
-	"github.com/bianjieai/iritamod-sdk-go/oracle"
 	"github.com/bianjieai/iritamod-sdk-go/params"
 	"github.com/bianjieai/iritamod-sdk-go/perm"
-	"github.com/bianjieai/iritamod-sdk-go/record"
-	"github.com/bianjieai/iritamod-sdk-go/service"
-	"github.com/bianjieai/iritamod-sdk-go/token"
-	"github.com/bianjieai/iritamod-sdk-go/wasm"
+	"github.com/tendermint/tendermint/libs/log"
 
-	cdctypes "github.com/irisnet/core-sdk-go/codec/types"
-	cryptocodec "github.com/irisnet/core-sdk-go/crypto/codec"
+	cdctypes "github.com/irisnet/core-sdk-go/common/codec/types"
+	cryptocodec "github.com/irisnet/core-sdk-go/common/crypto/codec"
 	txtypes "github.com/irisnet/core-sdk-go/types/tx"
 )
 
@@ -32,76 +24,52 @@ type Client struct {
 	encodingConfig types.EncodingConfig
 
 	types.BaseClient
-	Bank     bank.Client
-	Staking  staking.Client
-	Gov      gov.Client
+	Key  client.Client
+	Bank bank.Client
+
 	Identity identity.Client
-	Nft      nft.Client
 	Node     node.Client
-	Service  service.Client
-	Oracle   oracle.Client
 	Params   params.Client
 	Perm     perm.Client
-	Record   record.Client
-	Token    token.Client
-	Wasm     wasm.Client
+	Slashing slashing.Client
 }
 
 func NewClient(cfg types.ClientConfig) Client {
 	encodingConfig := makeEncodingConfig()
 
-	// create a instance of baseClient
+	// create an instance of baseClient
 
 	baseClient := client.NewBaseClient(cfg, encodingConfig, nil)
-	bankClient := bank.NewClient(baseClient, encodingConfig.Codec)
+	bankClient := bank.NewClient(baseClient, encodingConfig.Marshaler)
+	keysClient := client.NewKeysClient(cfg, baseClient)
 
-	stakingClient := staking.NewClient(baseClient, encodingConfig.Codec)
-	govClient := gov.NewClient(baseClient, encodingConfig.Codec)
-	identityClient := identity.NewClient(baseClient, encodingConfig.Codec)
-	nftClient := nft.NewClient(baseClient, encodingConfig.Codec)
-	nodeClient := node.NewClient(baseClient, encodingConfig.Codec)
-	serviceClient := service.NewClient(baseClient, encodingConfig.Codec)
-	oracleClient := oracle.NewClient(baseClient, encodingConfig.Codec)
-	paramsClient := params.NewClient(baseClient, encodingConfig.Codec)
-	permClient := perm.NewClient(baseClient, encodingConfig.Codec)
-	recordClient := record.NewClient(baseClient, encodingConfig.Codec)
-	tokenClient := token.NewClient(baseClient, encodingConfig.Codec)
-	wasmClient := wasm.NewClient(baseClient)
+	identityClient := identity.NewClient(baseClient, encodingConfig.Marshaler)
+	nodeClient := node.NewClient(baseClient, encodingConfig.Marshaler)
+	paramsClient := params.NewClient(baseClient, encodingConfig.Marshaler)
+	permClient := perm.NewClient(baseClient, encodingConfig.Marshaler)
+	slashingClient := slashing.NewClient(baseClient, encodingConfig.Marshaler)
 
 	client := &Client{
 		logger:         baseClient.Logger(),
 		BaseClient:     baseClient,
 		moduleManager:  make(map[string]types.Module),
 		encodingConfig: encodingConfig,
+		Key:            keysClient,
 		Bank:           bankClient,
-		Staking:        stakingClient,
-		Gov:            govClient,
 		Identity:       identityClient,
-		Nft:            nftClient,
 		Node:           nodeClient,
-		Service:        serviceClient,
-		Oracle:         oracleClient,
 		Params:         paramsClient,
 		Perm:           permClient,
-		Record:         recordClient,
-		Token:          tokenClient,
-		Wasm:           wasmClient,
+		Slashing:       slashingClient,
 	}
 
 	client.RegisterModule(
 		bankClient,
-		stakingClient,
-		govClient,
 		identityClient,
-		nftClient,
 		nodeClient,
-		serviceClient,
-		oracleClient,
 		paramsClient,
 		permClient,
-		recordClient,
-		tokenClient,
-		wasmClient,
+		slashingClient,
 	)
 	return *client
 }
@@ -114,8 +82,8 @@ func (client Client) Codec() *codec.LegacyAmino {
 	return client.encodingConfig.Amino
 }
 
-func (client Client) AppCodec() codec.Codec {
-	return client.encodingConfig.Codec
+func (client Client) AppCodec() codec.Marshaler {
+	return client.encodingConfig.Marshaler
 }
 
 func (client Client) EncodingConfig() types.EncodingConfig {
@@ -144,7 +112,7 @@ func makeEncodingConfig() types.EncodingConfig {
 
 	encodingConfig := types.EncodingConfig{
 		InterfaceRegistry: interfaceRegistry,
-		Codec:             protoCodec,
+		Marshaler:         protoCodec,
 		TxConfig:          txCfg,
 		Amino:             amino,
 	}

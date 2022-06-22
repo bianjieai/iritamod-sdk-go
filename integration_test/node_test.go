@@ -5,8 +5,6 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/bianjieai/iritamod-sdk-go/params"
-
 	"github.com/stretchr/testify/require"
 
 	sdk "github.com/irisnet/core-sdk-go/types"
@@ -16,93 +14,113 @@ import (
 
 func (s IntegrationTestSuite) TestValidator() {
 	baseTx := sdk.BaseTx{
-		From:     s.Account().Name,
-		Gas:      0,
-		Memo:     "test",
-		Mode:     sdk.Commit,
-		Password: s.Account().Password,
+		From:          s.Account().Name,
+		Password:      s.Account().Password,
+		Gas:           gasWanted,
+		Fee:           feeWanted,
+		Mode:          sdk.Commit,
+		GasAdjustment: 1.5,
 	}
 
 	cert := string(getRootPem())
 
 	createReq := node.CreateValidatorRequest{
-		Name:        "test1",
+		Name:        "create",
 		Certificate: cert,
 		Power:       10,
-		Details:     "this is a test",
+		Details:     "this is a create test",
 	}
 
-	var request1 = []params.UpdateParamRequest{{
-		Module: "service",
-		Key:    "BaseDenom",
-		Value:  `"upoint"`,
-	}}
-
-	rs1, err := s.Params.UpdateParams(request1, baseTx)
+	// create validator
+	createResp, err := s.Node.CreateValidator(createReq, baseTx)
 	require.NoError(s.T(), err)
-	require.NotEmpty(s.T(), rs1.Hash)
+	require.NotEmpty(s.T(), createResp.Hash)
 
-	rs, err := s.Node.CreateValidator(createReq, baseTx)
+	vId, err := createResp.Events.GetValue("create_validator", "validator")
 	require.NoError(s.T(), err)
-	require.NotEmpty(s.T(), rs.Hash)
+	require.NotEmpty(s.T(), vId)
+	println(vId)
 
-	validatorID, er := sdk.StringifyEvents(rs.TxResult.Events).GetValue("create_validator", "validator")
-	require.NoError(s.T(), er)
-
-	v, err := s.Node.QueryValidator(validatorID)
+	queryResp1, err := s.Node.QueryValidator(vId)
 	require.NoError(s.T(), err)
+	require.NotEmpty(s.T(), queryResp1)
+	require.Equal(s.T(), queryResp1.Details, createReq.Details)
 
-	vs, err := s.Node.QueryValidators(nil)
+	queryResp2, err := s.Node.QueryValidators(nil)
 	require.NoError(s.T(), err)
-	require.NotEmpty(s.T(), vs)
+	require.NotEmpty(s.T(), queryResp2)
+	require.Contains(s.T(), queryResp2, queryResp1)
 
+	// update validator
 	updateReq := node.UpdateValidatorRequest{
-		ID:          validatorID,
-		Name:        "test2",
+		ID:          vId,
+		Name:        "update",
 		Certificate: cert,
-		Power:       10,
-		Details:     "this is a updated test",
+		Power:       15,
+		Details:     "this is an update test",
 	}
-	rs, err = s.Node.UpdateValidator(updateReq, baseTx)
+	updateResp, err := s.Node.UpdateValidator(updateReq, baseTx)
 	require.NoError(s.T(), err)
-	require.NotEmpty(s.T(), rs.Hash)
+	require.NotEmpty(s.T(), updateResp.Hash)
 
-	v, err = s.Node.QueryValidator(validatorID)
+	queryResp3, err := s.Node.QueryValidator(vId)
 	require.NoError(s.T(), err)
-	require.Equal(s.T(), updateReq.Name, v.Name)
-	require.Equal(s.T(), updateReq.Details, v.Details)
+	require.Equal(s.T(), updateReq.Name, queryResp3.Name)
+	require.Equal(s.T(), updateReq.Details, queryResp3.Details)
+	require.Equal(s.T(), updateReq.Power, queryResp3.Power)
 
-	rs, err = s.Node.RemoveValidator(validatorID, baseTx)
+	// remove validator
+	removeResp, err := s.Node.RemoveValidator(vId, baseTx)
 	require.NoError(s.T(), err)
-	require.NotEmpty(s.T(), rs.Hash)
+	require.NotEmpty(s.T(), removeResp.Hash)
 
-	v, err = s.Node.QueryValidator(validatorID)
+	queryResp4, err := s.Node.QueryValidator(vId)
 	require.Error(s.T(), err)
+	require.Empty(s.T(), queryResp4.Name)
+}
 
-	grantNodeReq := node.GrantNodeRequest{
-		Name:        "test3",
-		Certificate: cert,
-		Details:     "this is a grantNode test",
+func (s IntegrationTestSuite) TestGrantRevoke() {
+	baseTx := sdk.BaseTx{
+		From:          s.Account().Name,
+		Password:      s.Account().Password,
+		Gas:           gasWanted,
+		Fee:           feeWanted,
+		Mode:          sdk.Commit,
+		GasAdjustment: 1.5,
 	}
-	rs, err = s.Node.GrantNode(grantNodeReq, baseTx)
+
+	cert := string(getRootPem())
+
+	// grant node
+	grantNodeReq := node.GrantNodeRequest{
+		Name:        "grant",
+		Certificate: cert,
+		Details:     "this is a grant test",
+	}
+
+	grantResp, err := s.Node.GrantNode(grantNodeReq, baseTx)
 	require.NoError(s.T(), err)
-	require.NotEmpty(s.T(), rs.Hash)
+	require.NotEmpty(s.T(), grantResp.Hash)
 
-	noid, e := sdk.StringifyEvents(rs.TxResult.Events).GetValue("grant_node", "id")
-	require.NoError(s.T(), e)
-
-	n, err := s.Node.QueryNode(noid)
+	nodeId, err := grantResp.Events.GetValue("grant_node", "id")
 	require.NoError(s.T(), err)
-	require.NotEmpty(s.T(), n)
 
-	ns, err := s.Node.QueryNodes(nil)
+	queryResp1, err := s.Node.QueryNode(nodeId)
 	require.NoError(s.T(), err)
-	require.NotEmpty(s.T(), ns)
+	require.NotEmpty(s.T(), queryResp1)
 
-	rs, err = s.Node.RevokeNode(noid, baseTx)
+	queryResp2, err := s.Node.QueryNodes(nil)
 	require.NoError(s.T(), err)
-	require.NotEmpty(s.T(), rs.Hash)
+	require.NotEmpty(s.T(), queryResp2)
 
+	// revoke node
+	revokeResp, err := s.Node.RevokeNode(nodeId, baseTx)
+	require.NoError(s.T(), err)
+	require.NotEmpty(s.T(), revokeResp.Hash)
+
+	queryResp3, err := s.Node.QueryNode(nodeId)
+	require.Error(s.T(), err)
+	require.Empty(s.T(), queryResp3)
 }
 
 func getRootPem() []byte {

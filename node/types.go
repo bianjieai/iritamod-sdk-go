@@ -4,7 +4,6 @@ import (
 	"strings"
 
 	sdk "github.com/irisnet/core-sdk-go/types"
-	"github.com/irisnet/core-sdk-go/types/errors"
 )
 
 const (
@@ -19,19 +18,35 @@ var (
 	_ sdk.Msg = &MsgRevokeNode{}
 )
 
+func (m MsgCreateValidator) Route() string {
+	return ModuleName
+}
+
+func (m MsgCreateValidator) Type() string {
+	return "create_validator"
+}
+
+func (m MsgCreateValidator) GetSignBytes() []byte {
+	bz, err := ModuleCdc.MarshalJSON(&m)
+	if err != nil {
+		panic(err)
+	}
+	return sdk.MustSortJSON(bz)
+}
+
 func (m MsgCreateValidator) ValidateBasic() error {
 	if len(m.Operator) == 0 {
-		return errors.Wrap(ErrValidateBasic, "operator missing")
+		return sdk.WrapWithMessage(ErrValidateBasic, "operator missing")
 	}
 	if len(strings.TrimSpace(m.Name)) == 0 {
-		return errors.Wrap(ErrValidateBasic, "validator name cannot be blank")
+		return sdk.WrapWithMessage(ErrValidateBasic, "validator name cannot be blank")
 	}
 
 	if len(m.Certificate) == 0 {
-		return errors.Wrap(ErrValidateBasic, "certificate missing")
+		return sdk.WrapWithMessage(ErrValidateBasic, "certificate missing")
 	}
 	if m.Power <= 0 {
-		return errors.Wrap(ErrValidateBasic, "power must be positive")
+		return sdk.WrapWithMessage(ErrValidateBasic, "power must be positive")
 	}
 	return nil
 }
@@ -40,16 +55,32 @@ func (m MsgCreateValidator) GetSigners() []sdk.AccAddress {
 	return []sdk.AccAddress{sdk.MustAccAddressFromBech32(m.Operator)}
 }
 
+func (m MsgUpdateValidator) Route() string {
+	return ModuleName
+}
+
+func (m MsgUpdateValidator) Type() string {
+	return "update_validator"
+}
+
+func (m MsgUpdateValidator) GetSignBytes() []byte {
+	bz, err := ModuleCdc.MarshalJSON(&m)
+	if err != nil {
+		panic(err)
+	}
+	return sdk.MustSortJSON(bz)
+}
+
 func (m MsgUpdateValidator) ValidateBasic() error {
 	if len(m.Operator) == 0 {
-		return errors.Wrap(ErrValidateBasic, "operator missing")
+		return sdk.WrapWithMessage(ErrValidateBasic, "operator missing")
 	}
 	if len(m.Id) == 0 {
-		return errors.Wrap(ErrValidateBasic, "validator id cannot be blank")
+		return sdk.WrapWithMessage(ErrValidateBasic, "validator id cannot be blank")
 	}
 
 	if m.Power < 0 {
-		return errors.Wrap(ErrValidateBasic, "power can not be negative")
+		return sdk.WrapWithMessage(ErrValidateBasic, "power can not be negative")
 	}
 	return nil
 }
@@ -58,12 +89,28 @@ func (m MsgUpdateValidator) GetSigners() []sdk.AccAddress {
 	return []sdk.AccAddress{sdk.MustAccAddressFromBech32(m.Operator)}
 }
 
+func (m MsgRemoveValidator) Route() string {
+	return ModuleName
+}
+
+func (m MsgRemoveValidator) Type() string {
+	return "remove_validator"
+}
+
+func (m MsgRemoveValidator) GetSignBytes() []byte {
+	bz, err := ModuleCdc.MarshalJSON(&m)
+	if err != nil {
+		panic(err)
+	}
+	return sdk.MustSortJSON(bz)
+}
+
 func (m MsgRemoveValidator) ValidateBasic() error {
 	if len(m.Operator) == 0 {
-		return errors.Wrap(ErrValidateBasic, "operator missing")
+		return sdk.WrapWithMessage(ErrValidateBasic, "operator missing")
 	}
 	if len(m.Id) == 0 {
-		return errors.Wrap(ErrValidateBasic, "validator id cannot be blank")
+		return sdk.WrapWithMessage(ErrValidateBasic, "validator id cannot be blank")
 	}
 	return nil
 }
@@ -72,9 +119,25 @@ func (m MsgRemoveValidator) GetSigners() []sdk.AccAddress {
 	return []sdk.AccAddress{sdk.MustAccAddressFromBech32(m.Operator)}
 }
 
+func (m MsgGrantNode) Route() string {
+	return ModuleName
+}
+
+func (m MsgGrantNode) Type() string {
+	return "grant_node"
+}
+
+func (m MsgGrantNode) GetSignBytes() []byte {
+	bz, err := ModuleCdc.MarshalJSON(&m)
+	if err != nil {
+		panic(err)
+	}
+	return sdk.MustSortJSON(bz)
+}
+
 func (m MsgGrantNode) ValidateBasic() error {
 	if len(m.Operator) == 0 {
-		return errors.Wrap(ErrValidateBasic, "operator missing")
+		return sdk.WrapWithMessage(ErrValidateBasic, "operator missing")
 	}
 	return nil
 }
@@ -83,12 +146,28 @@ func (m MsgGrantNode) GetSigners() []sdk.AccAddress {
 	return []sdk.AccAddress{sdk.MustAccAddressFromBech32(m.Operator)}
 }
 
+func (m MsgRevokeNode) Route() string {
+	return ModuleName
+}
+
+func (m MsgRevokeNode) Type() string {
+	return "revoke_node"
+}
+
+func (m MsgRevokeNode) GetSignBytes() []byte {
+	bz, err := ModuleCdc.MarshalJSON(&m)
+	if err != nil {
+		panic(err)
+	}
+	return sdk.MustSortJSON(bz)
+}
+
 func (m MsgRevokeNode) ValidateBasic() error {
 	if len(m.Operator) == 0 {
-		return errors.Wrap(ErrValidateBasic, "operator missing")
+		return sdk.WrapWithMessage(ErrValidateBasic, "operator missing")
 	}
 	if len(m.Id) == 0 {
-		return errors.Wrap(ErrValidateBasic, "validator id cannot be blank")
+		return sdk.WrapWithMessage(ErrValidateBasic, "validator id cannot be blank")
 	}
 	return nil
 }
