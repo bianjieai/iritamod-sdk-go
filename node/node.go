@@ -30,7 +30,7 @@ func (n nodeClient) RegisterInterfaceTypes(registry types.InterfaceRegistry) {
 }
 
 func (n nodeClient) CreateValidator(request CreateValidatorRequest, baseTx sdk.BaseTx) (sdk.ResultTx, error) {
-	creator, err := n.QueryAddress(baseTx.From, baseTx.Password)
+	sender, err := n.QueryAddress(baseTx.From, baseTx.Password)
 	if err != nil {
 		return sdk.ResultTx{}, sdk.WrapWithMessage(ErrQueryAddress, err.Error())
 	}
@@ -40,7 +40,7 @@ func (n nodeClient) CreateValidator(request CreateValidatorRequest, baseTx sdk.B
 		Certificate: request.Certificate,
 		Description: request.Details,
 		Power:       request.Power,
-		Operator:    creator.String(),
+		Operator:    sender.String(),
 	}
 	send, err := n.BuildAndSend([]sdk.Msg{msg}, baseTx)
 	if err != nil {
@@ -50,7 +50,7 @@ func (n nodeClient) CreateValidator(request CreateValidatorRequest, baseTx sdk.B
 }
 
 func (n nodeClient) UpdateValidator(request UpdateValidatorRequest, baseTx sdk.BaseTx) (sdk.ResultTx, error) {
-	creator, err := n.QueryAddress(baseTx.From, baseTx.Password)
+	sender, err := n.QueryAddress(baseTx.From, baseTx.Password)
 	if err != nil {
 		return sdk.ResultTx{}, sdk.WrapWithMessage(ErrQueryAddress, err.Error())
 	}
@@ -66,7 +66,7 @@ func (n nodeClient) UpdateValidator(request UpdateValidatorRequest, baseTx sdk.B
 		Certificate: request.Certificate,
 		Description: request.Details,
 		Power:       request.Power,
-		Operator:    creator.String(),
+		Operator:    sender.String(),
 	}
 
 	send, err := n.BuildAndSend([]sdk.Msg{msg}, baseTx)
@@ -77,7 +77,7 @@ func (n nodeClient) UpdateValidator(request UpdateValidatorRequest, baseTx sdk.B
 }
 
 func (n nodeClient) RemoveValidator(id string, baseTx sdk.BaseTx) (sdk.ResultTx, error) {
-	creator, err := n.QueryAddress(baseTx.From, baseTx.Password)
+	sender, err := n.QueryAddress(baseTx.From, baseTx.Password)
 	if err != nil {
 		return sdk.ResultTx{}, sdk.WrapWithMessage(ErrQueryAddress, err.Error())
 	}
@@ -88,7 +88,7 @@ func (n nodeClient) RemoveValidator(id string, baseTx sdk.BaseTx) (sdk.ResultTx,
 	}
 	msg := &MsgRemoveValidator{
 		Id:       vID.String(),
-		Operator: creator.String(),
+		Operator: sender.String(),
 	}
 
 	send, err := n.BuildAndSend([]sdk.Msg{msg}, baseTx)
@@ -99,7 +99,7 @@ func (n nodeClient) RemoveValidator(id string, baseTx sdk.BaseTx) (sdk.ResultTx,
 }
 
 func (n nodeClient) GrantNode(request GrantNodeRequest, baseTx sdk.BaseTx) (sdk.ResultTx, error) {
-	creator, err := n.QueryAddress(baseTx.From, baseTx.Password)
+	sender, err := n.QueryAddress(baseTx.From, baseTx.Password)
 	if err != nil {
 		return sdk.ResultTx{}, sdk.WrapWithMessage(ErrQueryAddress, err.Error())
 	}
@@ -107,7 +107,7 @@ func (n nodeClient) GrantNode(request GrantNodeRequest, baseTx sdk.BaseTx) (sdk.
 	msg := &MsgGrantNode{
 		Name:        request.Name,
 		Certificate: request.Certificate,
-		Operator:    creator.String(),
+		Operator:    sender.String(),
 	}
 
 	send, err := n.BuildAndSend([]sdk.Msg{msg}, baseTx)
@@ -118,7 +118,7 @@ func (n nodeClient) GrantNode(request GrantNodeRequest, baseTx sdk.BaseTx) (sdk.
 }
 
 func (n nodeClient) RevokeNode(nodeId string, baseTx sdk.BaseTx) (sdk.ResultTx, error) {
-	creator, err := n.QueryAddress(baseTx.From, baseTx.Password)
+	sender, err := n.QueryAddress(baseTx.From, baseTx.Password)
 	if err != nil {
 		return sdk.ResultTx{}, sdk.WrapWithMessage(ErrQueryAddress, err.Error())
 	}
@@ -130,7 +130,7 @@ func (n nodeClient) RevokeNode(nodeId string, baseTx sdk.BaseTx) (sdk.ResultTx, 
 
 	msg := &MsgRevokeNode{
 		Id:       vID.String(),
-		Operator: creator.String(),
+		Operator: sender.String(),
 	}
 
 	send, err := n.BuildAndSend([]sdk.Msg{msg}, baseTx)

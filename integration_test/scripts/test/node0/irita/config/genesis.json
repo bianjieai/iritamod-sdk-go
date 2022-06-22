@@ -1,6 +1,6 @@
 {
-  "genesis_time": "2021-11-01T07:10:47.911848Z",
-  "chain_id": "test",
+  "genesis_time": "2022-06-20T07:42:52.130423092Z",
+  "chain_id": "iritasdk",
   "initial_height": "1",
   "consensus_params": {
     "block": {
@@ -35,7 +35,7 @@
       "accounts": [
         {
           "@type": "/cosmos.auth.v1beta1.BaseAccount",
-          "address": "iaa1scwlz30csd2hkfchw7djjpelrc9ltfkp5egxr0",
+          "address": "iaa1d3p96vyvekh8wwrse5s2y7vhq9n6967mefsrav",
           "pub_key": null,
           "account_number": "0",
           "sequence": "0"
@@ -49,19 +49,23 @@
       },
       "balances": [
         {
-          "address": "iaa1scwlz30csd2hkfchw7djjpelrc9ltfkp5egxr0",
+          "address": "iaa1d3p96vyvekh8wwrse5s2y7vhq9n6967mefsrav",
           "coins": [
             {
               "denom": "node0token",
-              "amount": "1000000000"
+              "amount": "5000000000"
+            },
+            {
+              "denom": "ugas",
+              "amount": "5000000000000000000000"
             },
             {
               "denom": "uirita",
-              "amount": "5000000000000000"
+              "amount": "5000000000"
             },
             {
               "denom": "upoint",
-              "amount": "5000000000000000"
+              "amount": "5000000000"
             }
           ]
         }
@@ -78,8 +82,44 @@
     "evidence": {
       "evidence": []
     },
+    "evm": {
+      "accounts": [],
+      "params": {
+        "evm_denom": "ugas",
+        "enable_create": true,
+        "enable_call": true,
+        "extra_eips": [],
+        "chain_config": {
+          "homestead_block": "0",
+          "dao_fork_block": "0",
+          "dao_fork_support": true,
+          "eip150_block": "0",
+          "eip150_hash": "0x0000000000000000000000000000000000000000000000000000000000000000",
+          "eip155_block": "0",
+          "eip158_block": "0",
+          "byzantium_block": "0",
+          "constantinople_block": "0",
+          "petersburg_block": "0",
+          "istanbul_block": "0",
+          "muir_glacier_block": "0",
+          "berlin_block": "0",
+          "london_block": "0"
+        }
+      }
+    },
     "feegrant": {
       "allowances": []
+    },
+    "feemarket": {
+      "params": {
+        "no_base_fee": true,
+        "base_fee_change_denominator": 8,
+        "elasticity_multiplier": 2,
+        "initial_base_fee": "1000000000",
+        "enable_height": "0"
+      },
+      "base_fee": "0",
+      "block_gas": "0"
     },
     "genutil": {
       "gen_txs": [
@@ -89,13 +129,13 @@
               {
                 "@type": "/iritamod.node.MsgCreateValidator",
                 "name": "node0",
-                "certificate": "-----BEGIN CERTIFICATE-----\nMIIBrDCCAVICFGu7UQZ827/OAf7aAd2VyMV/pXb6MAoGCCqBHM9VAYN1MFgxCzAJ\nBgNVBAYTAkNOMQ0wCwYDVQQIDARyb290MQ0wCwYDVQQHDARyb290MQ0wCwYDVQQK\nDARyb290MQ0wCwYDVQQLDARyb290MQ0wCwYDVQQDDARyb290MB4XDTIxMTEwMTA3\nMTA0M1oXDTIyMTEwMTA3MTA0M1owWTELMAkGA1UEBhMCQ04xDTALBgNVBAgMBHRl\nc3QxDTALBgNVBAcMBHRlc3QxDTALBgNVBAoMBHRlc3QxDTALBgNVBAsMBHRlc3Qx\nDjAMBgNVBAMMBW5vZGUwMFkwEwYHKoZIzj0CAQYIKoEcz1UBgi0DQgAELUObl9AV\na46pnH6YS1BrZhpyWZgZbMePQtSR+cORNa2bY1CgOYQrDHO/F5CJ5cKIlYvWAq0X\nDWezmBqas/K9GjAKBggqgRzPVQGDdQNIADBFAiEAxapv51OpkOUGfgayGjeWJ5I+\nyVs+8FqRF39L/Jbia7kCIHy8s15YgrBthsW6jXOx2Gv3R3nsVwa7jeui4f514F3L\n-----END CERTIFICATE-----\n",
+                "certificate": "-----BEGIN CERTIFICATE-----\nMIIBrTCCAVICFBs01tn1EfCldRuWyA2dY2qR5VwJMAoGCCqBHM9VAYN1MFgxCzAJ\nBgNVBAYTAkNOMQ0wCwYDVQQIDARyb290MQ0wCwYDVQQHDARyb290MQ0wCwYDVQQK\nDARyb290MQ0wCwYDVQQLDARyb290MQ0wCwYDVQQDDARyb290MB4XDTIyMDYyMDA3\nNDI0N1oXDTIzMDYyMDA3NDI0N1owWTELMAkGA1UEBhMCQ04xDTALBgNVBAgMBHRl\nc3QxDTALBgNVBAcMBHRlc3QxDTALBgNVBAoMBHRlc3QxDTALBgNVBAsMBHRlc3Qx\nDjAMBgNVBAMMBW5vZGUwMFkwEwYHKoZIzj0CAQYIKoEcz1UBgi0DQgAELMd3ls/a\nUNmzpEyZiSE3RNhs8bTd9sjDJy0z23bLk1FWs8wW7fbZi1CVKitNyWR4OOyqhsMW\nJPw34OVJa04R+zAKBggqgRzPVQGDdQNJADBGAiEAu3OOkZaiM4Fmti2nhFUyb2N6\nAoK9sCuS1zSh+2P4VP8CIQDW9JLhOq3NbHLflH/EGujDpGklZ4ZaUAxZl9+T8f0/\njQ==\n-----END CERTIFICATE-----\n",
                 "power": "100",
                 "description": "node0",
-                "operator": "iaa1scwlz30csd2hkfchw7djjpelrc9ltfkp5egxr0"
+                "operator": "iaa1d3p96vyvekh8wwrse5s2y7vhq9n6967mefsrav"
               }
             ],
-            "memo": "bf3683d277aa45266fd7e6d7a9095b11fafe1693@192.168.0.1:26656",
+            "memo": "dcc3814be0213c29e1c5e41f0ba049e17579613e@192.168.0.1:26656",
             "timeout_height": "0",
             "extension_options": [],
             "non_critical_extension_options": []
@@ -105,7 +145,7 @@
               {
                 "public_key": {
                   "@type": "/cosmos.crypto.sm2.PubKey",
-                  "key": "Az/ph0qwMr2U6dlQoHQtptHayxTp4U96VYZxLFaDA8sV"
+                  "key": "AvLYOQKY//4zdZIKjiZXwDp+qqdrpV6nfLeQ07OMqczL"
                 },
                 "mode_info": {
                   "single": {
@@ -123,7 +163,7 @@
             }
           },
           "signatures": [
-            "Ney1QzaMsApegZ/I958dbB1UDXSwunc/8OdvNeees4wQ+TQq1OjT0CJhsJ1F6Guf6lA8+LoQuaqfoIiW0dwbjA=="
+            "yBDsxIPfOCjxJCYv4RHRR+zKKLlKrj6G9vSkaXQu21IGzCI/fYdV+dmuwc9GfBc2Fv5utYctzt0V7Frq0RUcqA=="
           ]
         }
       ]
@@ -131,18 +171,22 @@
     "identity": {
       "identities": []
     },
+    "mt": {
+      "collections": [],
+      "owners": []
+    },
     "nft": {
       "collections": []
     },
     "node": {
-      "root_cert": "-----BEGIN CERTIFICATE-----\nMIICBjCCAaugAwIBAgIUVwUx6O/foNc7DptBo7vIKdG13wowCgYIKoEcz1UBg3Uw\nWDELMAkGA1UEBhMCQ04xDTALBgNVBAgMBHJvb3QxDTALBgNVBAcMBHJvb3QxDTAL\nBgNVBAoMBHJvb3QxDTALBgNVBAsMBHJvb3QxDTALBgNVBAMMBHJvb3QwHhcNMjEx\nMTAxMDcxMDQzWhcNMjIxMTAxMDcxMDQzWjBYMQswCQYDVQQGEwJDTjENMAsGA1UE\nCAwEcm9vdDENMAsGA1UEBwwEcm9vdDENMAsGA1UECgwEcm9vdDENMAsGA1UECwwE\ncm9vdDENMAsGA1UEAwwEcm9vdDBZMBMGByqGSM49AgEGCCqBHM9VAYItA0IABDAa\nnt28nUW9ru2S6tIhr/XrFC+W2fvvXGl+9IiQX1m3c7o3uM0TO4D32zjtMSebvong\nXcyTjk9bSsyy6K3VK1mjUzBRMB0GA1UdDgQWBBRVrbF/rSlZgz0eriHaIxnxTZnO\n6jAfBgNVHSMEGDAWgBRVrbF/rSlZgz0eriHaIxnxTZnO6jAPBgNVHRMBAf8EBTAD\nAQH/MAoGCCqBHM9VAYN1A0kAMEYCIQDx8gnroawzSBFU5GAK6731/95rzAnP0Vo8\nHN9eVz/G+QIhANuZzJ8LXcObjXSh6WGEifCJln+73xXmgBtOc3axVUVp\n-----END CERTIFICATE-----\n",
+      "root_cert": "-----BEGIN CERTIFICATE-----\nMIICBjCCAaugAwIBAgIUHfc2qrRNwb/01fSDI3/XuZKMfZUwCgYIKoEcz1UBg3Uw\nWDELMAkGA1UEBhMCQ04xDTALBgNVBAgMBHJvb3QxDTALBgNVBAcMBHJvb3QxDTAL\nBgNVBAoMBHJvb3QxDTALBgNVBAsMBHJvb3QxDTALBgNVBAMMBHJvb3QwHhcNMjIw\nNjIwMDc0MjQ3WhcNMjMwNjIwMDc0MjQ3WjBYMQswCQYDVQQGEwJDTjENMAsGA1UE\nCAwEcm9vdDENMAsGA1UEBwwEcm9vdDENMAsGA1UECgwEcm9vdDENMAsGA1UECwwE\ncm9vdDENMAsGA1UEAwwEcm9vdDBZMBMGByqGSM49AgEGCCqBHM9VAYItA0IABIDD\nRZz7JNbRi3I1IEaLkXjEAg766FcBhIcYkS5MXzzNHkleSEdBpUm8eCcws+ylwQc+\nnOxJb2DggRANkfPxXnajUzBRMB0GA1UdDgQWBBS7/FFkdOIg171+SevominRzXJE\nKzAfBgNVHSMEGDAWgBS7/FFkdOIg171+SevominRzXJEKzAPBgNVHRMBAf8EBTAD\nAQH/MAoGCCqBHM9VAYN1A0kAMEYCIQCM5vS9P4Q8R1CtBm0nxwcFjJHgFufZzETp\nYqcwwgOzOAIhAMVul0OdKs+ldPNaEzRakt5MwBLVYOE3oBx30DsenETE\n-----END CERTIFICATE-----\n",
       "params": {
         "historical_entries": 100
       },
       "validators": [],
       "nodes": [
         {
-          "id": "bf3683d277aa45266fd7e6d7a9095b11fafe1693",
+          "id": "dcc3814be0213c29e1c5e41f0ba049e17579613e",
           "name": "node0",
           "certificate": ""
         }
@@ -163,13 +207,14 @@
     "perm": {
       "role_accounts": [
         {
-          "address": "iaa1scwlz30csd2hkfchw7djjpelrc9ltfkp5egxr0",
+          "address": "iaa1d3p96vyvekh8wwrse5s2y7vhq9n6967mefsrav",
           "roles": [
             "ROOT_ADMIN"
           ]
         }
       ],
-      "black_list": []
+      "black_list": [],
+      "contract_deny_list": []
     },
     "random": {
       "pending_random_requests": {}
@@ -216,7 +261,7 @@
         "clients": [],
         "clients_consensus": [],
         "clients_metadata": [],
-        "native_chain_name": "iritamodtest",
+        "native_chain_name": "tibc-test",
         "relayers": []
       },
       "packet_genesis": {
@@ -259,7 +304,17 @@
           "initial_supply": "1000000000",
           "max_supply": "18446744073709551615",
           "mintable": true,
-          "owner": "iaa1scwlz30csd2hkfchw7djjpelrc9ltfkp5egxr0"
+          "owner": "iaa1d3p96vyvekh8wwrse5s2y7vhq9n6967mefsrav"
+        },
+        {
+          "symbol": "gas",
+          "name": "IRITA Fee Token",
+          "scale": 18,
+          "min_unit": "ugas",
+          "initial_supply": "1000000000",
+          "max_supply": "18446744073709551615",
+          "mintable": true,
+          "owner": "iaa1d3p96vyvekh8wwrse5s2y7vhq9n6967mefsrav"
         }
       ],
       "burned_coins": []

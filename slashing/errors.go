@@ -7,5 +7,6 @@ const CodeSpace = ModuleName
 var (
 	ErrQueryAddress  = sdk.Wrapf(CodeSpace, 1, "query address error")
 	ErrBuildAndSend  = sdk.Wrapf(CodeSpace, 2, "BuildAndSend error")
-	ErrValidateBasic = sdk.Wrapf(CodeSpace, 3, "ValidateBasic fail")
+	ErrHex           = sdk.Wrapf(CodeSpace, 3, "hex fail")
+	ErrValidateBasic = sdk.Wrapf(CodeSpace, 4, "ValidateBasic fail")
 )

@@ -2,6 +2,7 @@ package perm
 
 import (
 	"context"
+	"github.com/ethereum/go-ethereum/common"
 
 	"github.com/irisnet/core-sdk-go/common/codec"
 	"github.com/irisnet/core-sdk-go/common/codec/types"
@@ -121,20 +122,19 @@ func (a permClient) UnblockAccount(address string, baseTx sdk.BaseTx) (sdk.Resul
 	return send, nil
 }
 
-func (a permClient) BlockContract(address string, baseTx sdk.BaseTx) (sdk.ResultTx, error) {
+func (a permClient) BlockContract(contractAddress string, baseTx sdk.BaseTx) (sdk.ResultTx, error) {
 	sender, err := a.QueryAddress(baseTx.From, baseTx.Password)
 	if err != nil {
 		return sdk.ResultTx{}, sdk.WrapWithMessage(ErrQueryAddress, err.Error())
 	}
 
-	acc, err := sdk.AccAddressFromBech32(address)
-	if err != nil {
-		return sdk.ResultTx{}, sdk.WrapWithMessage(ErrBench32, err.Error())
+	if !common.IsHexAddress(contractAddress) {
+		return sdk.ResultTx{}, sdk.WrapWithMessage(ErrHexAddr, "invalid contract address")
 	}
 
-	msg := &MsgBlockAccount{
-		Address:  acc.String(),
-		Operator: sender.String(),
+	msg := &MsgBlockContract{
+		ContractAddress: contractAddress,
+		Operator:        sender.String(),
 	}
 
 	send, err := a.BuildAndSend([]sdk.Msg{msg}, baseTx)
@@ -144,20 +144,19 @@ func (a permClient) BlockContract(address string, baseTx sdk.BaseTx) (sdk.Result
 	return send, nil
 }
 
-func (a permClient) UnblockContract(address string, baseTx sdk.BaseTx) (sdk.ResultTx, error) {
+func (a permClient) UnblockContract(contractAddress string, baseTx sdk.BaseTx) (sdk.ResultTx, error) {
 	sender, err := a.QueryAddress(baseTx.From, baseTx.Password)
 	if err != nil {
 		return sdk.ResultTx{}, sdk.WrapWithMessage(ErrQueryAddress, err.Error())
 	}
 
-	acc, err := sdk.AccAddressFromBech32(address)
-	if err != nil {
-		return sdk.ResultTx{}, sdk.WrapWithMessage(ErrBench32, err.Error())
+	if !common.IsHexAddress(contractAddress) {
+		return sdk.ResultTx{}, sdk.WrapWithMessage(ErrHexAddr, "invalid contract address")
 	}
 
-	msg := &MsgUnblockAccount{
-		Address:  acc.String(),
-		Operator: sender.String(),
+	msg := &MsgUnblockContract{
+		ContractAddress: contractAddress,
+		Operator:        sender.String(),
 	}
 
 	send, err := a.BuildAndSend([]sdk.Msg{msg}, baseTx)

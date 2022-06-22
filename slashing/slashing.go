@@ -1,6 +1,7 @@
 package slashing
 
 import (
+	"fmt"
 	"github.com/irisnet/core-sdk-go/common/codec"
 	"github.com/irisnet/core-sdk-go/common/codec/types"
 	sdk "github.com/irisnet/core-sdk-go/types"
@@ -30,6 +31,12 @@ func (s slashingClient) UnjailValidator(id string, baseTx sdk.BaseTx) (sdk.Resul
 	sender, err := s.QueryAddress(baseTx.From, baseTx.Password)
 	if err != nil {
 		return sdk.ResultTx{}, sdk.WrapWithMessage(ErrQueryAddress, err.Error())
+	}
+
+	// TODO: fix this
+	if id2, err2 := sdk.HexBytesFrom(id); err != nil {
+		fmt.Println(id2)
+		return sdk.ResultTx{}, sdk.WrapWithMessage(ErrHex, err2.Error())
 	}
 
 	msg := &MsgUnjailValidator{

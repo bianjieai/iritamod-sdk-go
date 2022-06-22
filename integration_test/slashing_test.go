@@ -1,7 +1,6 @@
 package integration
 
 import (
-	"fmt"
 	sdk "github.com/irisnet/core-sdk-go/types"
 	"github.com/stretchr/testify/require"
 )
@@ -18,8 +17,8 @@ func (s IntegrationTestSuite) TestUnjailValidator() {
 
 	id := "iaa1d3p96vyvekh8wwrse5s2y7vhq9n6967mefsrav"
 
+	// TODO: this is a bad test
 	res, err := s.Slashing.UnjailValidator(id, baseTx)
-	require.NoError(s.T(), err)
-	require.NotEmpty(s.T(), res.Hash)
-	fmt.Println(res)
+	require.Error(s.T(), err)
+	require.Empty(s.T(), res.Hash)
 }

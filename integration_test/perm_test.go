@@ -64,4 +64,6 @@ func (s IntegrationTestSuite) TestPerm() {
 	bl, err = s.Perm.QueryAccountBlockList()
 	require.NoError(s.T(), err)
 	require.NotContains(s.T(), bl, acc.Address.String())
+
+	// contract ??
 }

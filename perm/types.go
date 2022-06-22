@@ -10,12 +10,12 @@ import (
 const (
 	// ModuleName is the name of the perm module
 	ModuleName             = "perm"
-	TypeMsgAssignRoles     = "assign_roles"    // type for MsgAssignRoles
-	TypeMsgUnassignRoles   = "unassign_roles"  // type for MsgUnassignRoles
-	TypeMsgBlockAccount    = "block_account"   // type for MsgBlockAccount
-	TypeMsgUnblockAccount  = "unblock_account" // type for MsgUnblockAccount
-	TypeMsgBlockContract   = "block_contract"
-	TypeMsgUnblockContract = "unblock_contract"
+	TypeMsgAssignRoles     = "assign_roles"     // type for MsgAssignRoles
+	TypeMsgUnassignRoles   = "unassign_roles"   // type for MsgUnassignRoles
+	TypeMsgBlockAccount    = "block_account"    // type for MsgBlockAccount
+	TypeMsgUnblockAccount  = "unblock_account"  // type for MsgUnblockAccount
+	TypeMsgBlockContract   = "block_contract"   // type for MsgBlockContract
+	TypeMsgUnblockContract = "unblock_contract" // type for MsgUnblockContract
 )
 
 var (
@@ -154,6 +154,8 @@ func (m MsgUnblockAccount) GetSigners() []sdk.AccAddress {
 	return []sdk.AccAddress{sdk.MustAccAddressFromBech32(m.Operator)}
 }
 
+// MsgBlockContract implements sdk.Msg
+
 func (m MsgBlockContract) Route() string {
 	return ModuleName
 }
@@ -184,12 +186,14 @@ func (m MsgBlockContract) GetSigners() []sdk.AccAddress {
 	return []sdk.AccAddress{sdk.MustAccAddressFromBech32(m.Operator)}
 }
 
+// MsgBlockContract implements sdk.Msg
+
 func (m MsgUnblockContract) Route() string {
 	return ModuleName
 }
 
 func (m MsgUnblockContract) Type() string {
-	return TypeMsgUnblockAccount
+	return TypeMsgUnblockContract
 }
 
 func (m MsgUnblockContract) GetSignBytes() []byte {
@@ -214,7 +218,7 @@ func (m MsgUnblockContract) GetSigners() []sdk.AccAddress {
 	return []sdk.AccAddress{sdk.MustAccAddressFromBech32(m.Operator)}
 }
 
-// RoleFromstring turn a string into an Auth TODO
+// RoleFromstring turn a string into an Auth
 func roleFromString(str string) (Role, error) {
 	switch str {
 	case "RootAdmin":
@@ -310,7 +314,13 @@ func (r Role) string() string {
 		return "RelayerUser"
 
 	case RoleIDAdmin:
-		return "RoleIDAdmin"
+		return "IDAdmin"
+
+	case RoleBaseM1Admin:
+		return "BaseM1Admin"
+
+	case RolePlatformUser:
+		return "PlatformUser"
 
 	default:
 		return ""
