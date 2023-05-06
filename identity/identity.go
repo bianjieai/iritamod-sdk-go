@@ -81,12 +81,22 @@ func (i identityClient) UpdateIdentity(request UpdateIdentityRequest, baseTx sdk
 		}
 	}
 
+	credentials := DoNotModifyDesc
+	if request.Credentials != nil {
+		credentials = *request.Credentials
+	}
+	data := DoNotModifyDesc
+	if request.Data != nil {
+		data = *request.Data
+	}
+
 	msg := &MsgUpdateIdentity{
 		Id:          id.String(),
 		PubKey:      request.PubKeyInfo,
 		Certificate: request.Certificate,
-		Credentials: *request.Credentials,
+		Credentials: credentials,
 		Owner:       sender.String(),
+		Data:        data,
 	}
 
 	res, err := i.BuildAndSend([]sdk.Msg{msg}, baseTx)

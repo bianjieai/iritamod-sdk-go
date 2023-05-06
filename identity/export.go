@@ -26,7 +26,7 @@ type UpdateIdentityRequest struct {
 	PubKeyInfo  *PubKeyInfo `json:"pubkey_info"`
 	Certificate string      `json:"certificate"`
 	Credentials *string     `json:"credentials"`
-	Data        string      `json:"data"`
+	Data        *string     `json:"data"`
 }
 
 type QueryIdentityResp struct {

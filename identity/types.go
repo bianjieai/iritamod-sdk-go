@@ -14,6 +14,8 @@ const (
 	IDLength     = 16  // size of the ID in bytes
 	MaxURILength = 140 // maximum size of the URI
 
+	DoNotModifyDesc = "[do-not-modify]" // description used to indicate not to modify a field
+
 	ModuleName = "identity"
 )
 
