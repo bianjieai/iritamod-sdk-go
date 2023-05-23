@@ -1,6 +1,7 @@
 package integration
 
 import (
+	"github.com/bianjieai/iritamod-sdk-go/layer2"
 	"github.com/bianjieai/iritamod-sdk-go/slashing"
 	"github.com/irisnet/core-sdk-go/bank"
 	"github.com/irisnet/core-sdk-go/client"
@@ -32,6 +33,8 @@ type Client struct {
 	Params   params.Client
 	Perm     perm.Client
 	Slashing slashing.Client
+
+	Layer2Client layer2.Client
 }
 
 func NewClient(cfg types.ClientConfig) Client {
@@ -49,6 +52,8 @@ func NewClient(cfg types.ClientConfig) Client {
 	permClient := perm.NewClient(baseClient, encodingConfig.Marshaler)
 	slashingClient := slashing.NewClient(baseClient, encodingConfig.Marshaler)
 
+	layer2Client := layer2.NewClient(baseClient, encodingConfig.Marshaler)
+
 	client := &Client{
 		logger:         baseClient.Logger(),
 		BaseClient:     baseClient,
@@ -61,6 +66,7 @@ func NewClient(cfg types.ClientConfig) Client {
 		Params:         paramsClient,
 		Perm:           permClient,
 		Slashing:       slashingClient,
+		Layer2Client:   layer2Client,
 	}
 
 	client.RegisterModule(

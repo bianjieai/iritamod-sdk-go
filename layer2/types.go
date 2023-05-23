@@ -13,6 +13,7 @@ const (
 	TypeMsgCreateNFTs          = "create_nfts"
 	TypeMsgUpdateNFTs          = "update_nfts"
 	TypeMsgDeleteNFTs          = "delete_nfts"
+	TypeMsgUpdateClassesForNFT = "update_classes_for_nft"
 	TypeMsgDepositClassForNFT  = "deposit_class_for_nft"
 	TypeMsgWithdrawClassForNFT = "withdraw_class_for_nft"
 	TypeMsgDepositTokenForNFT  = "deposit_token_for_nft"
@@ -22,11 +23,12 @@ const (
 var (
 	_ sdk.Msg = &MsgCreateL2Space{}
 	_ sdk.Msg = &MsgTransferL2Space{}
-	_ sdk.Msg = &MsgCreateL2Record{}
+	_ sdk.Msg = &MsgCreateL2BlockHeader{}
 
 	_ sdk.Msg = &MsgCreateNFTs{}
 	_ sdk.Msg = &MsgUpdateNFTs{}
 	_ sdk.Msg = &MsgDeleteNFTs{}
+	_ sdk.Msg = &MsgUpdateClassesForNFT{}
 	_ sdk.Msg = &MsgDepositClassForNFT{}
 	_ sdk.Msg = &MsgWithdrawClassForNFT{}
 	_ sdk.Msg = &MsgDepositTokenForNFT{}
@@ -34,8 +36,10 @@ var (
 )
 
 // NewMsgCreateL2Space is a constructor function for MsgCreateL2Space
-func NewMsgCreateL2Space(sender string) *MsgCreateL2Space {
+func NewMsgCreateL2Space(name, uri, sender string) *MsgCreateL2Space {
 	return &MsgCreateL2Space{
+		Name:   name,
+		Uri:    uri,
 		Sender: sender,
 	}
 }
@@ -107,9 +111,9 @@ func (msg MsgTransferL2Space) GetSigners() []sdk.AccAddress {
 	return []sdk.AccAddress{from}
 }
 
-// NewMsgCreateNFTs is a constructor function for MsgCreateNFTs
-func NewMsgCreateL2Record(spaceId, height uint64, header string, sender string) *MsgCreateL2Record {
-	return &MsgCreateL2Record{
+// NewMsgCreateL2BLockHeader is a constructor function for MsgCreateNFTs
+func NewMsgCreateL2BLockHeader(spaceId, height uint64, header string, sender string) *MsgCreateL2BlockHeader {
+	return &MsgCreateL2BlockHeader{
 		SpaceId: spaceId,
 		Height:  height,
 		Header:  header,
@@ -117,11 +121,11 @@ func NewMsgCreateL2Record(spaceId, height uint64, header string, sender string) 
 	}
 }
 
-func (msg MsgCreateL2Record) Route() string { return RouterKey }
+func (msg MsgCreateL2BlockHeader) Route() string { return RouterKey }
 
-func (msg MsgCreateL2Record) Type() string { return TypeMsgCreateL2Record }
+func (msg MsgCreateL2BlockHeader) Type() string { return TypeMsgCreateL2Record }
 
-func (msg MsgCreateL2Record) ValidateBasic() error {
+func (msg MsgCreateL2BlockHeader) ValidateBasic() error {
 	if _, err := sdk.AccAddressFromBech32(msg.Sender); err != nil {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid sender address (%s)", err)
 	}
@@ -141,11 +145,11 @@ func (msg MsgCreateL2Record) ValidateBasic() error {
 	return nil
 }
 
-func (msg MsgCreateL2Record) GetSignBytes() []byte {
+func (msg MsgCreateL2BlockHeader) GetSignBytes() []byte {
 	return sdk.MustSortJSON(ModuleCdc.MustMarshalJSON(&msg))
 }
 
-func (msg MsgCreateL2Record) GetSigners() []sdk.AccAddress {
+func (msg MsgCreateL2BlockHeader) GetSigners() []sdk.AccAddress {
 	from, err := sdk.AccAddressFromBech32(msg.Sender)
 	if err != nil {
 		panic(err)
@@ -154,11 +158,11 @@ func (msg MsgCreateL2Record) GetSigners() []sdk.AccAddress {
 }
 
 // NewMsgCreateNFTs is a constructor function for MsgCreateNFTs
-func NewMsgCreateNFTs(spaceId uint64, classId string, nfts []*TokenForNFT, sender string) *MsgCreateNFTs {
+func NewMsgCreateNFTs(spaceId uint64, classId string, tokens []TokenForNFT, sender string) *MsgCreateNFTs {
 	return &MsgCreateNFTs{
 		SpaceId: spaceId,
 		ClassId: classId,
-		Nfts:    nfts,
+		Tokens:  tokens,
 		Sender:  sender,
 	}
 }
@@ -180,7 +184,7 @@ func (msg MsgCreateNFTs) ValidateBasic() error {
 		return err
 	}
 
-	if err := ValidateTokensForNFT(msg.Nfts); err != nil {
+	if err := ValidateTokensForNFT(msg.Tokens); err != nil {
 		return err
 	}
 
@@ -200,11 +204,11 @@ func (msg MsgCreateNFTs) GetSigners() []sdk.AccAddress {
 }
 
 // NewMsgUpdateNFTs is a constructor function for MsgUpdateNFTs
-func NewMsgUpdateNFTs(spaceId uint64, classId string, nfts []*TokenForNFT, sender string) *MsgUpdateNFTs {
+func NewMsgUpdateNFTs(spaceId uint64, classId string, tokens []TokenForNFT, sender string) *MsgUpdateNFTs {
 	return &MsgUpdateNFTs{
 		SpaceId: spaceId,
 		ClassId: classId,
-		Nfts:    nfts,
+		Tokens:  tokens,
 		Sender:  sender,
 	}
 }
@@ -226,7 +230,7 @@ func (msg MsgUpdateNFTs) ValidateBasic() error {
 		return err
 	}
 
-	if err := ValidateTokensForNFT(msg.Nfts); err != nil {
+	if err := ValidateTokensForNFT(msg.Tokens); err != nil {
 		return err
 	}
 
@@ -246,12 +250,12 @@ func (msg MsgUpdateNFTs) GetSigners() []sdk.AccAddress {
 }
 
 // NewMsgDeleteNFTs is a constructor function for MsgDeleteNFTs
-func NewMsgDeleteNFTs(spaceId uint64, classId string, nftIds []string, sender string) *MsgDeleteNFTs {
+func NewMsgDeleteNFTs(spaceId uint64, classId string, tokenIds []string, sender string) *MsgDeleteNFTs {
 	return &MsgDeleteNFTs{
-		SpaceId: spaceId,
-		ClassId: classId,
-		NftIds:  nftIds,
-		Sender:  sender,
+		SpaceId:  spaceId,
+		ClassId:  classId,
+		TokenIds: tokenIds,
+		Sender:   sender,
 	}
 }
 
@@ -274,7 +278,7 @@ func (msg MsgDeleteNFTs) ValidateBasic() error {
 
 	// validate that the tokenId is not duplicated.
 	seenIDs := make(map[string]bool)
-	for _, tokenId := range msg.NftIds {
+	for _, tokenId := range msg.TokenIds {
 		if seenIDs[tokenId] {
 			return sdkerrors.Wrapf(ErrDuplicateTokenIdsForNFT, "token id %s is duplicated", tokenId)
 		}
@@ -296,12 +300,55 @@ func (msg MsgDeleteNFTs) GetSigners() []sdk.AccAddress {
 	return []sdk.AccAddress{from}
 }
 
+// NewMsgUpdateClassesForNFT is a constructor function for MsgUpdateClassesForNFT
+func NewMsgUpdateClassesForNFT(spaceId uint64, updateClasses []UpdateClassForNFT, sender string) *MsgUpdateClassesForNFT {
+	return &MsgUpdateClassesForNFT{
+		SpaceId:            spaceId,
+		ClassUpdatesForNft: updateClasses,
+		Sender:             sender,
+	}
+}
+
+func (msg MsgUpdateClassesForNFT) Route() string { return RouterKey }
+
+func (msg MsgUpdateClassesForNFT) Type() string { return TypeMsgUpdateClassesForNFT }
+
+func (msg MsgUpdateClassesForNFT) ValidateBasic() error {
+	if _, err := sdk.AccAddressFromBech32(msg.Sender); err != nil {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid sender address (%s)", err)
+	}
+
+	if err := ValidateSpaceId(msg.SpaceId); err != nil {
+		return err
+	}
+
+	if err := ValidateClassUpdatesForNFT(msg.ClassUpdatesForNft); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (msg MsgUpdateClassesForNFT) GetSignBytes() []byte {
+	return sdk.MustSortJSON(ModuleCdc.MustMarshalJSON(&msg))
+}
+
+func (msg MsgUpdateClassesForNFT) GetSigners() []sdk.AccAddress {
+	from, err := sdk.AccAddressFromBech32(msg.Sender)
+	if err != nil {
+		panic(err)
+	}
+	return []sdk.AccAddress{from}
+}
+
 // NewMsgDepositClassForNFT is a constructor function for NewMsgDepositClassForNFT
-func NewMsgDepositClassForNFT(classId, baseUri string, sender string) *MsgDepositClassForNFT {
+func NewMsgDepositClassForNFT(spaceId uint64, classId, baseUri, recipient, sender string) *MsgDepositClassForNFT {
 	return &MsgDepositClassForNFT{
-		ClassId: classId,
-		BaseUri: baseUri,
-		Sender:  sender,
+		SpaceId:   spaceId,
+		ClassId:   classId,
+		BaseUri:   baseUri,
+		Recipient: recipient,
+		Sender:    sender,
 	}
 }
 
@@ -312,6 +359,14 @@ func (msg MsgDepositClassForNFT) Type() string { return TypeMsgDepositClassForNF
 func (msg MsgDepositClassForNFT) ValidateBasic() error {
 	if _, err := sdk.AccAddressFromBech32(msg.Sender); err != nil {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid sender address (%s)", err)
+	}
+
+	if _, err := sdk.AccAddressFromBech32(msg.Recipient); err != nil {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid recipient address (%s)", err)
+	}
+
+	if err := ValidateSpaceId(msg.SpaceId); err != nil {
+		return err
 	}
 
 	if err := ValidateClassIdForNFT(msg.ClassId); err != nil {
@@ -334,9 +389,11 @@ func (msg MsgDepositClassForNFT) GetSigners() []sdk.AccAddress {
 }
 
 // NewMsgWithdrawClassForNFT is a constructor function for NewMsgWithdrawClassForNFT
-func NewMsgWithdrawClassForNFT(classId string, sender string) *MsgWithdrawClassForNFT {
+func NewMsgWithdrawClassForNFT(spaceId uint64, classId, owner, sender string) *MsgWithdrawClassForNFT {
 	return &MsgWithdrawClassForNFT{
+		SpaceId: spaceId,
 		ClassId: classId,
+		Owner:   owner,
 		Sender:  sender,
 	}
 }
@@ -352,6 +409,10 @@ func (msg MsgWithdrawClassForNFT) ValidateBasic() error {
 
 	if _, err := sdk.AccAddressFromBech32(msg.Owner); err != nil {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid owner address (%s)", err)
+	}
+
+	if err := ValidateSpaceId(msg.SpaceId); err != nil {
+		return err
 	}
 
 	if err := ValidateClassIdForNFT(msg.ClassId); err != nil {
@@ -378,7 +439,7 @@ func NewMsgDepositTokenForNFT(spaceId uint64, classId, tokenId string, sender st
 	return &MsgDepositTokenForNFT{
 		SpaceId: spaceId,
 		ClassId: classId,
-		NftId:   tokenId,
+		TokenId: tokenId,
 		Sender:  sender,
 	}
 }
@@ -400,7 +461,7 @@ func (msg MsgDepositTokenForNFT) ValidateBasic() error {
 		return err
 	}
 
-	if err := ValidateTokenIdForNFT(msg.NftId); err != nil {
+	if err := ValidateTokenIdForNFT(msg.TokenId); err != nil {
 		return err
 	}
 
@@ -423,7 +484,7 @@ func NewMsgWithdrawTokenForNFT(spaceId uint64, classId, tokenId, owner, name, ur
 	return &MsgWithdrawTokenForNFT{
 		SpaceId: spaceId,
 		ClassId: classId,
-		NftId:   tokenId,
+		TokenId: tokenId,
 		Owner:   owner,
 		Name:    name,
 		Uri:     uri,
@@ -454,7 +515,7 @@ func (msg MsgWithdrawTokenForNFT) ValidateBasic() error {
 		return err
 	}
 
-	if err := ValidateTokenIdForNFT(msg.NftId); err != nil {
+	if err := ValidateTokenIdForNFT(msg.TokenId); err != nil {
 		return err
 	}
 	return nil

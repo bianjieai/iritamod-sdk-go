@@ -2,9 +2,10 @@ package layer2
 
 import (
 	"fmt"
+	"regexp"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
-	"regexp"
 )
 
 var (
@@ -30,16 +31,16 @@ func ValidateClassIdForNFT(classId string) error {
 }
 
 func ValidateTokenIdForNFT(tokenId string) error {
-	if !regexpNftClassId(tokenId) {
+	if !regexpNftTokenId(tokenId) {
 		return sdkerrors.Wrapf(ErrInvalidTokenIdForNFT, "token id can only accept characters that match the regular expression: (%s),but got (%s)", nftClassIdString, tokenId)
 	}
 	return nil
 }
 
-func ValidateTokensForNFT(nfts []*TokenForNFT) error {
+func ValidateTokensForNFT(tokens []TokenForNFT) error {
 	seenIDs := make(map[string]bool)
 
-	for _, token := range nfts {
+	for _, token := range tokens {
 		if seenIDs[token.Id] {
 			return sdkerrors.Wrapf(ErrDuplicateTokenIdsForNFT, "token id %s is duplicated", token.Id)
 		}
@@ -50,7 +51,28 @@ func ValidateTokensForNFT(nfts []*TokenForNFT) error {
 		}
 
 		if _, err := sdk.AccAddressFromBech32(token.Owner); err != nil {
-			return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid owner address (%s) for token id (%s)", err, token.Id)
+			return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid owner address (%s) with err (%s)", token.Owner, err.Error())
+		}
+	}
+
+	return nil
+}
+
+func ValidateClassUpdatesForNFT(classes []UpdateClassForNFT) error {
+	seenIDs := make(map[string]bool)
+
+	for _, class := range classes {
+		if seenIDs[class.Id] {
+			return sdkerrors.Wrapf(ErrDuplicateClassIdForNFT, "class id %s is duplicated", class.Id)
+		}
+		seenIDs[class.Id] = true
+
+		if err := ValidateClassIdForNFT(class.Id); err != nil {
+			return err
+		}
+
+		if _, err := sdk.AccAddressFromBech32(class.Owner); err != nil {
+			return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid owner address (%s) with error (%s)", class.Owner, err.Error())
 		}
 	}
 

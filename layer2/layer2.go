@@ -29,7 +29,7 @@ func (l layer2Client) RegisterInterfaceTypes(registry types.InterfaceRegistry) {
 	RegisterInterfaces(registry)
 }
 
-func (l layer2Client) CreateL2Space(baseTx sdk.BaseTx) (sdk.ResultTx, error) {
+func (l layer2Client) CreateL2Space(name, uri string, baseTx sdk.BaseTx) (sdk.ResultTx, error) {
 	sender, err := l.QueryAddress(baseTx.From, baseTx.Password)
 	if err != nil {
 		return sdk.ResultTx{}, sdk.WrapWithMessage(ErrQueryAddress, err.Error())
@@ -37,6 +37,8 @@ func (l layer2Client) CreateL2Space(baseTx sdk.BaseTx) (sdk.ResultTx, error) {
 
 	msg := &MsgCreateL2Space{
 		Sender: sender.String(),
+		Name:   name,
+		Uri:    uri,
 	}
 	resultTx, err := l.BuildAndSend([]sdk.Msg{msg}, baseTx)
 	if err != nil {
@@ -63,13 +65,13 @@ func (l layer2Client) TransferL2Space(spaceId uint64, recipient string, baseTx s
 	return resultTx, nil
 }
 
-func (l layer2Client) CreateL2Record(spaceId uint64, height uint64, blockHeader string, baseTx sdk.BaseTx) (sdk.ResultTx, error) {
+func (l layer2Client) CreateL2BlockHeader(spaceId uint64, height uint64, blockHeader string, baseTx sdk.BaseTx) (sdk.ResultTx, error) {
 	sender, err := l.QueryAddress(baseTx.From, baseTx.Password)
 	if err != nil {
 		return sdk.ResultTx{}, sdk.WrapWithMessage(ErrQueryAddress, err.Error())
 	}
 
-	msg := &MsgCreateL2Record{
+	msg := &MsgCreateL2BlockHeader{
 		Sender:  sender.String(),
 		SpaceId: spaceId,
 		Height:  height,
@@ -82,7 +84,7 @@ func (l layer2Client) CreateL2Record(spaceId uint64, height uint64, blockHeader 
 	return resultTx, nil
 }
 
-func (l layer2Client) CreateNFTs(spaceId uint64, classId string, nfts []*TokenForNFT, baseTx sdk.BaseTx) (sdk.ResultTx, error) {
+func (l layer2Client) CreateNFTs(spaceId uint64, classId string, tokens []TokenForNFT, baseTx sdk.BaseTx) (sdk.ResultTx, error) {
 	sender, err := l.QueryAddress(baseTx.From, baseTx.Password)
 	if err != nil {
 		return sdk.ResultTx{}, sdk.WrapWithMessage(ErrQueryAddress, err.Error())
@@ -92,7 +94,7 @@ func (l layer2Client) CreateNFTs(spaceId uint64, classId string, nfts []*TokenFo
 		Sender:  sender.String(),
 		SpaceId: spaceId,
 		ClassId: classId,
-		Nfts:    nfts,
+		Tokens:  tokens,
 	}
 	resultTx, err := l.BuildAndSend([]sdk.Msg{msg}, baseTx)
 	if err != nil {
@@ -101,7 +103,7 @@ func (l layer2Client) CreateNFTs(spaceId uint64, classId string, nfts []*TokenFo
 	return resultTx, nil
 }
 
-func (l layer2Client) UpdateNFTs(spaceId uint64, classId string, nfts []*TokenForNFT, baseTx sdk.BaseTx) (sdk.ResultTx, error) {
+func (l layer2Client) UpdateNFTs(spaceId uint64, classId string, tokens []TokenForNFT, baseTx sdk.BaseTx) (sdk.ResultTx, error) {
 	sender, err := l.QueryAddress(baseTx.From, baseTx.Password)
 	if err != nil {
 		return sdk.ResultTx{}, sdk.WrapWithMessage(ErrQueryAddress, err.Error())
@@ -111,7 +113,7 @@ func (l layer2Client) UpdateNFTs(spaceId uint64, classId string, nfts []*TokenFo
 		Sender:  sender.String(),
 		SpaceId: spaceId,
 		ClassId: classId,
-		Nfts:    nfts,
+		Tokens:  tokens,
 	}
 	resultTx, err := l.BuildAndSend([]sdk.Msg{msg}, baseTx)
 	if err != nil {
@@ -120,17 +122,17 @@ func (l layer2Client) UpdateNFTs(spaceId uint64, classId string, nfts []*TokenFo
 	return resultTx, nil
 }
 
-func (l layer2Client) DeleteNFTs(spaceId uint64, classId string, nftIds []string, baseTx sdk.BaseTx) (sdk.ResultTx, error) {
+func (l layer2Client) DeleteNFTs(spaceId uint64, classId string, tokenIds []string, baseTx sdk.BaseTx) (sdk.ResultTx, error) {
 	sender, err := l.QueryAddress(baseTx.From, baseTx.Password)
 	if err != nil {
 		return sdk.ResultTx{}, sdk.WrapWithMessage(ErrQueryAddress, err.Error())
 	}
 
 	msg := &MsgDeleteNFTs{
-		Sender:  sender.String(),
-		SpaceId: spaceId,
-		ClassId: classId,
-		NftIds:  nftIds,
+		Sender:   sender.String(),
+		SpaceId:  spaceId,
+		ClassId:  classId,
+		TokenIds: tokenIds,
 	}
 	resultTx, err := l.BuildAndSend([]sdk.Msg{msg}, baseTx)
 	if err != nil {
@@ -139,16 +141,35 @@ func (l layer2Client) DeleteNFTs(spaceId uint64, classId string, nftIds []string
 	return resultTx, nil
 }
 
-func (l layer2Client) DepositClassForNFT(spaceId uint64, classId string, baseURI string, baseTx sdk.BaseTx) (sdk.ResultTx, error) {
+func (l layer2Client) UpdateClassesForNFT(spaceId uint64, ClassUpdatesForNft []UpdateClassForNFT, baseTx sdk.BaseTx) (sdk.ResultTx, error) {
+	sender, err := l.QueryAddress(baseTx.From, baseTx.Password)
+	if err != nil {
+		return sdk.ResultTx{}, sdk.WrapWithMessage(ErrQueryAddress, err.Error())
+	}
+	msg := &MsgUpdateClassesForNFT{
+		Sender:             sender.String(),
+		SpaceId:            spaceId,
+		ClassUpdatesForNft: ClassUpdatesForNft,
+	}
+	resultTx, err := l.BuildAndSend([]sdk.Msg{msg}, baseTx)
+	if err != nil {
+		return sdk.ResultTx{}, sdk.WrapWithMessage(ErrBuildAndSend, err.Error())
+	}
+	return resultTx, nil
+}
+
+func (l layer2Client) DepositClassForNFT(spaceId uint64, classId string, baseURI string, recipient string, baseTx sdk.BaseTx) (sdk.ResultTx, error) {
 	sender, err := l.QueryAddress(baseTx.From, baseTx.Password)
 	if err != nil {
 		return sdk.ResultTx{}, sdk.WrapWithMessage(ErrQueryAddress, err.Error())
 	}
 
 	msg := &MsgDepositClassForNFT{
-		Sender:  sender.String(),
-		ClassId: classId,
-		BaseUri: baseURI,
+		SpaceId:   spaceId,
+		ClassId:   classId,
+		BaseUri:   baseURI,
+		Recipient: recipient,
+		Sender:    sender.String(),
 	}
 	resultTx, err := l.BuildAndSend([]sdk.Msg{msg}, baseTx)
 	if err != nil {
@@ -164,6 +185,7 @@ func (l layer2Client) WithdrawClassForNFT(spaceId uint64, classId string, owner 
 	}
 
 	msg := &MsgWithdrawClassForNFT{
+		SpaceId: spaceId,
 		Sender:  sender.String(),
 		ClassId: classId,
 		Owner:   owner,
@@ -175,7 +197,7 @@ func (l layer2Client) WithdrawClassForNFT(spaceId uint64, classId string, owner 
 	return resultTx, nil
 }
 
-func (l layer2Client) DepositTokenForNFT(spaceId uint64, classId string, nftId string, baseTx sdk.BaseTx) (sdk.ResultTx, error) {
+func (l layer2Client) DepositTokenForNFT(spaceId uint64, classId string, tokenId string, baseTx sdk.BaseTx) (sdk.ResultTx, error) {
 	sender, err := l.QueryAddress(baseTx.From, baseTx.Password)
 	if err != nil {
 		return sdk.ResultTx{}, sdk.WrapWithMessage(ErrQueryAddress, err.Error())
@@ -184,7 +206,7 @@ func (l layer2Client) DepositTokenForNFT(spaceId uint64, classId string, nftId s
 	msg := &MsgDepositTokenForNFT{
 		Sender:  sender.String(),
 		ClassId: classId,
-		NftId:   nftId,
+		TokenId: tokenId,
 		SpaceId: spaceId,
 	}
 	resultTx, err := l.BuildAndSend([]sdk.Msg{msg}, baseTx)
@@ -196,9 +218,7 @@ func (l layer2Client) DepositTokenForNFT(spaceId uint64, classId string, nftId s
 
 func (l layer2Client) WithdrawTokenForNFT(
 	spaceId uint64,
-	classId string,
-	nftId string,
-	owner string,
+	classId, tokenId, owner, name, uri, uriHash, data string,
 	baseTx sdk.BaseTx) (sdk.ResultTx, error) {
 	sender, err := l.QueryAddress(baseTx.From, baseTx.Password)
 	if err != nil {
@@ -206,11 +226,15 @@ func (l layer2Client) WithdrawTokenForNFT(
 	}
 
 	msg := &MsgWithdrawTokenForNFT{
-		Sender:  sender.String(),
-		ClassId: classId,
-		NftId:   nftId,
-		Owner:   owner,
 		SpaceId: spaceId,
+		ClassId: classId,
+		TokenId: tokenId,
+		Owner:   owner,
+		Name:    name,
+		Uri:     uri,
+		UriHash: uriHash,
+		Data:    data,
+		Sender:  sender.String(),
 	}
 	resultTx, err := l.BuildAndSend([]sdk.Msg{msg}, baseTx)
 	if err != nil {
@@ -237,28 +261,34 @@ func (l layer2Client) GetSpace(spaceID uint64) (*Space, error) {
 }
 
 // GetSpaceOfOwner returns all spaces
-func (l layer2Client) GetSpaceOfOwner(owner string) ([]uint64, error) {
+func (l layer2Client) GetSpaceOfOwner(owner string, page *query.PageRequest) ([]Space, error) {
 	conn, err := l.GenConn()
 	if err != nil {
 		return nil, sdk.WrapWithMessage(ErrGenConn, err.Error())
 	}
 	resp, err := NewQueryClient(conn).SpaceOfOwner(
 		context.Background(),
-		&QuerySpaceOfOwnerRequest{Owner: owner})
+		&QuerySpaceOfOwnerRequest{
+			Owner:      owner,
+			Pagination: page,
+		})
 	if err != nil {
 		return nil, sdk.WrapWithMessage(ErrQueryPerm, err.Error())
 	}
-	return resp.SpaceIds, nil
+	return resp.Spaces, nil
 }
 
-func (l layer2Client) GetRecord(spaceID uint64, height uint64) (string, error) {
+func (l layer2Client) GetL2BlockHeader(spaceID uint64, height uint64) (string, error) {
 	conn, err := l.GenConn()
 	if err != nil {
 		return "", sdk.WrapWithMessage(ErrGenConn, err.Error())
 	}
-	resp, err := NewQueryClient(conn).Record(
+	resp, err := NewQueryClient(conn).L2BlockHeader(
 		context.Background(),
-		&QueryRecordRequest{SpaceId: spaceID, Height: height})
+		&QueryL2BlockHeaderRequest{
+			SpaceId: spaceID,
+			Height:  height,
+		})
 	if err != nil {
 		return "", sdk.WrapWithMessage(ErrQueryPerm, err.Error())
 	}
@@ -273,8 +303,7 @@ func (l layer2Client) GetClassForNFT(classID string) (*ClassForNFT, error) {
 	resp, err := NewQueryClient(conn).ClassForNFT(
 		context.Background(),
 		&QueryClassForNFTRequest{
-			ClassId:    classID,
-			Pagination: nil,
+			ClassId: classID,
 		})
 	if err != nil {
 		return nil, sdk.WrapWithMessage(ErrQueryPerm, err.Error())
@@ -282,7 +311,7 @@ func (l layer2Client) GetClassForNFT(classID string) (*ClassForNFT, error) {
 	return resp.Class, nil
 }
 
-func (l layer2Client) GetClassesForNFT(page *query.PageRequest) ([]*ClassForNFT, error) {
+func (l layer2Client) GetClassesForNFT(page *query.PageRequest) ([]ClassForNFT, error) {
 	conn, err := l.GenConn()
 	if err != nil {
 		return nil, sdk.WrapWithMessage(ErrGenConn, err.Error())
@@ -298,7 +327,7 @@ func (l layer2Client) GetClassesForNFT(page *query.PageRequest) ([]*ClassForNFT,
 	return resp.Classes, nil
 }
 
-func (l layer2Client) GetTokenForNFT(spaceID uint64, classID string, nftID string) (string, error) {
+func (l layer2Client) GetTokenForNFT(spaceID uint64, classID string, tokenID string) (string, error) {
 	conn, err := l.GenConn()
 	if err != nil {
 		return "", sdk.WrapWithMessage(ErrGenConn, err.Error())
@@ -308,7 +337,7 @@ func (l layer2Client) GetTokenForNFT(spaceID uint64, classID string, nftID strin
 		&QueryTokenForNFTRequest{
 			SpaceId: spaceID,
 			ClassId: classID,
-			NftId:   nftID,
+			TokenId: tokenID,
 		})
 	if err != nil {
 		return "", sdk.WrapWithMessage(ErrQueryPerm, err.Error())
@@ -316,7 +345,7 @@ func (l layer2Client) GetTokenForNFT(spaceID uint64, classID string, nftID strin
 	return resp.Owner, nil
 }
 
-func (l layer2Client) GetCollectionForNFT(spaceID uint64, classID string, page *query.PageRequest) ([]*TokenForNFT, error) {
+func (l layer2Client) GetCollectionForNFT(spaceID uint64, classID string, page *query.PageRequest) ([]TokenForNFT, error) {
 	conn, err := l.GenConn()
 	if err != nil {
 		return nil, sdk.WrapWithMessage(ErrGenConn, err.Error())
@@ -331,10 +360,10 @@ func (l layer2Client) GetCollectionForNFT(spaceID uint64, classID string, page *
 	if err != nil {
 		return nil, sdk.WrapWithMessage(ErrQueryPerm, err.Error())
 	}
-	return resp.Nfts, nil
+	return resp.Tokens, nil
 }
 
-func (l layer2Client) GetTokensOfOwnerForNFT(spaceID uint64, classID string, owner string, page *query.PageRequest) ([]string, error) {
+func (l layer2Client) GetTokensOfOwnerForNFT(spaceID uint64, classID string, owner string, page *query.PageRequest) ([]TokenForNFTByOwner, error) {
 	conn, err := l.GenConn()
 	if err != nil {
 		return nil, sdk.WrapWithMessage(ErrGenConn, err.Error())
@@ -350,5 +379,38 @@ func (l layer2Client) GetTokensOfOwnerForNFT(spaceID uint64, classID string, own
 	if err != nil {
 		return nil, sdk.WrapWithMessage(ErrQueryPerm, err.Error())
 	}
-	return resp.NftIds, nil
+	return resp.Tokens, nil
+}
+
+func (l layer2Client) GetBaseUriForNFT(classId string) (string, error) {
+	conn, err := l.GenConn()
+	if err != nil {
+		return "", sdk.WrapWithMessage(ErrGenConn, err.Error())
+	}
+	resp, err := NewQueryClient(conn).BaseUriForNFT(
+		context.Background(),
+		&QueryBaseUriForNFTRequest{
+			ClassId: classId,
+		})
+	if err != nil {
+		return "", sdk.WrapWithMessage(ErrQueryPerm, err.Error())
+	}
+	return resp.BaseUri, nil
+}
+func (l layer2Client) GetTokenUriForNFT(spaceId uint64, classId string, tokenId string) (string, error) {
+	conn, err := l.GenConn()
+	if err != nil {
+		return "", sdk.WrapWithMessage(ErrGenConn, err.Error())
+	}
+	resp, err := NewQueryClient(conn).TokenUriForNFT(
+		context.Background(),
+		&QueryTokenUriForNFTRequest{
+			SpaceId: spaceId,
+			ClassId: classId,
+			TokenId: tokenId,
+		})
+	if err != nil {
+		return "", sdk.WrapWithMessage(ErrQueryPerm, err.Error())
+	}
+	return resp.TokenUri, nil
 }

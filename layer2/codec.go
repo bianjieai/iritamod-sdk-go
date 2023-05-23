@@ -22,7 +22,6 @@ func RegisterInterfaces(registry types.InterfaceRegistry) {
 		(*sdk.Msg)(nil),
 		&MsgCreateL2Space{},
 		&MsgTransferL2Space{},
-		&MsgCreateL2Record{},
 		&MsgCreateNFTs{},
 		&MsgUpdateNFTs{},
 		&MsgDeleteNFTs{},
