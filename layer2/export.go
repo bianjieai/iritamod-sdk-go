@@ -19,6 +19,7 @@ type Client interface {
 	WithdrawClassForNFT(spaceId uint64, classId string, owner string, baseTx sdk.BaseTx) (sdk.ResultTx, error)
 	DepositTokenForNFT(spaceId uint64, classId string, tokenId string, baseTx sdk.BaseTx) (sdk.ResultTx, error)
 	WithdrawTokenForNFT(spaceId uint64, classId, tokenId, owner, name, uri, uriHash, data string, baseTx sdk.BaseTx) (sdk.ResultTx, error)
+	CreateL2BlockHeader(spaceId uint64, height uint64, blockHeader string, baseTx sdk.BaseTx) (sdk.ResultTx, error)
 
 	GetSpace(spaceID uint64) (*Space, error)
 	GetSpaceOfOwner(owner string, page *query.PageRequest) ([]Space, error)
