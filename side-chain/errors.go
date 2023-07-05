@@ -1,4 +1,4 @@
-package layer2
+package side_chain
 
 import (
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"

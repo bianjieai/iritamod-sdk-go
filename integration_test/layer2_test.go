@@ -28,10 +28,10 @@ func (s IntegrationTestSuite) TestLeayer2() {
 	require.NoError(s.T(), err)
 	spaceName := ""
 	spaceURI := ""
-	_, err = s.Layer2Client.CreateL2Space(spaceName, spaceURI, baseTx)
+	_, err = s.SideChainClient.CreateSpace(spaceName, spaceURI, baseTx)
 	require.NoError(s.T(), err)
 	var exceptSpaceId uint64 = 1
-	space, err := s.Layer2Client.GetSpace(exceptSpaceId)
+	space, err := s.SideChainClient.GetSpace(exceptSpaceId)
 	require.NoError(s.T(), err)
 	require.Equal(s.T(), space.Name, spaceName)
 	require.Equal(s.T(), space.Uri, spaceURI)
