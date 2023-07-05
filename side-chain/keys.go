@@ -1,4 +1,4 @@
-package layer2
+package side_chain
 
 const (
 	ModuleName = "perm"

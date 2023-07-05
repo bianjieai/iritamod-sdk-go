@@ -1,4 +1,4 @@
-package layer2
+package side_chain
 
 import (
 	"github.com/irisnet/core-sdk-go/common/codec"
@@ -20,14 +20,8 @@ func init() {
 func RegisterInterfaces(registry types.InterfaceRegistry) {
 	registry.RegisterImplementations(
 		(*sdk.Msg)(nil),
-		&MsgCreateL2Space{},
-		&MsgTransferL2Space{},
-		&MsgCreateNFTs{},
-		&MsgUpdateNFTs{},
-		&MsgDeleteNFTs{},
-		&MsgDepositClassForNFT{},
-		&MsgWithdrawClassForNFT{},
-		&MsgDepositTokenForNFT{},
-		&MsgWithdrawTokenForNFT{},
+		&MsgCreateSpace{},
+		&MsgTransferSpace{},
+		&MsgCreateBlockHeader{},
 	)
 }
