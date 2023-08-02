@@ -1,129 +1,150 @@
 package identity
 
 import (
-	"context"
-	"github.com/irisnet/core-sdk-go/common/codec"
-	"github.com/irisnet/core-sdk-go/common/codec/types"
-	sdk "github.com/irisnet/core-sdk-go/types"
+	"encoding/hex"
+	"encoding/json"
+	"strings"
+
+	"github.com/tendermint/tendermint/crypto/ed25519"
+	"github.com/tendermint/tendermint/crypto/sm2"
+	tmbytes "github.com/tendermint/tendermint/libs/bytes"
+
+	sdk "github.com/cosmos/cosmos-sdk/types"
+	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 )
 
-type identityClient struct {
-	sdk.BaseClient
-	codec.Marshaler
-}
-
-func NewClient(bc sdk.BaseClient, cdc codec.Marshaler) Client {
-	return identityClient{
-		BaseClient: bc,
-		Marshaler:  cdc,
+// NewIdentity contructs a new Identity instance
+func NewIdentity(
+	id tmbytes.HexBytes,
+	pubKeys []PubKeyInfo,
+	certificates []string,
+	credentials string,
+	owner sdk.AccAddress,
+	data string,
+) Identity {
+	return Identity{
+		Id:           id.String(),
+		PubKeys:      pubKeys,
+		Certificates: certificates,
+		Credentials:  credentials,
+		Owner:        owner.String(),
+		Data:         data,
 	}
 }
 
-func (i identityClient) Name() string {
-	return ModuleName
-}
-
-func (i identityClient) RegisterInterfaceTypes(registry types.InterfaceRegistry) {
-	RegisterInterfaces(registry)
-}
-
-func (i identityClient) CreateIdentity(request CreateIdentityRequest, baseTx sdk.BaseTx) (sdk.ResultTx, error) {
-	sender, err := i.QueryAddress(baseTx.From, baseTx.Password)
-	if err != nil {
-		return sdk.ResultTx{}, sdk.WrapWithMessage(ErrQueryAddress, err.Error())
+// Validate validates the identity
+func (i Identity) Validate() error {
+	if len(i.Owner) == 0 {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "owner missing")
 	}
 
-	// expect request.ID is hex-able.
-	_, hexErr := sdk.HexBytesFrom(request.Id)
-	if hexErr != nil {
-		return sdk.ResultTx{}, sdk.WrapWithMessage(ErrHex, hexErr.Error())
+	if _, err := sdk.AccAddressFromBech32(i.Owner); err != nil {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "wrong address format")
 	}
 
-	// expect pubkey is hex-able
-	if request.PubKeyInfo != nil && len(request.PubKeyInfo.PubKey) > 0 {
-		_, hexErr := sdk.HexBytesFrom(request.PubKeyInfo.PubKey)
-		if hexErr != nil {
-			return sdk.ResultTx{}, sdk.WrapWithMessage(ErrHex, err.Error())
+	if len(i.Id) > IdLengthMax*2 || len(i.Id) < IdLengthMin*2 {
+		return sdkerrors.Wrapf(ErrInvalidID, "size of the ID must be %d ~ %d in bytes", IdLengthMin, IdLengthMax)
+	}
+	for _, pubKey := range i.PubKeys {
+		if err := pubKey.Validate(); err != nil {
+			return err
 		}
 	}
 
-	msg := &MsgCreateIdentity{
-		Id:          request.Id,
-		PubKey:      request.PubKeyInfo,
-		Certificate: request.Certificate,
-		Credentials: *request.Credentials,
-		Owner:       sender.String(),
-		Data:        request.Data,
-	}
-
-	res, err := i.BuildAndSend([]sdk.Msg{msg}, baseTx)
-	if err != nil {
-		return sdk.ResultTx{}, sdk.WrapWithMessage(ErrBuildAndSend, err.Error())
-	}
-	return res, nil
-}
-
-func (i identityClient) UpdateIdentity(request UpdateIdentityRequest, baseTx sdk.BaseTx) (sdk.ResultTx, error) {
-	sender, err := i.QueryAddress(baseTx.From, baseTx.Password)
-	if err != nil {
-		return sdk.ResultTx{}, sdk.WrapWithMessage(ErrQueryAddress, err.Error())
-	}
-
-	id, e := sdk.HexBytesFrom(request.Id)
-	if e != nil {
-		return sdk.ResultTx{}, sdk.WrapWithMessage(ErrHex, e.Error())
-	}
-
-	if request.PubKeyInfo != nil && len(request.PubKeyInfo.PubKey) > 0 {
-		_, hexErr := sdk.HexBytesFrom(request.PubKeyInfo.PubKey)
-		if hexErr != nil {
-			return sdk.ResultTx{}, sdk.WrapWithMessage(ErrHex, err.Error())
+	for _, cert := range i.Certificates {
+		if err := CheckCertificate([]byte(cert)); err != nil {
+			return err
 		}
 	}
 
-	credentials := DoNotModifyDesc
-	if request.Credentials != nil {
-		credentials = *request.Credentials
-	}
-	data := DoNotModifyDesc
-	if request.Data != nil {
-		data = *request.Data
+	if len(i.Credentials) > MaxURILength {
+		return sdkerrors.Wrapf(ErrInvalidCredentials, "length of the credentials uri must not be greater than %d", MaxURILength)
 	}
 
-	msg := &MsgUpdateIdentity{
-		Id:          id.String(),
-		PubKey:      request.PubKeyInfo,
-		Certificate: request.Certificate,
-		Credentials: credentials,
-		Owner:       sender.String(),
-		Data:        data,
-	}
-
-	res, err := i.BuildAndSend([]sdk.Msg{msg}, baseTx)
-	if err != nil {
-		return sdk.ResultTx{}, sdk.WrapWithMessage(ErrBuildAndSend, err.Error())
-	}
-	return res, nil
+	return nil
 }
 
-func (i identityClient) QueryIdentity(id string) (QueryIdentityResp, error) {
-	conn, err := i.GenConn()
+// NewPubKeyInfo constructs a new PubKeyInfo instance
+func NewPubKeyInfo(pubKey tmbytes.HexBytes, algorithm PubKeyAlgorithm) PubKeyInfo {
+	return PubKeyInfo{
+		PubKey:    pubKey.String(),
+		Algorithm: algorithm,
+	}
+}
+
+// Validate validates the public key against underlying constraints
+// which vary by the algorithm
+func (pki PubKeyInfo) Validate() error {
+	pubKey, err := hex.DecodeString(pki.PubKey)
 	if err != nil {
-		return QueryIdentityResp{}, sdk.WrapWithMessage(ErrGenConn, err.Error())
+		return err
 	}
 
-	identityId, err := sdk.HexBytesFrom(id)
-	if err != nil {
-		return QueryIdentityResp{}, sdk.WrapWithMessage(ErrHex, err.Error())
+	switch pki.Algorithm {
+	case RSA:
+		if err := ValidateRSAPubKey(pubKey); err != nil {
+			return sdkerrors.Wrapf(ErrInvalidPubKey, err.Error())
+		}
+
+	case DSA:
+		if err := ValidateDSAPubKey(pubKey); err != nil {
+			return sdkerrors.Wrapf(ErrInvalidPubKey, err.Error())
+		}
+
+	case ECDSA:
+		if len(pubKey) != 33 {
+			return sdkerrors.Wrapf(ErrInvalidPubKey, "size of the ECDSA public key must be %d in bytes", 33)
+		}
+
+	case ED25519:
+		if len(pubKey) != ed25519.PubKeySize {
+			return sdkerrors.Wrapf(ErrInvalidPubKey, "size of the ED25519 public key must be %d in bytes", ed25519.PubKeySize)
+		}
+
+	case SM2:
+		if len(pubKey) != sm2.PubKeySize {
+			return sdkerrors.Wrapf(ErrInvalidPubKey, "size of the SM2 public key must be %d in bytes", sm2.PubKeySize)
+		}
+
+	default:
+		return sdkerrors.Wrap(ErrUnsupportedPubKeyAlgorithm, "")
 	}
 
-	resp, err := NewQueryClient(conn).Identity(
-		context.Background(),
-		&QueryIdentityRequest{Id: identityId.String()},
-	)
-	if err != nil {
-		return QueryIdentityResp{}, sdk.WrapWithMessage(ErrQueryIdentity, err.Error())
+	return nil
+}
+
+// PubKeyBytes return the hex bytes of the PubKey
+func (pki PubKeyInfo) PubKeyBytes() []byte {
+	bz, _ := hex.DecodeString(pki.PubKey)
+	return bz
+}
+
+// PubKeyAlgorithmFromString converts the given string to PubKeyAlgorithm
+func PubKeyAlgorithmFromString(str string) PubKeyAlgorithm {
+	if pkAlgo, ok := PubKeyAlgorithm_value[strings.ToUpper(str)]; ok {
+		return PubKeyAlgorithm(pkAlgo)
 	}
 
-	return resp.Identity.Convert().(QueryIdentityResp), nil
+	return UnknownPubKeyAlgorithm
+}
+
+// MarshalJSON returns the JSON representation
+func (p PubKeyAlgorithm) MarshalJSON() ([]byte, error) {
+	return json.Marshal(PubKeyAlgorithm_name[int32(p)])
+}
+
+// UnmarshalJSON unmarshals raw JSON bytes into a PubKeyAlgorithm
+func (p *PubKeyAlgorithm) UnmarshalJSON(data []byte) error {
+	var s string
+	if err := json.Unmarshal(data, &s); err != nil {
+		return nil
+	}
+
+	*p = PubKeyAlgorithmFromString(s)
+	return nil
+}
+
+// MarshalYAML returns the YAML representation
+func (p PubKeyAlgorithm) MarshalYAML() (interface{}, error) {
+	return PubKeyAlgorithm_name[int32(p)], nil
 }

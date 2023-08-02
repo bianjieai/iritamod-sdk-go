@@ -1,10 +1,10 @@
 package node
 
 import (
-	"github.com/irisnet/core-sdk-go/common/codec"
-	"github.com/irisnet/core-sdk-go/common/codec/types"
-	cryptocodec "github.com/irisnet/core-sdk-go/common/crypto/codec"
-	sdk "github.com/irisnet/core-sdk-go/types"
+	"github.com/cosmos/cosmos-sdk/codec"
+	"github.com/cosmos/cosmos-sdk/codec/types"
+	cryptocodec "github.com/cosmos/cosmos-sdk/crypto/codec"
+	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
 var (
@@ -13,17 +13,28 @@ var (
 )
 
 func init() {
+	RegisterLegacyAminoCodec(amino)
 	cryptocodec.RegisterCrypto(amino)
 	amino.Seal()
 }
 
+// RegisterLegacyAminoCodec registers the necessary interfaces and concrete types
+// on the provided Amino codec. These types are used for Amino JSON serialization.
+func RegisterLegacyAminoCodec(cdc *codec.LegacyAmino) {
+	cdc.RegisterConcrete(&MsgCreateValidator{}, "iritamod/validator/MsgCreateValidator", nil)
+	cdc.RegisterConcrete(&MsgUpdateValidator{}, "iritamod/validator/MsgUpdateValidator", nil)
+	cdc.RegisterConcrete(&MsgRemoveValidator{}, "iritamod/validator/MsgRemoveValidator", nil)
+	cdc.RegisterConcrete(&MsgGrantNode{}, "iritamod/node/MsgGrantNode", nil)
+	cdc.RegisterConcrete(&MsgRevokeNode{}, "iritamod/node/MsgRevokeNode", nil)
+}
+
 func RegisterInterfaces(registry types.InterfaceRegistry) {
-	registry.RegisterImplementations(
-		(*sdk.Msg)(nil),
+	registry.RegisterImplementations((*sdk.Msg)(nil),
 		&MsgCreateValidator{},
 		&MsgUpdateValidator{},
 		&MsgRemoveValidator{},
 		&MsgGrantNode{},
 		&MsgRevokeNode{},
 	)
+
 }

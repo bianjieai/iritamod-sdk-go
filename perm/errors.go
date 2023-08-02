@@ -1,17 +1,20 @@
 package perm
 
-import (
-	sdk "github.com/irisnet/core-sdk-go/types"
-)
-
-const CodeSpace = ModuleName
+import sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 
 var (
-	ErrQueryAddress  = sdk.Wrapf(CodeSpace, 1, "query address error")
-	ErrBuildAndSend  = sdk.Wrapf(CodeSpace, 2, "BuildAndSend error")
-	ErrGenConn       = sdk.Wrapf(CodeSpace, 3, "generate conn error")
-	ErrBench32       = sdk.Wrapf(CodeSpace, 4, "err bench32")
-	ErrHexAddr       = sdk.Wrapf(CodeSpace, 5, "err hex address")
-	ErrQueryPerm     = sdk.Wrapf(CodeSpace, 6, "query perm fail")
-	ErrValidateBasic = sdk.Wrapf(CodeSpace, 7, "ValidateBasic fail")
+	ErrUnauthorizedOperation = sdkerrors.Register(ModuleName, 2, "unauthorized operation")
+	ErrAlreadyBlockedAccount = sdkerrors.Register(ModuleName, 3, "account already blocked")
+	ErrBlockAdminAccount     = sdkerrors.Register(ModuleName, 4, "can not block admin account")
+	ErrUnknownBlockedAccount = sdkerrors.Register(ModuleName, 5, "unknown blocked account")
+	ErrAddRootAdmin          = sdkerrors.Register(ModuleName, 6, "can not add root account")
+	ErrRemoveRootAdmin       = sdkerrors.Register(ModuleName, 7, "can not remove root account")
+	ErrRemoveUnknownRole     = sdkerrors.Register(ModuleName, 8, "the account does not have this role")
+	ErrInvalidMsgURL         = sdkerrors.Register(ModuleName, 9, "invalid url")
+	// ErrInvalidContractAddress returns an error that the contract address is invalid
+	ErrInvalidContractAddress = sdkerrors.Register(ModuleName, 10, "contract address is invalid")
+	ErrContractDisable        = sdkerrors.Register(ModuleName, 11, "contract is disable")
+
+	ErrOperateRootAdmin = sdkerrors.Wrap(ErrUnauthorizedOperation, "can not operate root admin")
+	ErrOperatePermAdmin = sdkerrors.Wrap(ErrUnauthorizedOperation, "can not operate another permission admin")
 )

@@ -1,328 +1,124 @@
 package perm
 
 import (
-	"encoding/json"
+	"bytes"
+	"encoding/hex"
 	"fmt"
+	"math/big"
 
-	sdk "github.com/irisnet/core-sdk-go/types"
+	"golang.org/x/crypto/sha3"
 )
 
+// Lengths of hashes and addresses in bytes.
 const (
-	// ModuleName is the name of the perm module
-	ModuleName             = "perm"
-	TypeMsgAssignRoles     = "assign_roles"     // type for MsgAssignRoles
-	TypeMsgUnassignRoles   = "unassign_roles"   // type for MsgUnassignRoles
-	TypeMsgBlockAccount    = "block_account"    // type for MsgBlockAccount
-	TypeMsgUnblockAccount  = "unblock_account"  // type for MsgUnblockAccount
-	TypeMsgBlockContract   = "block_contract"   // type for MsgBlockContract
-	TypeMsgUnblockContract = "unblock_contract" // type for MsgUnblockContract
+	// AddressLength is the expected length of the address
+	AddressLength = 20
 )
 
-var (
-	_ sdk.Msg = &MsgAssignRoles{}
-	_ sdk.Msg = &MsgUnassignRoles{}
-	_ sdk.Msg = &MsgBlockAccount{}
-	_ sdk.Msg = &MsgUnblockAccount{}
-	_ sdk.Msg = &MsgBlockContract{}
-	_ sdk.Msg = &MsgUnblockContract{}
-)
+/////////// Address
 
-func (m MsgAssignRoles) Route() string {
-	return ModuleName
+// Address represents the 20 byte address of an Ethereum account.
+type Address [AddressLength]byte
+
+// BytesToAddress returns Address with value b.
+// If b is larger than len(h), b will be cropped from the left.
+func BytesToAddress(b []byte) Address {
+	var a Address
+	a.SetBytes(b)
+	return a
 }
 
-func (m MsgAssignRoles) Type() string {
-	return TypeMsgAssignRoles
-}
+// BigToAddress returns Address with byte values of b.
+// If b is larger than len(h), b will be cropped from the left.
+func BigToAddress(b *big.Int) Address { return BytesToAddress(b.Bytes()) }
 
-func (m MsgAssignRoles) GetSignBytes() []byte {
-	bz, err := ModuleCdc.MarshalJSON(&m)
-	if err != nil {
-		panic(err)
+// HexToAddress returns Address with byte values of s.
+// If s is larger than len(h), s will be cropped from the left.
+func HexToAddress(s string) Address { return BytesToAddress(FromHex(s)) }
+
+// IsHexAddress verifies whether a string can represent a valid hex-encoded
+// Ethereum address or not.
+func IsHexAddress(s string) bool {
+	if has0xPrefix(s) {
+		s = s[2:]
 	}
-	return sdk.MustSortJSON(bz)
+	return len(s) == 2*AddressLength && isHex(s)
 }
 
-func (m MsgAssignRoles) ValidateBasic() error {
-	if len(m.Address) == 0 {
-		return sdk.WrapWithMessage(ErrValidateBasic, "address missing")
+// Bytes gets the string representation of the underlying address.
+func (a Address) Bytes() []byte { return a[:] }
+
+// Hex returns an EIP55-compliant hex string representation of the address.
+func (a Address) Hex() string {
+	return string(a.checksumHex())
+}
+
+// String implements fmt.Stringer.
+func (a Address) String() string {
+	return a.Hex()
+}
+
+func (a *Address) checksumHex() []byte {
+	buf := a.hex()
+
+	// compute checksum
+	sha := sha3.NewLegacyKeccak256()
+	sha.Write(buf[2:])
+	hash := sha.Sum(nil)
+	for i := 2; i < len(buf); i++ {
+		hashByte := hash[(i-2)/2]
+		if i%2 == 0 {
+			hashByte = hashByte >> 4
+		} else {
+			hashByte &= 0xf
+		}
+		if buf[i] > '9' && hashByte > 7 {
+			buf[i] -= 32
+		}
 	}
-
-	if len(m.Operator) == 0 {
-		return sdk.WrapWithMessage(ErrValidateBasic, "operator missing")
-	}
-	if len(m.Roles) == 0 {
-		return sdk.WrapWithMessage(ErrValidateBasic, "roles missing")
-	}
-	return nil
+	return buf[:]
 }
 
-func (m MsgAssignRoles) GetSigners() []sdk.AccAddress {
-	return []sdk.AccAddress{sdk.MustAccAddressFromBech32(m.Operator)}
+func (a Address) hex() []byte {
+	var buf [len(a)*2 + 2]byte
+	copy(buf[:2], "0x")
+	hex.Encode(buf[2:], a[:])
+	return buf[:]
 }
 
-func (m MsgUnassignRoles) Route() string {
-	return ModuleName
-}
-
-func (m MsgUnassignRoles) Type() string {
-	return TypeMsgUnassignRoles
-}
-
-func (m MsgUnassignRoles) GetSignBytes() []byte {
-	bz, err := ModuleCdc.MarshalJSON(&m)
-	if err != nil {
-		panic(err)
-	}
-	return sdk.MustSortJSON(bz)
-}
-
-func (m MsgUnassignRoles) ValidateBasic() error {
-	if len(m.Address) == 0 {
-		return sdk.WrapWithMessage(ErrValidateBasic, "address missing")
-	}
-	if len(m.Operator) == 0 {
-		return sdk.WrapWithMessage(ErrValidateBasic, "operator missing")
-	}
-	if len(m.Roles) == 0 {
-		return sdk.WrapWithMessage(ErrValidateBasic, "roles missing")
-	}
-	return nil
-}
-
-func (m MsgUnassignRoles) GetSigners() []sdk.AccAddress {
-	return []sdk.AccAddress{sdk.MustAccAddressFromBech32(m.Operator)}
-}
-
-func (m MsgBlockAccount) Route() string {
-	return ModuleName
-}
-
-func (m MsgBlockAccount) Type() string {
-	return TypeMsgBlockAccount
-}
-
-func (m MsgBlockAccount) GetSignBytes() []byte {
-	bz, err := ModuleCdc.MarshalJSON(&m)
-	if err != nil {
-		panic(err)
-	}
-	return sdk.MustSortJSON(bz)
-}
-
-func (m MsgBlockAccount) ValidateBasic() error {
-	if len(m.Address) == 0 {
-		return sdk.WrapWithMessage(ErrValidateBasic, "address missing")
-	}
-	if len(m.Operator) == 0 {
-		return sdk.WrapWithMessage(ErrValidateBasic, "operator missing")
-	}
-	return nil
-}
-
-func (m MsgBlockAccount) GetSigners() []sdk.AccAddress {
-	return []sdk.AccAddress{sdk.MustAccAddressFromBech32(m.Operator)}
-}
-
-func (m MsgUnblockAccount) Route() string {
-	return ModuleName
-}
-
-func (m MsgUnblockAccount) Type() string {
-	return TypeMsgUnblockAccount
-}
-
-func (m MsgUnblockAccount) GetSignBytes() []byte {
-	bz, err := ModuleCdc.MarshalJSON(&m)
-	if err != nil {
-		panic(err)
-	}
-	return sdk.MustSortJSON(bz)
-}
-
-func (m MsgUnblockAccount) ValidateBasic() error {
-	if len(m.Address) == 0 {
-		return sdk.WrapWithMessage(ErrValidateBasic, "address missing")
-	}
-	if len(m.Operator) == 0 {
-		return sdk.WrapWithMessage(ErrValidateBasic, "operator missing")
-	}
-	return nil
-}
-
-func (m MsgUnblockAccount) GetSigners() []sdk.AccAddress {
-	return []sdk.AccAddress{sdk.MustAccAddressFromBech32(m.Operator)}
-}
-
-// MsgBlockContract implements sdk.Msg
-
-func (m MsgBlockContract) Route() string {
-	return ModuleName
-}
-
-func (m MsgBlockContract) Type() string {
-	return TypeMsgBlockContract
-}
-
-func (m MsgBlockContract) GetSignBytes() []byte {
-	bz, err := ModuleCdc.MarshalJSON(&m)
-	if err != nil {
-		panic(err)
-	}
-	return sdk.MustSortJSON(bz)
-}
-
-func (m MsgBlockContract) ValidateBasic() error {
-	if len(m.ContractAddress) == 0 {
-		return sdk.WrapWithMessage(ErrValidateBasic, "address missing")
-	}
-	if len(m.Operator) == 0 {
-		return sdk.WrapWithMessage(ErrValidateBasic, "operator missing")
-	}
-	return nil
-}
-
-func (m MsgBlockContract) GetSigners() []sdk.AccAddress {
-	return []sdk.AccAddress{sdk.MustAccAddressFromBech32(m.Operator)}
-}
-
-// MsgBlockContract implements sdk.Msg
-
-func (m MsgUnblockContract) Route() string {
-	return ModuleName
-}
-
-func (m MsgUnblockContract) Type() string {
-	return TypeMsgUnblockContract
-}
-
-func (m MsgUnblockContract) GetSignBytes() []byte {
-	bz, err := ModuleCdc.MarshalJSON(&m)
-	if err != nil {
-		panic(err)
-	}
-	return sdk.MustSortJSON(bz)
-}
-
-func (m MsgUnblockContract) ValidateBasic() error {
-	if len(m.ContractAddress) == 0 {
-		return sdk.WrapWithMessage(ErrValidateBasic, "address missing")
-	}
-	if len(m.Operator) == 0 {
-		return sdk.WrapWithMessage(ErrValidateBasic, "operator missing")
-	}
-	return nil
-}
-
-func (m MsgUnblockContract) GetSigners() []sdk.AccAddress {
-	return []sdk.AccAddress{sdk.MustAccAddressFromBech32(m.Operator)}
-}
-
-// RoleFromstring turn a string into an Auth
-func roleFromString(str string) (Role, error) {
-	switch str {
-	case "RootAdmin":
-		return RoleRootAdmin, nil
-
-	case "PermAdmin":
-		return RolePermAdmin, nil
-
-	case "BlacklistAdmin":
-		return RoleBlacklistAdmin, nil
-
-	case "NodeAdmin":
-		return RoleNodeAdmin, nil
-
-	case "ParamAdmin":
-		return RoleParamAdmin, nil
-
-	case "PowerUser":
-		return RolePowerUser, nil
-
-	case "RelayerUser":
-		return RoleRelayerUser, nil
-
-	case "IDAdmin":
-		return RoleIDAdmin, nil
-
-	case "BaseM1Admin":
-		return RoleBaseM1Admin, nil
-
-	case "PlatformUser":
-		return RolePlatformUser, nil
-
+// Format implements fmt.Formatter.
+// Address supports the %v, %s, %q, %x, %X and %d format verbs.
+func (a Address) Format(s fmt.State, c rune) {
+	switch c {
+	case 'v', 's':
+		s.Write(a.checksumHex())
+	case 'q':
+		q := []byte{'"'}
+		s.Write(q)
+		s.Write(a.checksumHex())
+		s.Write(q)
+	case 'x', 'X':
+		// %x disables the checksum.
+		hex := a.hex()
+		if !s.Flag('#') {
+			hex = hex[2:]
+		}
+		if c == 'X' {
+			hex = bytes.ToUpper(hex)
+		}
+		s.Write(hex)
+	case 'd':
+		fmt.Fprint(s, ([len(a)]byte)(a))
 	default:
-		return Role(0xff), fmt.Errorf("'%s' is not a valid role", str)
+		fmt.Fprintf(s, "%%!%c(address=%x)", c, a)
 	}
 }
 
-// Marshal needed for protobuf compatibility
-func (r Role) Marshal() ([]byte, error) {
-	return []byte{byte(r)}, nil
-}
-
-// Unmarshal needed for protobuf compatibility
-func (r *Role) Unmarshal(data []byte) error {
-	*r = Role(data[0])
-	return nil
-}
-
-// MarshalJSON Marshals to JSON using string representation of the status
-func (r Role) MarshalJSON() ([]byte, error) {
-	return json.Marshal(r.string())
-}
-
-// UnmarshalJSON Unmarshals from JSON assuming Bech32 encoding
-func (r *Role) UnmarshalJSON(data []byte) error {
-	var s string
-	err := json.Unmarshal(data, &s)
-	if err != nil {
-		return err
+// SetBytes sets the address to the value of b.
+// If b is larger than len(a), b will be cropped from the left.
+func (a *Address) SetBytes(b []byte) {
+	if len(b) > len(a) {
+		b = b[len(b)-AddressLength:]
 	}
-
-	bz2, err := roleFromString(s)
-	if err != nil {
-		return err
-	}
-
-	*r = bz2
-	return nil
-}
-
-// string implements the stringer interface.
-func (r Role) string() string {
-	switch r {
-	case RoleRootAdmin:
-		return "RootAdmin"
-
-	case RolePermAdmin:
-		return "PermAdmin"
-
-	case RoleBlacklistAdmin:
-		return "BlacklistAdmin"
-
-	case RoleNodeAdmin:
-		return "NodeAdmin"
-
-	case RoleParamAdmin:
-		return "ParamAdmin"
-
-	case RolePowerUser:
-		return "PowerUser"
-
-	case RoleRelayerUser:
-		return "RelayerUser"
-
-	case RoleIDAdmin:
-		return "IDAdmin"
-
-	case RoleBaseM1Admin:
-		return "BaseM1Admin"
-
-	case RolePlatformUser:
-		return "PlatformUser"
-
-	default:
-		return ""
-	}
+	copy(a[AddressLength-len(b):], b)
 }

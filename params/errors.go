@@ -1,13 +1,19 @@
 package params
 
 import (
-	sdk "github.com/irisnet/core-sdk-go/types"
+	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+	"github.com/cosmos/cosmos-sdk/x/params/types/proposal"
 )
 
-const CodeSpace = ModuleName
-
+// alias params module sentinel errors
 var (
-	ErrQueryAddress  = sdk.Wrapf(CodeSpace, 1, "query address error")
-	ErrBuildAndSend  = sdk.Wrapf(CodeSpace, 2, "BuildAndSend error")
-	ErrValidateBasic = sdk.Wrapf(CodeSpace, 3, "ValidateBasic fail")
+	ErrUnknownSubspace  = proposal.ErrUnknownSubspace
+	ErrSettingParameter = proposal.ErrSettingParameter
+	ErrEmptyChanges     = proposal.ErrEmptyChanges
+	ErrEmptySubspace    = proposal.ErrEmptySubspace
+	ErrEmptyKey         = proposal.ErrEmptyKey
+	ErrEmptyValue       = proposal.ErrEmptyValue
+
+	// Custom error codes start at 20
+	ErrUnknownKey = sdkerrors.Register(ModuleName, 20, "unknown key")
 )
